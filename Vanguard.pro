@@ -1,0 +1,53 @@
+QT += core
+QT -= gui
+
+TARGET = Vanguard
+CONFIG += console
+CONFIG -= app_bundle
+
+TEMPLATE = app
+
+SOURCES += main.cpp \
+    Solvers/firstordersolver.cpp \
+    Solvers/secondordersolver.cpp \
+    Mathematics/vectoralgebra.cpp \
+    Solvers/solvers.cpp \
+    Mathematics/matrixalgebra.cpp \
+    Mathematics/tensoralgebra.cpp \
+    Elasticity/elasticequationofstate.cpp \
+    Elasticity/elasticstatevector.cpp \
+    Elasticity/elasticacoustictensor.cpp \
+    Elasticity/hyperelasticmaterialparameters.cpp \
+    Solvers/slopelimiters.cpp \
+    Elasticity/elastictests.cpp \
+    Elasticity/Multiphysics/elasticmultiphysicsstatevector.cpp \
+    Euler/eulermaterialparameters.cpp \
+    Euler/eulerequationofstate.cpp \
+    Euler/eulerstatevector.cpp \
+    Euler/eulertests.cpp \
+    Euler/Multiphysics/eulermultiphysicsstatevector.cpp \
+    Euler/Multiphysics/eulermultiphysicstests.cpp \
+    Solvers/multiphysicssolvers.cpp
+
+HEADERS += \
+    Solvers/firstordersolver.h \
+    Solvers/secondordersolver.h \
+    Mathematics/vectoralgebra.h \
+    Solvers/solvers.h \
+    Mathematics/matrixalgebra.h \
+    Mathematics/tensoralgebra.h \
+    Elasticity/elasticequationofstate.h \
+    Elasticity/elasticstatevector.h \
+    Elasticity/elasticacoustictensor.h \
+    Elasticity/hyperelasticmaterialparameters.h \
+    Solvers/slopelimiters.h \
+    Elasticity/elastictests.h \
+    Elasticity/Multiphysics/elasticmultiphysicsstatevector.h \
+    Euler/eulermaterialparameters.h \
+    Euler/eulerequationofstate.h \
+    Euler/eulerstatevector.h \
+    Euler/eulertests.h \
+    Euler/Multiphysics/eulermultiphysicsstatevector.h \
+    Euler/Multiphysics/eulermultiphysicstests.h \
+    Solvers/multiphysicssolvers.h
+
