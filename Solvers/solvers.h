@@ -12,25 +12,39 @@ public:
     static vector<EulerStateVector> insertBoundaryCells(vector<EulerStateVector> & currentCells, int boundarySize);
     static vector<EulerMultiphysicsStateVector> insertBoundaryCells(vector<EulerMultiphysicsStateVector> & currentCells, int boundarySize);
 
+    static vector<ElasticStateVector> insertBoundaryCells(vector<ElasticStateVector> & currentCells, int boundarySize);
+
     static vector<vector<EulerStateVector> > insertBoundaryCells2D(vector<vector<EulerStateVector> > & currentCells, int boundarySize);
     static vector<vector<EulerMultiphysicsStateVector> > insertBoundaryCells2D(vector<vector<EulerMultiphysicsStateVector> > & currentCells, int boundarySize);
+
+    static vector<vector<ElasticStateVector> > insertBoundaryCells2D(vector<vector<ElasticStateVector> > & currentCells, int boundarySize);
 
     static double computeMaximumWaveSpeed(vector<EulerStateVector> & currentCells, EulerMaterialParameters materialParameters);
     static double computeMaximumWaveSpeed(vector<EulerMultiphysicsStateVector> & currentCells, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
 
+    static double computeMaximumWaveSpeed(vector<ElasticStateVector> & currentCells, HyperelasticMaterialParameters materialParameters);
+
     static double computeMaximumWaveSpeed2D(vector<vector<EulerStateVector> > & currentCells, EulerMaterialParameters materialParameters);
     static double computeMaximumWaveSpeed2D(vector<vector<EulerMultiphysicsStateVector> > & currentCells, EulerMaterialParameters material1Parameters,
                                             EulerMaterialParameters material2Parameters);
+
+    static double computeMaximumWaveSpeed2D(vector<vector<ElasticStateVector> > & currentCells, HyperelasticMaterialParameters materialParameters);
 
     static double computeStableTimeStep(vector<EulerStateVector> & currentCells, double cellSpacing, double CFLCoefficient, double currentTime, double finalTime, int currentIteration,
                                         EulerMaterialParameters materialParameters);
     static double computeStableTimeStep(vector<EulerMultiphysicsStateVector> & currentCells, double cellSpacing, double CFLCoefficient, double currentTime, double finalTime,
                                         int currentIteration, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
 
+    static double computeStableTimeStep(vector<ElasticStateVector> & currentCells, double cellSpacing, double CFLCoefficient, double currentTime, double finalTime, int currentIteration,
+                                        HyperelasticMaterialParameters materialParameters);
+
     static double computeStableTimeStep2D(vector<vector<EulerStateVector> > & currentCells, double cellSpacing, double CFLCoefficient, double currentTime, double finalTime,
                                           int currentIteration, EulerMaterialParameters materialParameters);
     static double computeStableTimeStep2D(vector<vector<EulerMultiphysicsStateVector> > & currentCells, double cellSpacing, double CFLCoefficient, double currentTime, double finalTime,
                                           int currentIteration, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
+
+    static double computeStableTimeStep2D(vector<vector<ElasticStateVector> > & currentCells, double cellSpacing, double CFLCoefficient, double currentTime, double finalTime,
+                                          int currentIteration, HyperelasticMaterialParameters materialParameters);
 
     static double computeStableTimeStep(double timeStep, double currentTime, double finalTime, int currentIteration);
 
@@ -40,16 +54,25 @@ public:
                                                                    EulerMultiphysicsStateVector rightStateVector, double cellSpacing, double timeStep, double bias, int slopeLimiter, int side,
                                                                    EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
 
+    static ElasticStateVector evolveStateByHalfXTimeStep(ElasticStateVector leftStateVector, ElasticStateVector middleStateVector, ElasticStateVector rightStateVector, double cellSpacing,
+                                                         double timeStep, double bias, int slopeLimiter, int side, HyperelasticMaterialParameters materialParameters);
+
     static EulerStateVector evolveStateByHalfYTimeStep(EulerStateVector topStateVector, EulerStateVector middleStateVector, EulerStateVector bottomStateVector, double cellSpacing, double timeStep,
                                                        double bias, int slopeLimiter, int side, EulerMaterialParameters materialParameters);
     static EulerMultiphysicsStateVector evolveStateByHalfYTimeStep(EulerMultiphysicsStateVector topStateVector, EulerMultiphysicsStateVector middleStateVector,
                                                                    EulerMultiphysicsStateVector bottomStateVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
                                                                    int side, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
 
+    static ElasticStateVector evolveStateByHalfYTimeStep(ElasticStateVector topStateVector, ElasticStateVector middleStateVector, ElasticStateVector bottomStateVector, double cellSpacing,
+                                                         double timeStep, double bias, int slopeLimiter, int side, HyperelasticMaterialParameters materialParameters);
+
     static EulerStateVector evolveStateByHalfTimeStep(vector<double> leftExtrapolatedValue, vector<double> rightExtrapolatedValue, vector<double> evolutionVector, int side,
                                                       EulerMaterialParameters materialParameters);
     static EulerMultiphysicsStateVector evolveStateByHalfTimeStep(vector<double> leftExtrapolatedValue, vector<double> rightExtrapolatedValue, vector<double> evolutionVector, int side,
                                                                  EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
+
+    static ElasticStateVector evolveStateByHalfTimeStep(vector<double> leftExtrapolatedValue, vector<double> rightExtrapolatedValue, vector<double> evolutionVector, int side,
+                                                        HyperelasticMaterialParameters materialParameters);
 
     static vector<double> computeEvolutionVector(vector<double> leftFluxVector, vector<double> rightFluxVector, double cellSpacing, double timeStep);
 };

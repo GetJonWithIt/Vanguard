@@ -93,6 +93,16 @@ vector<double> SlopeLimiters::computeSlopeVector(EulerMultiphysicsStateVector le
     return computeSlopeVector(leftConservedVariableVector, middleConservedVariableVector, rightConservedVariableVector, bias, slopeLimiter);
 }
 
+vector<double> SlopeLimiters::computeSlopeVector(ElasticStateVector leftStateVector, ElasticStateVector middleStateVector, ElasticStateVector rightStateVector, double bias, int slopeLimiter,
+                                                 HyperelasticMaterialParameters materialParameters)
+{
+    vector<double> leftConservedVariableVector = leftStateVector.computeConservedVariableVector(materialParameters);
+    vector<double> middleConservedVariableVector = middleStateVector.computeConservedVariableVector(materialParameters);
+    vector<double> rightConservedVariableVector = rightStateVector.computeConservedVariableVector(materialParameters);
+
+    return computeSlopeVector(leftConservedVariableVector, middleConservedVariableVector, rightConservedVariableVector, bias, slopeLimiter);
+}
+
 vector<double> SlopeLimiters::computeSlopeVector(vector<double> leftConservedVariableVector, vector<double> middleConservedVariableVector, vector<double> rightConservedVariableVector,
                                                  double bias, int slopeLimiter)
 {

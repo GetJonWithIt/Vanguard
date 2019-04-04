@@ -2,11 +2,20 @@
 
 EulerMultiphysicsStateVector::EulerMultiphysicsStateVector()
 {
+    material1VolumeFraction = 0.999;
+    interfaceXVelocity = 0.0;
+    interfaceYVelocity = 0.0;
+    interfaceZVelocity = 0.0;
+
+    material1Density = 1.0;
+    material1Pressure = 1.0;
+
+    material2Density = 1.0;
+    material2Pressure = 1.0;
 }
 
-EulerMultiphysicsStateVector::EulerMultiphysicsStateVector(double newMaterial1VolumeFraction, double newInterfaceXVelocity, double newInterfaceYVelocity,
-                                                           double newInterfaceZVelocity, double newMaterial1Density, double newMaterial1Pressure, double newMaterial2Density,
-                                                           double newMaterial2Pressure)
+EulerMultiphysicsStateVector::EulerMultiphysicsStateVector(double newMaterial1VolumeFraction, double newInterfaceXVelocity, double newInterfaceYVelocity, double newInterfaceZVelocity,
+                                                           double newMaterial1Density, double newMaterial1Pressure, double newMaterial2Density, double newMaterial2Pressure)
 {
     material1VolumeFraction = newMaterial1VolumeFraction;
     interfaceXVelocity = newInterfaceXVelocity;

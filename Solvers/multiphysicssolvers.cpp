@@ -41,29 +41,34 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<EulerMultiphy
 
     for (int i = 0; i < rowCount; i++)
     {
-        int interfaceLocation1 = 0;
-        int interfaceLocation2 = 0;
+        int interfaceCount1 = 0;
+        int interfaceCount2 = 0;
+        vector<int> interfaceLocations1(100);
+        vector<int> interfaceLocations2(100);
 
         for (int j = 1; j < columnCount; j++)
         {
             if (currentCells[i][j].getMaterial1VolumeFraction() < 0.5 && currentCells[i][j - 1].getMaterial1VolumeFraction() >= 0.5)
             {
-                interfaceLocation1 = j;
+                interfaceLocations1[interfaceCount1] = j;
+                interfaceCount1 += 1;
             }
+
             if (currentCells[i][j].getMaterial1VolumeFraction() > 0.5 && currentCells[i][j - 1].getMaterial1VolumeFraction() <= 0.5)
             {
-                interfaceLocation2 = j;
+                interfaceLocations2[interfaceCount2] = j;
+                interfaceCount2 += 1;
             }
         }
 
-        if (interfaceLocation1 != 0)
+        for (int k = 0; k < interfaceCount1; k++)
         {
-            for (int j = interfaceLocation1 - 1; j < interfaceLocation1 + 2; j++)
+            for (int j = interfaceLocations1[k] - 1; j < interfaceLocations1[k] + 2; j++)
             {
                 currentCells[i][j].relaxTotalDensity();
                 currentCells[i][j].relaxTotalPressure(material1Parameters, material2Parameters);
 
-                if (j < interfaceLocation1)
+                if (j < interfaceLocations1[k])
                 {
                     currentCells[i][j].setMaterial1VolumeFraction(0.999);
                 }
@@ -73,14 +78,15 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<EulerMultiphy
                 }
             }
         }
-        if (interfaceLocation2 != 0)
+
+        for (int k = 0; k < interfaceCount2; k++)
         {
-            for (int j = interfaceLocation2 - 2; j < interfaceLocation2 + 1; j++)
+            for (int j = interfaceLocations2[k] - 2; j < interfaceLocations2[k] + 1; j++)
             {
                 currentCells[i][j].relaxTotalDensity();
                 currentCells[i][j].relaxTotalPressure(material1Parameters, material2Parameters);
 
-                if (j < interfaceLocation2)
+                if (j < interfaceLocations2[k])
                 {
                     currentCells[i][j].setMaterial1VolumeFraction(0.001);
                 }
@@ -94,29 +100,34 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<EulerMultiphy
 
     for (int i = 0; i < columnCount; i++)
     {
-        int interfaceLocation1 = 0;
-        int interfaceLocation2 = 0;
+        int interfaceCount1 = 0;
+        int interfaceCount2 = 0;
+        vector<int> interfaceLocations1(100);
+        vector<int> interfaceLocations2(100);
 
         for (int j = 1; j < rowCount; j++)
         {
             if (currentCells[j][i].getMaterial1VolumeFraction() < 0.5 && currentCells[j - 1][i].getMaterial1VolumeFraction() >= 0.5)
             {
-                interfaceLocation1 = j;
+                interfaceLocations1[interfaceCount1] = j;
+                interfaceCount1 += 1;
             }
+
             if (currentCells[j][i].getMaterial1VolumeFraction() > 0.5 && currentCells[j - 1][i].getMaterial1VolumeFraction() <= 0.5)
             {
-                interfaceLocation2 = j;
+                interfaceLocations2[interfaceCount2] = j;
+                interfaceCount2 += 1;
             }
         }
 
-        if (interfaceLocation1 != 0)
+        for (int k = 0; k < interfaceCount1; k++)
         {
-            for (int j = interfaceLocation1 - 1; j < interfaceLocation1 + 2; j++)
+            for (int j = interfaceLocations1[k] - 1; j < interfaceLocations1[k] + 2; j++)
             {
                 currentCells[j][i].relaxTotalDensity();
                 currentCells[j][i].relaxTotalPressure(material1Parameters, material2Parameters);
 
-                if (j < interfaceLocation1)
+                if (j < interfaceLocations1[k])
                 {
                     currentCells[j][i].setMaterial1VolumeFraction(0.999);
                 }
@@ -126,14 +137,15 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<EulerMultiphy
                 }
             }
         }
-        if (interfaceLocation2 != 0)
+
+        for (int k = 0; k < interfaceCount2; k++)
         {
-            for (int j = interfaceLocation2 - 2; j < interfaceLocation2 + 1; j++)
+            for (int j = interfaceLocations2[k] - 2; j < interfaceLocations2[k] + 1; j++)
             {
                 currentCells[j][i].relaxTotalDensity();
                 currentCells[j][i].relaxTotalPressure(material1Parameters, material2Parameters);
 
-                if (j < interfaceLocation2)
+                if (j < interfaceLocations2[k])
                 {
                     currentCells[j][i].setMaterial1VolumeFraction(0.001);
                 }

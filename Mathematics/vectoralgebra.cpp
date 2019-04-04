@@ -34,3 +34,34 @@ vector<double> VectorAlgebra::multiplyVector(double scalar1, vector<double> vect
 
     return productVector;
 }
+
+double VectorAlgebra::computeDotProduct(vector<double> vector1, vector<double> vector2)
+{
+    double dotProduct = 0.0;
+    int componentCount = vector1.size();
+
+    for (int i = 0; i < componentCount; i++)
+    {
+        dotProduct += vector1[i] * vector2[i];
+    }
+
+    return dotProduct;
+}
+
+double VectorAlgebra::computeNorm(vector<double> vector1)
+{
+    return sqrt(computeDotProduct(vector1, vector1));
+}
+
+double VectorAlgebra::computeComponentSum(vector<double> vector1)
+{
+    double componentSum = 0.0;
+    int componentCount = vector1.size();
+
+    for (int i = 0; i < componentCount; i++)
+    {
+        componentSum += vector1[i];
+    }
+
+    return componentSum;
+}

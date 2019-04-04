@@ -28,6 +28,18 @@ vector<double> SecondOrderSolver::computeXSLICFlux(EulerMultiphysicsStateVector 
     return FirstOrderSolver::computeXFORCEFlux(evolvedRightStateVector, evolvedLeftStateVector, cellSpacing, timeStep, material1Parameters, material2Parameters);
 }
 
+vector<double> SecondOrderSolver::computeXSLICFlux(ElasticStateVector leftLeftStateVector, ElasticStateVector leftStateVector, ElasticStateVector rightStateVector,
+                                                   ElasticStateVector rightRightStateVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
+                                                   HyperelasticMaterialParameters materialParameters)
+{
+    ElasticStateVector evolvedRightStateVector = Solvers::evolveStateByHalfXTimeStep(leftLeftStateVector, leftStateVector, rightStateVector, cellSpacing, timeStep, bias, slopeLimiter, 1,
+                                                                                     materialParameters);
+    ElasticStateVector evolvedLeftStateVector = Solvers::evolveStateByHalfXTimeStep(leftStateVector, rightStateVector, rightRightStateVector, cellSpacing, timeStep, bias, slopeLimiter, 0,
+                                                                                    materialParameters);
+
+    return FirstOrderSolver::computeXFORCEFlux(evolvedRightStateVector, evolvedLeftStateVector, cellSpacing, timeStep, materialParameters);
+}
+
 vector<double> SecondOrderSolver::computeYSLICFlux(EulerStateVector topTopStateVector, EulerStateVector topStateVector, EulerStateVector bottomStateVector, EulerStateVector bottomBottomStateVector,
                                                    double cellSpacing, double timeStep, double bias, int slopeLimiter, EulerMaterialParameters materialParameters)
 {
@@ -49,6 +61,18 @@ vector<double> SecondOrderSolver::computeYSLICFlux(EulerMultiphysicsStateVector 
                                                                                              0, material1Parameters, material2Parameters);
 
     return FirstOrderSolver::computeYFORCEFlux(evolvedBottomStateVector, evolvedTopStateVector, cellSpacing, timeStep, material1Parameters, material2Parameters);
+}
+
+vector<double> SecondOrderSolver::computeYSLICFlux(ElasticStateVector topTopStateVector, ElasticStateVector topStateVector, ElasticStateVector bottomStateVector,
+                                                   ElasticStateVector bottomBottomStateVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
+                                                   HyperelasticMaterialParameters materialParameters)
+{
+    ElasticStateVector evolvedBottomStateVector = Solvers::evolveStateByHalfYTimeStep(topTopStateVector, topStateVector, bottomStateVector, cellSpacing, timeStep, bias, slopeLimiter, 1,
+                                                                                      materialParameters);
+    ElasticStateVector evolvedTopStateVector = Solvers::evolveStateByHalfYTimeStep(topStateVector, bottomStateVector, bottomBottomStateVector, cellSpacing, timeStep, bias, slopeLimiter, 0,
+                                                                                   materialParameters);
+
+    return FirstOrderSolver::computeYFORCEFlux(evolvedBottomStateVector, evolvedTopStateVector, cellSpacing, timeStep, materialParameters);
 }
 
 void SecondOrderSolver::computeSLICTimeStep(vector<EulerStateVector> & currentCells, vector<EulerStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep, double bias,
@@ -85,6 +109,24 @@ void SecondOrderSolver::computeSLICTimeStep(vector<EulerMultiphysicsStateVector>
 
         currentCells[i].setConservedVariableVector(FirstOrderSolver::computeFORCEUpdate(conservedVariableVector, leftFluxVector, rightFluxVector, cellSpacing, timeStep),
                                                     material1Parameters, material2Parameters);
+    }
+}
+
+void SecondOrderSolver::computeSLICTimeStep(vector<ElasticStateVector> & currentCells, vector<ElasticStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep,
+                                            double bias, int slopeLimiter, HyperelasticMaterialParameters materialParameters)
+{
+    int cellCount = currentCells.size();
+
+    for (int i = 0; i < cellCount; i++)
+    {
+        vector<double> conservedVariableVector = currentCells[i].computeConservedVariableVector(materialParameters);
+
+        vector<double> leftFluxVector = computeXSLICFlux(currentCellsWithBoundary[i], currentCellsWithBoundary[i + 1], currentCellsWithBoundary[i + 2], currentCellsWithBoundary[i + 3],
+                cellSpacing, timeStep, bias, slopeLimiter, materialParameters);
+        vector<double> rightFluxVector = computeXSLICFlux(currentCellsWithBoundary[i + 1], currentCellsWithBoundary[i + 2], currentCellsWithBoundary[i + 3], currentCellsWithBoundary[i + 4],
+                cellSpacing, timeStep, bias, slopeLimiter, materialParameters);
+
+        currentCells[i].setConservedVariableVector(FirstOrderSolver::computeFORCEUpdate(conservedVariableVector, leftFluxVector, rightFluxVector, cellSpacing, timeStep), materialParameters);
     }
 }
 
@@ -134,6 +176,29 @@ void SecondOrderSolver::computeXSLICTimeStep2D(vector<vector<EulerMultiphysicsSt
     }
 }
 
+void SecondOrderSolver::computeXSLICTimeStep2D(vector<vector<ElasticStateVector> > & currentCells, vector<vector<ElasticStateVector> > & currentCellsWithBoundary, double cellSpacing,
+                                               double timeStep, double bias, int slopeLimiter, HyperelasticMaterialParameters materialParameters)
+{
+    int rowCount = currentCells.size();
+    int columnCount = currentCells[0].size();
+
+    for (int i = 0; i < rowCount; i++)
+    {
+        for (int j = 0; j < columnCount; j++)
+        {
+            vector<double> conservedVariableVector = currentCells[i][j].computeConservedVariableVector(materialParameters);
+
+            vector<double> leftFluxVector = computeXSLICFlux(currentCellsWithBoundary[i + 2][j], currentCellsWithBoundary[i + 2][j + 1], currentCellsWithBoundary[i + 2][j + 2],
+                    currentCellsWithBoundary[i + 2][j + 3], cellSpacing, timeStep, bias, slopeLimiter, materialParameters);
+            vector<double> rightFluxVector = computeXSLICFlux(currentCellsWithBoundary[i + 2][j + 1], currentCellsWithBoundary[i + 2][j + 2], currentCellsWithBoundary[i + 2][j + 3],
+                    currentCellsWithBoundary[i + 2][j + 4], cellSpacing, timeStep, bias, slopeLimiter, materialParameters);
+
+            currentCells[i][j].setConservedVariableVector(FirstOrderSolver::computeFORCEUpdate(conservedVariableVector, leftFluxVector, rightFluxVector, cellSpacing, timeStep),
+                                                          materialParameters);
+        }
+    }
+}
+
 void SecondOrderSolver::computeYSLICTimeStep2D(vector<vector<EulerStateVector> > & currentCells, vector<vector<EulerStateVector> > & currentCellsWithBoundary, double cellSpacing,
                                                double timeStep, double bias, int slopeLimiter, EulerMaterialParameters materialParameters)
 {
@@ -176,6 +241,29 @@ void SecondOrderSolver::computeYSLICTimeStep2D(vector<vector<EulerMultiphysicsSt
 
             currentCells[i][j].setConservedVariableVector(FirstOrderSolver::computeFORCEUpdate(conservedVariableVector, topFluxVector, bottomFluxVector, cellSpacing, timeStep),
                                                           material1Parameters, material2Parameters);
+        }
+    }
+}
+
+void SecondOrderSolver::computeYSLICTimeStep2D(vector<vector<ElasticStateVector> > & currentCells, vector<vector<ElasticStateVector> > & currentCellsWithBoundary, double cellSpacing,
+                                               double timeStep, double bias, int slopeLimiter, HyperelasticMaterialParameters materialParameters)
+{
+    int rowCount = currentCells.size();
+    int columnCount = currentCells[0].size();
+
+    for (int i = 0; i < rowCount; i++)
+    {
+        for (int j = 0; j < columnCount; j++)
+        {
+            vector<double> conservedVariableVector = currentCells[i][j].computeConservedVariableVector(materialParameters);
+
+            vector<double> topFluxVector = computeYSLICFlux(currentCellsWithBoundary[i][j + 2], currentCellsWithBoundary[i + 1][j + 2], currentCellsWithBoundary[i + 2][j + 2],
+                    currentCellsWithBoundary[i + 3][j + 2], cellSpacing, timeStep, bias, slopeLimiter, materialParameters);
+            vector<double> bottomFluxVector = computeYSLICFlux(currentCellsWithBoundary[i + 1][j + 2], currentCellsWithBoundary[i + 2][j + 2], currentCellsWithBoundary[i + 3][j + 2],
+                    currentCellsWithBoundary[i + 4][j + 2], cellSpacing, timeStep, bias, slopeLimiter, materialParameters);
+
+            currentCells[i][j].setConservedVariableVector(FirstOrderSolver::computeFORCEUpdate(conservedVariableVector, topFluxVector, bottomFluxVector, cellSpacing, timeStep),
+                                                          materialParameters);
         }
     }
 }
@@ -239,7 +327,30 @@ vector<EulerMultiphysicsStateVector> SecondOrderSolver::solve(vector<EulerMultip
             }
         }
 
-        cout << "Iteration = " << currentIteration << "; Times = " << currentTime << "; Timestep = " << timeStep << endl;
+        cout << "Iteration = " << currentIteration << "; Time = " << currentTime << "; Timestep = " << timeStep << endl;
+    }
+
+    return currentCells;
+}
+
+vector<ElasticStateVector> SecondOrderSolver::solve(vector<ElasticStateVector> & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, double bias, int slopeLimiter,
+                                                    int subcyclingIterations, HyperelasticMaterialParameters materialParameters)
+{
+    double currentTime = 0.0;
+    int currentIteration = 0;
+    vector<ElasticStateVector> currentCells = initialCells;
+
+    while (currentTime < finalTime)
+    {
+        vector<ElasticStateVector> currentCellsWithBoundary = Solvers::insertBoundaryCells(currentCells, 2);
+        double timeStep = Solvers::computeStableTimeStep(currentCellsWithBoundary, cellSpacing, CFLCoefficient, currentTime, finalTime, currentIteration, materialParameters);
+
+        computeSLICTimeStep(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, bias, slopeLimiter, materialParameters);
+
+        currentTime += timeStep;
+        currentIteration += 1;
+
+        cout << "Iteration = " << currentIteration << "; Time = " << currentTime << "; Timestep = " << timeStep << endl;
     }
 
     return currentCells;
@@ -310,6 +421,32 @@ vector<vector<EulerMultiphysicsStateVector> > SecondOrderSolver::solve2D(vector<
                 MultiphysicsSolvers::reinitialiseVolumeFraction(currentCells, material1Parameters, material2Parameters);
             }
         }
+
+        cout << "Iteration = " << currentIteration << "; Time = " << currentTime << "; Timestep = " << timeStep << endl;
+    }
+
+    return currentCells;
+}
+
+vector<vector<ElasticStateVector> > SecondOrderSolver::solve2D(vector<vector<ElasticStateVector> > & initialCells, double cellSpacing, double CFLCoefficient, double finalTime,
+                                                               double bias, int slopeLimiter, int subcyclingIterations, HyperelasticMaterialParameters materialParameters)
+{
+    double currentTime = 0.0;
+    int currentIteration = 0;
+    vector<vector<ElasticStateVector> > currentCells = initialCells;
+
+    while (currentTime < finalTime)
+    {
+        vector<vector<ElasticStateVector> > currentCellsWithBoundary = Solvers::insertBoundaryCells2D(currentCells, 2);
+        double timeStep = Solvers::computeStableTimeStep2D(currentCellsWithBoundary, cellSpacing, CFLCoefficient, currentTime, finalTime, currentIteration, materialParameters);
+
+        computeXSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, bias, slopeLimiter, materialParameters);
+
+        currentCellsWithBoundary = Solvers::insertBoundaryCells2D(currentCells, 2);
+        computeYSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, bias, slopeLimiter, materialParameters);
+
+        currentTime += timeStep;
+        currentIteration += 1;
 
         cout << "Iteration = " << currentIteration << "; Time = " << currentTime << "; Timestep = " << timeStep << endl;
     }
