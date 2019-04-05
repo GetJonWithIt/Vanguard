@@ -4,6 +4,7 @@
 #include "Euler/eulerstatevector.h"
 #include "Euler/Multiphysics/eulermultiphysicsstatevector.h"
 #include "Elasticity/elasticstatevector.h"
+#include "Elasticity/Multiphysics/elasticmultiphysicsstatevector.h"
 #include "Mathematics/vectoralgebra.h"
 using namespace std;
 
@@ -27,6 +28,8 @@ public:
 
     static vector<double> computeSlopeVector(ElasticStateVector leftStateVector, ElasticStateVector middleStateVector, ElasticStateVector rightStateVector, double bias, int slopeLimiter,
                                              HyperelasticMaterialParameters materialParameters);
+    static vector<double> computeSlopeVector(ElasticMultiphysicsStateVector leftStateVector, ElasticMultiphysicsStateVector middleStateVector, ElasticMultiphysicsStateVector rightStateVector,
+                                             double bias, int slopeLimiter, HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
 
     static vector<double> computeSlopeVector(vector<double> leftConservedVariableVector, vector<double> middleConservedVariableVector, vector<double> rightConservedVariableVector,
                                              double bias, int slopeLimiter);

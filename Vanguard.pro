@@ -27,7 +27,10 @@ SOURCES += main.cpp \
     Euler/eulertests.cpp \
     Euler/Multiphysics/eulermultiphysicsstatevector.cpp \
     Euler/Multiphysics/eulermultiphysicstests.cpp \
-    Solvers/multiphysicssolvers.cpp
+    Solvers/multiphysicssolvers.cpp \
+    MHD/mhdstatevector.cpp \
+    MHD/mhdmaterialparameters.cpp \
+    Elasticity/Multiphysics/elasticmultiphysicstests.cpp
 
 HEADERS += \
     Solvers/firstordersolver.h \
@@ -49,5 +52,8 @@ HEADERS += \
     Euler/eulertests.h \
     Euler/Multiphysics/eulermultiphysicsstatevector.h \
     Euler/Multiphysics/eulermultiphysicstests.h \
-    Solvers/multiphysicssolvers.h
+    Solvers/multiphysicssolvers.h \
+    MHD/mhdstatevector.h \
+    MHD/mhdmaterialparameters.h \
+    Elasticity/Multiphysics/elasticmultiphysicstests.h
 

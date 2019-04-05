@@ -18,6 +18,9 @@ public:
     static vector<double> computeXSLICFlux(ElasticStateVector leftLeftStateVector, ElasticStateVector leftStateVector, ElasticStateVector rightStateVector,
                                            ElasticStateVector rightRightStateVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
                                            HyperelasticMaterialParameters materialParameters);
+    static vector<double> computeXSLICFlux(ElasticMultiphysicsStateVector leftLeftStateVector, ElasticMultiphysicsStateVector leftStateVector, ElasticMultiphysicsStateVector rightStateVector,
+                                           ElasticMultiphysicsStateVector rightRightStateVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
+                                           HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
 
     static vector<double> computeYSLICFlux(EulerStateVector topTopStateVector, EulerStateVector topStateVector, EulerStateVector bottomStateVector, EulerStateVector bottomBottomStateVector,
                                            double cellSpacing, double timeStep, double bias, int slopeLimiter, EulerMaterialParameters materialParameters);
@@ -36,6 +39,8 @@ public:
 
     static void computeSLICTimeStep(vector<ElasticStateVector> & currentCells, vector<ElasticStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep, double bias,
                                     int slopeLimiter, HyperelasticMaterialParameters materialParameters);
+    static void computeSLICTimeStep(vector<ElasticMultiphysicsStateVector> & currentCells, vector<ElasticMultiphysicsStateVector> & currentCellsWithBoundary, double cellSpacing,
+                                    double timeStep, double bias, int slopeLimiter, HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
 
     static void computeXSLICTimeStep2D(vector<vector<EulerStateVector> > & currentCells, vector<vector<EulerStateVector> > & currentCellsWithBoundary, double cellSpacing, double timeStep,
                                        double bias, int slopeLimiter, EulerMaterialParameters materialParameters);
@@ -63,6 +68,9 @@ public:
 
     static vector<ElasticStateVector> solve(vector<ElasticStateVector> & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, double bias, int slopeLimiter,
                                             int subcyclingIterations, HyperelasticMaterialParameters materialParameters);
+    static vector<ElasticMultiphysicsStateVector> solve(vector<ElasticMultiphysicsStateVector> & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, double bias,
+                                                        int slopeLimiter, int subcyclingIterations, int reinitialisationFrequency, HyperelasticMaterialParameters material1Parameters,
+                                                        HyperelasticMaterialParameters material2Parameters);
 
     static vector<vector<EulerStateVector> > solve2D(vector<vector<EulerStateVector> > & initialCells, double cellSpacing, double CFLCofficient, double finalTime, double bias, int slopeLimiter,
                                                      int subcyclingIterations, EulerMaterialParameters materialParameters);

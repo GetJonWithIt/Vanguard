@@ -98,8 +98,15 @@ double ElasticEquationOfState::computeEntropy(double totalEnergy, vector<vector<
              computeShearDeformationInternalEnergy(fingerTensorFirstInvariant, fingerTensorSecondInvariant, fingerTensorThirdInvariant, shearWaveSpeedSquared, betaParameter) +
              (0.5 * velocitySquared));
 
-    return specificHeatCapacity * log(1.0 + (hydrodynamicInternalEnergySecondComponent / (specificHeatCapacity * initialTemperature * pow(fingerTensorThirdInvariant,
-                                                                                                                                          (0.5 * gammaParameter)))));
+    if (hydrodynamicInternalEnergySecondComponent > 0.0)
+    {
+        return specificHeatCapacity * log(1.0 + (hydrodynamicInternalEnergySecondComponent / (specificHeatCapacity * initialTemperature * pow(fingerTensorThirdInvariant,
+                                                                                                                                              (0.5 * gammaParameter)))));
+    }
+    else
+    {
+        return 0.0;
+    }
 }
 
 double ElasticEquationOfState::computePressure(double density, vector<vector<double> > distortionTensor, double entropy, HyperelasticMaterialParameters materialParameters)

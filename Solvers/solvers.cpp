@@ -82,6 +82,32 @@ vector<ElasticStateVector> Solvers::insertBoundaryCells(vector<ElasticStateVecto
     return currentCellsWithBoundary;
 }
 
+vector<ElasticMultiphysicsStateVector> Solvers::insertBoundaryCells(vector<ElasticMultiphysicsStateVector> & currentCells, int boundarySize)
+{
+    int cellCount = currentCells.size();
+    vector<ElasticMultiphysicsStateVector> currentCellsWithBoundary(cellCount + (2 * boundarySize));
+
+    if (boundarySize == 1)
+    {
+        currentCellsWithBoundary[0] = currentCells[0];
+        currentCellsWithBoundary[cellCount + 1] = currentCells[cellCount - 1];
+    }
+    else if (boundarySize == 2)
+    {
+        currentCellsWithBoundary[0] = currentCells[1];
+        currentCellsWithBoundary[1] = currentCells[0];
+        currentCellsWithBoundary[cellCount + 2] = currentCells[cellCount - 1];
+        currentCellsWithBoundary[cellCount + 3] = currentCells[cellCount - 2];
+    }
+
+    for (int i = 0; i < cellCount; i++)
+    {
+        currentCellsWithBoundary[i + boundarySize] = currentCells[i];
+    }
+
+    return currentCellsWithBoundary;
+}
+
 vector<vector<EulerStateVector> > Solvers::insertBoundaryCells2D(vector<vector<EulerStateVector> > & currentCells, int boundarySize)
 {
     int rowCount = currentCells.size();
@@ -293,6 +319,26 @@ double Solvers::computeMaximumWaveSpeed(vector<ElasticStateVector> & currentCell
     return maximumWaveSpeed;
 }
 
+double Solvers::computeMaximumWaveSpeed(vector<ElasticMultiphysicsStateVector> & currentCells, HyperelasticMaterialParameters material1Parameters,
+                                        HyperelasticMaterialParameters material2Parameters)
+{
+    double maximumWaveSpeed = 0.0;
+    int cellCount = currentCells.size();
+
+    for (int i = 0; i < cellCount; i++)
+    {
+        double waveSpeed = abs(currentCells[i].getInterfaceXVelocity()) + max(currentCells[i].computeMaterial1SoundSpeed(material1Parameters, 0),
+                                                                              currentCells[i].computeMaterial2SoundSpeed(material2Parameters, 0));
+
+        if (waveSpeed > maximumWaveSpeed)
+        {
+            maximumWaveSpeed = waveSpeed;
+        }
+    }
+
+    return maximumWaveSpeed;
+}
+
 double Solvers::computeMaximumWaveSpeed2D(vector<vector<EulerStateVector> > & currentCells, EulerMaterialParameters materialParameters)
 {
     double maximumWaveSpeed = 0.0;
@@ -385,6 +431,14 @@ double Solvers::computeStableTimeStep(vector<ElasticStateVector> & currentCells,
     return computeStableTimeStep(timeStep, currentTime, finalTime, currentIteration);
 }
 
+double Solvers::computeStableTimeStep(vector<ElasticMultiphysicsStateVector> & currentCells, double cellSpacing, double CFLCoefficient, double currentTime, double finalTime,
+                                      int currentIteration, HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters)
+{
+    double timeStep = CFLCoefficient * (cellSpacing / computeMaximumWaveSpeed(currentCells, material1Parameters, material2Parameters));
+
+    return computeStableTimeStep(timeStep, currentTime, finalTime, currentIteration);
+}
+
 double Solvers::computeStableTimeStep2D(vector<vector<EulerStateVector> > & currentCells, double cellSpacing, double CFLCoefficient, double currentTime, double finalTime, int currentIteration,
                                         EulerMaterialParameters materialParameters)
 {
@@ -469,6 +523,23 @@ ElasticStateVector Solvers::evolveStateByHalfXTimeStep(ElasticStateVector leftSt
     vector<double> evolutionVector = computeEvolutionVector(leftFluxVector, rightFluxVector, cellSpacing, timeStep);
 
     return evolveStateByHalfTimeStep(leftExtrapolatedValue, rightExtrapolatedValue, evolutionVector, side, materialParameters);
+}
+
+ElasticMultiphysicsStateVector Solvers::evolveStateByHalfXTimeStep(ElasticMultiphysicsStateVector leftStateVector, ElasticMultiphysicsStateVector middleStateVector,
+                                                                   ElasticMultiphysicsStateVector rightStateVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
+                                                                   int side, HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters)
+{
+    vector<double> slopeVector = SlopeLimiters::computeSlopeVector(leftStateVector, middleStateVector, rightStateVector, bias, slopeLimiter, material1Parameters, material2Parameters);
+    vector<double> leftExtrapolatedValue = VectorAlgebra::subtractVectors(middleStateVector.computeConservedVariableVector(material1Parameters, material2Parameters),
+                                                                          VectorAlgebra::multiplyVector(0.5, slopeVector));
+    vector<double> rightExtrapolatedValue = VectorAlgebra::addVectors(middleStateVector.computeConservedVariableVector(material1Parameters, material2Parameters),
+                                                                      VectorAlgebra::multiplyVector(0.5, slopeVector));
+
+    vector<double> leftFluxVector = ElasticMultiphysicsStateVector::computeXFluxVector(leftExtrapolatedValue, material1Parameters, material2Parameters);
+    vector<double> rightFluxVector = ElasticMultiphysicsStateVector::computeXFluxVector(rightExtrapolatedValue, material1Parameters, material2Parameters);
+    vector<double> evolutionVector = computeEvolutionVector(leftFluxVector, rightFluxVector, cellSpacing, timeStep);
+
+    return evolveStateByHalfTimeStep(leftExtrapolatedValue, rightExtrapolatedValue, evolutionVector, side, material1Parameters, material2Parameters);
 }
 
 EulerStateVector Solvers::evolveStateByHalfYTimeStep(EulerStateVector topStateVector, EulerStateVector middleStateVector, EulerStateVector bottomStateVector, double cellSpacing,
@@ -567,7 +638,29 @@ ElasticStateVector Solvers::evolveStateByHalfTimeStep(vector<double> leftExtrapo
     return evolvedStateVector;
 }
 
+ElasticMultiphysicsStateVector Solvers::evolveStateByHalfTimeStep(vector<double> leftExtrapolatedValue, vector<double> rightExtrapolatedValue, vector<double> evolutionVector, int side,
+                                                                  HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters)
+{
+    ElasticMultiphysicsStateVector evolvedStateVector;
+
+    if (side == 0)
+    {
+        evolvedStateVector.setConservedVariableVector(VectorAlgebra::addVectors(leftExtrapolatedValue, evolutionVector), material1Parameters, material2Parameters);
+    }
+    else
+    {
+        evolvedStateVector.setConservedVariableVector(VectorAlgebra::addVectors(rightExtrapolatedValue, evolutionVector), material1Parameters, material2Parameters);
+    }
+
+    return evolvedStateVector;
+}
+
 vector<double> Solvers::computeEvolutionVector(vector<double> leftFluxVector, vector<double> rightFluxVector, double cellSpacing, double timeStep)
 {
     return VectorAlgebra::multiplyVector(0.5 * (timeStep / cellSpacing), VectorAlgebra::subtractVectors(leftFluxVector, rightFluxVector));
+}
+
+void Solvers::outputStatus(int currentIteration, double currentTime, double timeStep)
+{
+    cout << "Iteration = " << currentIteration << "; Time = " << currentTime << "; Timestep = " << timeStep << endl;
 }

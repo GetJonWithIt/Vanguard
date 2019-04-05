@@ -3,6 +3,7 @@
 #include "Euler/eulertests.h"
 #include "Euler/Multiphysics/eulermultiphysicstests.h"
 #include "Elasticity/elastictests.h"
+#include "Elasticity/Multiphysics/elasticmultiphysicstests.h"
 
 int main(int argc, char *argv[])
 {
@@ -20,7 +21,11 @@ int main(int argc, char *argv[])
     //ElasticTests::solveBartonTest1(500);
     //ElasticTests::solveBartonTest2(200);
     //ElasticTests::solve2DBartonTest1(50);
-    ElasticTests::solve2DBartonTest2(50);
+    //ElasticTests::solve2DBartonTest2(20);
+
+    //ElasticMultiphysicsTests::solveBartonTest1(100, 3);
+    //ElasticMultiphysicsTests::solveBartonTest2(100, 3);
+    ElasticMultiphysicsTests::solveZhangTest(100, 0);
 
     return a.exec();
 }

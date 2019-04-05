@@ -124,9 +124,14 @@ vector<double> ElasticStateVector::computeXFluxVector(vector<double> conservedVa
     }
 
     double computedTotalEnergy = conservedVariableVector[13] / computedDensity;
-
     double computedEntropy = ElasticEquationOfState::computeEntropy(computedTotalEnergy, computedDistortionTensor, computedXVelocity, computedYVelocity, computedZVelocity, materialParameters);
+
     vector<vector<double> > computedTotalStressTensor = ElasticEquationOfState::computeTotalStressTensor(computedDensity, computedDistortionTensor, computedEntropy, materialParameters);
+
+    for (int i = 0; i < 14; i++)
+    {
+        fluxVector[i] = 0.0;
+    }
 
     fluxVector[0] = computedDensity * computedXVelocity;
     fluxVector[1] = (computedDensity * (computedXVelocity * computedXVelocity)) - computedTotalStressTensor[0][0];
@@ -176,6 +181,11 @@ vector<double> ElasticStateVector::computeYFluxVector(vector<double> conservedVa
 
     double computedEntropy = ElasticEquationOfState::computeEntropy(computedTotalEnergy, computedDistortionTensor, computedXVelocity, computedYVelocity, computedZVelocity, materialParameters);
     vector<vector<double> > computedTotalStressTensor = ElasticEquationOfState::computeTotalStressTensor(computedDensity, computedDistortionTensor, computedEntropy, materialParameters);
+
+    for (int i = 0; i < 14; i++)
+    {
+        fluxVector[i] = 0.0;
+    }
 
     fluxVector[0] = computedDensity * computedYVelocity;
     fluxVector[1] = (computedDensity * (computedYVelocity * computedXVelocity)) - computedTotalStressTensor[1][0];

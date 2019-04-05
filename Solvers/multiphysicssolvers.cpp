@@ -157,3 +157,34 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<EulerMultiphy
         }
     }
 }
+
+void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<ElasticMultiphysicsStateVector> & currentCells, HyperelasticMaterialParameters material1Parameters,
+                                                     HyperelasticMaterialParameters material2Parameters)
+{
+    int interfaceLocation = 0;
+    int cellCount = currentCells.size();
+
+    for (int i = 0; i < cellCount; i++)
+    {
+        if (currentCells[i].getMaterial1VolumeFraction() < 0.5 && currentCells[i - 1].getMaterial1VolumeFraction() >= 0.5)
+        {
+            interfaceLocation = i;
+        }
+    }
+
+    for (int i = interfaceLocation - i; i < interfaceLocation + 2; i++)
+    {
+        currentCells[i].relaxTotalDensity();
+        currentCells[i].relaxTotalDistortionTensor();
+        currentCells[i].relaxTotalEntropy(material1Parameters, material2Parameters);
+
+        if (i < interfaceLocation)
+        {
+            currentCells[i].setMaterial1VolumeFraction(0.999);
+        }
+        else
+        {
+            currentCells[i].setMaterial1VolumeFraction(0.001);
+        }
+    }
+}
