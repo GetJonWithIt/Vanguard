@@ -5,6 +5,7 @@
 #include "Euler/Multiphysics/eulermultiphysicsstatevector.h"
 #include "Elasticity/elasticstatevector.h"
 #include "Elasticity/Multiphysics/elasticmultiphysicsstatevector.h"
+#include "Elasticity/Multiphysics/elasticreducedstatevector.h"
 #include "Mathematics/vectoralgebra.h"
 using namespace std;
 
@@ -30,6 +31,8 @@ public:
                                              HyperelasticMaterialParameters materialParameters);
     static vector<double> computeSlopeVector(ElasticMultiphysicsStateVector leftStateVector, ElasticMultiphysicsStateVector middleStateVector, ElasticMultiphysicsStateVector rightStateVector,
                                              double bias, int slopeLimiter, HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
+    static vector<double> computeSlopeVector(ElasticReducedStateVector leftStateVector, ElasticReducedStateVector middleStateVector, ElasticReducedStateVector rightStateVector, double bias,
+                                             int slopeLimiter, HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
 
     static vector<double> computeSlopeVector(vector<double> leftConservedVariableVector, vector<double> middleConservedVariableVector, vector<double> rightConservedVariableVector,
                                              double bias, int slopeLimiter);

@@ -18,6 +18,8 @@ public:
                                                     HyperelasticMaterialParameters materialParameters);
     static vector<double> computeXLaxFriedrichsFlux(ElasticMultiphysicsStateVector leftStateVector, ElasticMultiphysicsStateVector rightStateVector, double cellSpacing, double timeStep,
                                                     HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
+    static vector<double> computeXLaxFriedrichsFlux(ElasticReducedStateVector leftStateVector, ElasticReducedStateVector rightStateVector, double cellSpacing, double timeStep,
+                                                    HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
 
     static vector<double> computeYLaxFriedrichsFlux(EulerStateVector topStateVector, EulerStateVector bottomStateVector, double cellSpacing, double timeStep,
                                                     EulerMaterialParameters materialParameters);
@@ -26,6 +28,8 @@ public:
 
     static vector<double> computeYLaxFriedrichsFlux(ElasticStateVector topStateVector, ElasticStateVector bottomStateVector, double cellSpacing, double timeStep,
                                                     HyperelasticMaterialParameters materialParameters);
+    static vector<double> computeYLaxFriedrichsFlux(ElasticReducedStateVector topStateVector, ElasticReducedStateVector bottomStateVector, double cellSpacing, double timeStep,
+                                                    HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
 
     static vector<double> computeLaxFriedrichsFlux(vector<double> leftConservedVariableVector, vector<double> rightConservedVariableVector, vector<double> leftFluxVector,
                                                    vector<double> rightFluxVector, double cellSpacing, double timeStep);
@@ -39,6 +43,8 @@ public:
                                                 HyperelasticMaterialParameters materialParameters);
     static vector<double> computeXRichtmyerFlux(ElasticMultiphysicsStateVector leftStateVector, ElasticMultiphysicsStateVector rightStateVector, double cellSpacing, double timeStep,
                                                 HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
+    static vector<double> computeXRichtmyerFlux(ElasticReducedStateVector leftStateVector, ElasticReducedStateVector rightStateVector, double cellSpacing, double timeStep,
+                                                HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
 
     static vector<double> computeYRichtmyerFlux(EulerStateVector topStateVector, EulerStateVector bottomStateVector, double cellSpacing, double timeStep,
                                                 EulerMaterialParameters materialParameters);
@@ -47,6 +53,8 @@ public:
 
     static vector<double> computeYRichtmyerFlux(ElasticStateVector topStateVector, ElasticStateVector bottomStateVector, double cellSpacing, double timeStep,
                                                 HyperelasticMaterialParameters materialParameters);
+    static vector<double> computeYRichtmyerFlux(ElasticReducedStateVector topStateVector, ElasticReducedStateVector bottomStateVector, double cellSpacing, double timeStep,
+                                                HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
 
     static vector<double> computeRichtmyerFlux(vector<double> leftConservedVariableVector, vector<double> rightConservedVariableVector, vector<double> leftFluxVector,
                                                vector<double> rightFluxVector,
@@ -60,6 +68,8 @@ public:
                                             HyperelasticMaterialParameters materialParameters);
     static vector<double> computeXFORCEFlux(ElasticMultiphysicsStateVector leftStateVector, ElasticMultiphysicsStateVector rightStateVector, double cellSpacing, double timeStep,
                                             HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
+    static vector<double> computeXFORCEFlux(ElasticReducedStateVector leftStateVector, ElasticReducedStateVector rightStateVector, double cellSpacing, double timeStep,
+                                            HyperelasticMaterialParameters material1Parametres, HyperelasticMaterialParameters material2Parameters);
 
     static vector<double> computeYFORCEFlux(EulerStateVector topStateVector, EulerStateVector bottomStateVector, double cellSpacing, double timeStep, EulerMaterialParameters materialParameters);
     static vector<double> computeYFORCEFlux(EulerMultiphysicsStateVector topStateVector, EulerMultiphysicsStateVector bottomStateVector, double cellspacing, double timeStep,
@@ -67,6 +77,8 @@ public:
 
     static vector<double> computeYFORCEFlux(ElasticStateVector topStateVector, ElasticStateVector bottomStateVector, double cellSpacing, double timeStep,
                                             HyperelasticMaterialParameters materialParameters);
+    static vector<double> computeYFORCEFlux(ElasticReducedStateVector topStateVector, ElasticReducedStateVector bottomStateVector, double cellSpacing, double timeStep,
+                                            HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
 
     static vector<double> computeFORCEFlux(vector<double> laxFriedrichsFlux, vector<double> richtmyerFlux);
 
@@ -79,6 +91,8 @@ public:
                                      HyperelasticMaterialParameters materialParameters);
     static void computeFORCETimeStep(vector<ElasticMultiphysicsStateVector> & currentCells, vector<ElasticMultiphysicsStateVector> & currentCellsWithBoundary, double cellSpacing,
                                      double timeStep, HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
+    static void computeFORCETimeStep(vector<ElasticReducedStateVector> & currentCells, vector<ElasticReducedStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep,
+                                     HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
 
     static void computeXFORCETimeStep2D(vector<vector<EulerStateVector> > & currentCells, vector<vector<EulerStateVector> > & currentCellsWithBoundary, double cellSpacing, double timeStep,
                                         EulerMaterialParameters materialParameters);
@@ -87,6 +101,8 @@ public:
 
     static void computeXFORCETimeStep2D(vector<vector<ElasticStateVector> > & currentCells, vector<vector<ElasticStateVector> > & currentCellsWithBoundary, double cellSpacing,
                                         double timeStep, HyperelasticMaterialParameters materialParameters);
+    static void computeXFORCETimeStep2D(vector<vector<ElasticReducedStateVector> > & currentCells, vector<vector<ElasticReducedStateVector> > & currentCellsWithBoundary,
+                                        double cellSpacing, double timeStep, HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
 
     static void computeYFORCETimeStep2D(vector<vector<EulerStateVector> > & currentCells, vector<vector<EulerStateVector> > & currentCellsWithBoundary, double cellSpacing, double timeStep,
                                         EulerMaterialParameters materialParameters);
@@ -95,6 +111,8 @@ public:
 
     static void computeYFORCETimeStep2D(vector<vector<ElasticStateVector> > & currentCells, vector<vector<ElasticStateVector> > & currentCellsWithBoundary, double cellSpacing,
                                         double timeStep, HyperelasticMaterialParameters materialParameters);
+    static void computeYFORCETimeStep2D(vector<vector<ElasticReducedStateVector> > & currentCells, vector<vector<ElasticReducedStateVector> > & currentCellsWithBoundary, double cellSpacing,
+                                        double timeStep, HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
 
     static vector<double> computeFORCEUpdate(vector<double> conservedVariableVector, vector<double> leftFluxVector, vector<double> rightFluxVector, double cellSpacing, double timeStep);
 
@@ -107,6 +125,8 @@ public:
                                             HyperelasticMaterialParameters materialParameters);
     static vector<ElasticMultiphysicsStateVector> solve(vector<ElasticMultiphysicsStateVector> & initialCells, double cellSpacing, double CFLCoefficient, double finalTime,
                                                         int subcyclingIterations, HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
+    static vector<ElasticReducedStateVector> solve(vector<ElasticReducedStateVector> & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, int subcyclingIterations,
+                                                   HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
 
     static vector<vector<EulerStateVector> > solve2D(vector<vector<EulerStateVector> > & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, int subcyclingIterations,
                                                      EulerMaterialParameters materialParameters);
@@ -115,6 +135,8 @@ public:
 
     static vector<vector<ElasticStateVector> > solve2D(vector<vector<ElasticStateVector> > & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, int subcyclingIterations,
                                                      HyperelasticMaterialParameters materialParameters);
+    static vector<vector<ElasticReducedStateVector> > solve2D(vector<vector<ElasticReducedStateVector> > & initialCells, double cellSpacing, double CFLCoefficient, double finalTime,
+                                                              int subcyclingIterations, HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
 };
 
 #endif // FIRSTORDERSOLVER_H

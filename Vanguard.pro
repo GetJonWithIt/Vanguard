@@ -30,7 +30,9 @@ SOURCES += main.cpp \
     Solvers/multiphysicssolvers.cpp \
     MHD/mhdstatevector.cpp \
     MHD/mhdmaterialparameters.cpp \
-    Elasticity/Multiphysics/elasticmultiphysicstests.cpp
+    Elasticity/Multiphysics/elasticmultiphysicstests.cpp \
+    Elasticity/Multiphysics/elasticreducedstatevector.cpp \
+    Elasticity/Multiphysics/elasticreducedtests.cpp
 
 HEADERS += \
     Solvers/firstordersolver.h \
@@ -55,5 +57,7 @@ HEADERS += \
     Solvers/multiphysicssolvers.h \
     MHD/mhdstatevector.h \
     MHD/mhdmaterialparameters.h \
-    Elasticity/Multiphysics/elasticmultiphysicstests.h
+    Elasticity/Multiphysics/elasticmultiphysicstests.h \
+    Elasticity/Multiphysics/elasticreducedstatevector.h \
+    Elasticity/Multiphysics/elasticreducedtests.h
 

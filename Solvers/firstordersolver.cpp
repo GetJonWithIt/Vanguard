@@ -52,6 +52,18 @@ vector<double> FirstOrderSolver::computeXLaxFriedrichsFlux(ElasticMultiphysicsSt
     return computeLaxFriedrichsFlux(leftConservedVariableVector, rightConservedVariableVector, leftFluxVector, rightFluxVector, cellSpacing, timeStep);
 }
 
+vector<double> FirstOrderSolver::computeXLaxFriedrichsFlux(ElasticReducedStateVector leftStateVector, ElasticReducedStateVector rightStateVector, double cellSpacing, double timeStep,
+                                                           HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters)
+{
+    vector<double> leftConservedVariableVector = leftStateVector.computeConservedVariableVector(material1Parameters, material2Parameters);
+    vector<double> rightConservedVariableVector = rightStateVector.computeConservedVariableVector(material1Parameters, material2Parameters);
+
+    vector<double> leftFluxVector = leftStateVector.computeXFluxVector(material1Parameters, material2Parameters);
+    vector<double> rightFluxVector = rightStateVector.computeXFluxVector(material1Parameters, material2Parameters);
+
+    return computeLaxFriedrichsFlux(leftConservedVariableVector, rightConservedVariableVector, leftFluxVector, rightFluxVector, cellSpacing, timeStep);
+}
+
 vector<double> FirstOrderSolver::computeYLaxFriedrichsFlux(EulerStateVector topStateVector, EulerStateVector bottomStateVector, double cellSpacing, double timeStep,
                                                            EulerMaterialParameters materialParameters)
 {
@@ -84,6 +96,18 @@ vector<double> FirstOrderSolver::computeYLaxFriedrichsFlux(ElasticStateVector to
 
     vector<double> topFluxVector = topStateVector.computeYFluxVector(materialParameters);
     vector<double> bottomFluxVector = bottomStateVector.computeYFluxVector(materialParameters);
+
+    return computeLaxFriedrichsFlux(topConservedVariableVector, bottomConservedVariableVector, topFluxVector, bottomFluxVector, cellSpacing, timeStep);
+}
+
+vector<double> FirstOrderSolver::computeYLaxFriedrichsFlux(ElasticReducedStateVector topStateVector, ElasticReducedStateVector bottomStateVector, double cellSpacing, double timeStep,
+                                                           HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters)
+{
+    vector<double> topConservedVariableVector = topStateVector.computeConservedVariableVector(material1Parameters, material2Parameters);
+    vector<double> bottomConservedVariableVector = bottomStateVector.computeConservedVariableVector(material1Parameters, material2Parameters);
+
+    vector<double> topFluxVector = topStateVector.computeYFluxVector(material1Parameters, material2Parameters);
+    vector<double> bottomFluxVector = bottomStateVector.computeYFluxVector(material1Parameters, material2Parameters);
 
     return computeLaxFriedrichsFlux(topConservedVariableVector, bottomConservedVariableVector, topFluxVector, bottomFluxVector, cellSpacing, timeStep);
 }
@@ -145,6 +169,18 @@ vector<double> FirstOrderSolver::computeXRichtmyerFlux(ElasticMultiphysicsStateV
     return ElasticMultiphysicsStateVector::computeXFluxVector(intermediateStateVector, material1Parameters, material2Parameters);
 }
 
+vector<double> FirstOrderSolver::computeXRichtmyerFlux(ElasticReducedStateVector leftStateVector, ElasticReducedStateVector rightStateVector, double cellSpacing, double timeStep,
+                                                       HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters)
+{
+    vector<double> leftConservedVariableVector = leftStateVector.computeConservedVariableVector(material1Parameters, material2Parameters);
+    vector<double> rightConservedVariableVector = rightStateVector.computeConservedVariableVector(material1Parameters, material2Parameters);
+
+    vector<double> leftFluxVector = leftStateVector.computeXFluxVector(material1Parameters, material2Parameters);
+    vector<double> rightFluxVector = rightStateVector.computeXFluxVector(material1Parameters, material2Parameters);
+    vector<double> intermediateStateVector = computeRichtmyerFlux(leftConservedVariableVector, rightConservedVariableVector, leftFluxVector, rightFluxVector, cellSpacing, timeStep);
+    return ElasticReducedStateVector::computeXFluxVector(intermediateStateVector, material1Parameters, material2Parameters);
+}
+
 vector<double> FirstOrderSolver::computeYRichtmyerFlux(EulerStateVector topStateVector, EulerStateVector bottomStateVector, double cellSpacing, double timeStep,
                                                        EulerMaterialParameters materialParameters)
 {
@@ -182,6 +218,19 @@ vector<double> FirstOrderSolver::computeYRichtmyerFlux(ElasticStateVector topSta
 
     vector<double> intermediateStateVector = computeRichtmyerFlux(topConservedVariableVector, bottomConservedVariableVector, topFluxVector, bottomFluxVector, cellSpacing, timeStep);
     return ElasticStateVector::computeYFluxVector(intermediateStateVector, materialParameters);
+}
+
+vector<double> FirstOrderSolver::computeYRichtmyerFlux(ElasticReducedStateVector topStateVector, ElasticReducedStateVector bottomStateVector, double cellSpacing, double timeStep,
+                                                       HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters)
+{
+    vector<double> topConservedVariableVector = topStateVector.computeConservedVariableVector(material1Parameters, material2Parameters);
+    vector<double> bottomConservedVariableVector = bottomStateVector.computeConservedVariableVector(material1Parameters, material2Parameters);
+
+    vector<double> topFluxVector = topStateVector.computeYFluxVector(material1Parameters, material2Parameters);
+    vector<double> bottomFluxVector = bottomStateVector.computeYFluxVector(material1Parameters, material2Parameters);
+
+    vector<double> intermediateStateVector = computeRichtmyerFlux(topConservedVariableVector, bottomConservedVariableVector, topFluxVector, bottomFluxVector, cellSpacing, timeStep);
+    return ElasticReducedStateVector::computeYFluxVector(intermediateStateVector, material1Parameters, material2Parameters);
 }
 
 vector<double> FirstOrderSolver::computeRichtmyerFlux(vector<double> leftConservedVariableVector, vector<double> rightConservedVariableVector, vector<double> leftFluxVector,
@@ -227,6 +276,15 @@ vector<double> FirstOrderSolver::computeXFORCEFlux(ElasticMultiphysicsStateVecto
     return computeFORCEFlux(laxFriedrichsFlux, richtmyerFlux);
 }
 
+vector<double> FirstOrderSolver::computeXFORCEFlux(ElasticReducedStateVector leftStateVector, ElasticReducedStateVector rightStateVector, double cellSpacing, double timeStep,
+                                                   HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters)
+{
+    vector<double> laxFriedrichsFlux = computeXLaxFriedrichsFlux(leftStateVector, rightStateVector, cellSpacing, timeStep, material1Parameters, material2Parameters);
+    vector<double> richtmyerFlux = computeXRichtmyerFlux(leftStateVector, rightStateVector, cellSpacing, timeStep, material1Parameters, material2Parameters);
+
+    return computeFORCEFlux(laxFriedrichsFlux, richtmyerFlux);
+}
+
 vector<double> FirstOrderSolver::computeYFORCEFlux(EulerStateVector topStateVector, EulerStateVector bottomStateVector, double cellSpacing, double timeStep,
                                                    EulerMaterialParameters materialParameters)
 {
@@ -250,6 +308,15 @@ vector<double> FirstOrderSolver::computeYFORCEFlux(ElasticStateVector topStateVe
 {
     vector<double> laxFriedrichsFlux = computeYLaxFriedrichsFlux(topStateVector, bottomStateVector, cellSpacing, timeStep, materialParameters);
     vector<double> richtmyerFlux = computeYRichtmyerFlux(topStateVector, bottomStateVector, cellSpacing, timeStep, materialParameters);
+
+    return computeFORCEFlux(laxFriedrichsFlux, richtmyerFlux);
+}
+
+vector<double> FirstOrderSolver::computeYFORCEFlux(ElasticReducedStateVector topStateVector, ElasticReducedStateVector bottomStateVector, double cellSpacing, double timeStep,
+                                                   HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters)
+{
+    vector<double> laxFriedrichsFlux = computeYLaxFriedrichsFlux(topStateVector, bottomStateVector, cellSpacing, timeStep, material1Parameters, material2Parameters);
+    vector<double> richtmyerFlux = computeYRichtmyerFlux(topStateVector, bottomStateVector, cellSpacing, timeStep, material1Parameters, material2Parameters);
 
     return computeFORCEFlux(laxFriedrichsFlux, richtmyerFlux);
 }
@@ -306,6 +373,21 @@ void FirstOrderSolver::computeFORCETimeStep(vector<ElasticStateVector> & current
 
 void FirstOrderSolver::computeFORCETimeStep(vector<ElasticMultiphysicsStateVector> & currentCells, vector<ElasticMultiphysicsStateVector> & currentCellsWithBoundary, double cellSpacing,
                                             double timeStep, HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters)
+{
+    int cellCount = currentCells.size();
+
+    for (int i = 0; i < cellCount; i++)
+    {
+        vector<double> conservedVariableVector = currentCells[i].computeConservedVariableVector(material1Parameters, material2Parameters);
+        vector<double> leftFluxVector = computeXFORCEFlux(currentCellsWithBoundary[i], currentCellsWithBoundary[i + 1], cellSpacing, timeStep, material1Parameters, material2Parameters);
+        vector<double> rightFluxVector = computeXFORCEFlux(currentCellsWithBoundary[i + 1], currentCellsWithBoundary[i + 2], cellSpacing, timeStep, material1Parameters, material2Parameters);
+
+        currentCells[i].setConservedVariableVector(computeFORCEUpdate(conservedVariableVector, leftFluxVector, rightFluxVector, cellSpacing, timeStep), material1Parameters, material2Parameters);
+    }
+}
+
+void FirstOrderSolver::computeFORCETimeStep(vector<ElasticReducedStateVector> & currentCells, vector<ElasticReducedStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep,
+                                            HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters)
 {
     int cellCount = currentCells.size();
 
@@ -382,6 +464,29 @@ void FirstOrderSolver::computeXFORCETimeStep2D(vector<vector<ElasticStateVector>
     }
 }
 
+void FirstOrderSolver::computeXFORCETimeStep2D(vector<vector<ElasticReducedStateVector> > & currentCells, vector<vector<ElasticReducedStateVector> > & currentCellsWithBoundary,
+                                               double cellSpacing, double timeStep, HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters)
+{
+    int rowCount = currentCells.size();
+    int columnCount = currentCells[0].size();
+
+    for (int i = 0; i < rowCount; i++)
+    {
+        for (int j = 0; j < columnCount; j++)
+        {
+            vector<double> conservedVariableVector = currentCells[i][j].computeConservedVariableVector(material1Parameters, material2Parameters);
+
+            vector<double> leftFluxVector = computeXFORCEFlux(currentCellsWithBoundary[i + 1][j], currentCellsWithBoundary[i + 1][j + 1], cellSpacing, timeStep, material1Parameters,
+                    material2Parameters);
+            vector<double> rightFluxVector = computeXFORCEFlux(currentCellsWithBoundary[i + 1][j + 1], currentCellsWithBoundary[i + 1][j + 2], cellSpacing, timeStep, material1Parameters,
+                    material2Parameters);
+
+            currentCells[i][j].setConservedVariableVector(computeFORCEUpdate(conservedVariableVector, leftFluxVector, rightFluxVector, cellSpacing, timeStep), material1Parameters,
+                                                          material2Parameters);
+        }
+    }
+}
+
 void FirstOrderSolver::computeYFORCETimeStep2D(vector<vector<EulerStateVector> > & currentCells, vector<vector<EulerStateVector> > & currentCellsWithBoundary, double cellSpacing, double timeStep,
                                                EulerMaterialParameters materialParameters)
 {
@@ -441,6 +546,29 @@ void FirstOrderSolver::computeYFORCETimeStep2D(vector<vector<ElasticStateVector>
             vector<double> bottomFluxVector = computeYFORCEFlux(currentCellsWithBoundary[i + 1][j + 1], currentCellsWithBoundary[i + 2][j + 1], cellSpacing, timeStep, materialParameters);
 
             currentCells[i][j].setConservedVariableVector(computeFORCEUpdate(conservedVariableVector, topFluxVector, bottomFluxVector, cellSpacing, timeStep), materialParameters);
+        }
+    }
+}
+
+void FirstOrderSolver::computeYFORCETimeStep2D(vector<vector<ElasticReducedStateVector> > & currentCells, vector<vector<ElasticReducedStateVector> > & currentCellsWithBoundary,
+                                               double cellSpacing, double timeStep, HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters)
+{
+    int rowCount = currentCells.size();
+    int columnCount = currentCells[0].size();
+
+    for (int i = 0; i < rowCount; i++)
+    {
+        for (int j = 0; j < columnCount; j++)
+        {
+            vector<double> conservedVariableVector = currentCells[i][j].computeConservedVariableVector(material1Parameters, material2Parameters);
+
+            vector<double> topFluxVector = computeYFORCEFlux(currentCellsWithBoundary[i][j + 1], currentCellsWithBoundary[i + 1][j + 1], cellSpacing, timeStep, material1Parameters,
+                    material2Parameters);
+            vector<double> bottomFluxVector = computeYFORCEFlux(currentCellsWithBoundary[i + 1][j + 1], currentCellsWithBoundary[i + 2][j + 1], cellSpacing, timeStep, material1Parameters,
+                    material2Parameters);
+
+            currentCells[i][j].setConservedVariableVector(computeFORCEUpdate(conservedVariableVector, topFluxVector, bottomFluxVector, cellSpacing, timeStep), material1Parameters,
+                                                          material2Parameters);
         }
     }
 }
@@ -553,6 +681,30 @@ vector<ElasticMultiphysicsStateVector> FirstOrderSolver::solve(vector<ElasticMul
     return currentCells;
 }
 
+vector<ElasticReducedStateVector> FirstOrderSolver::solve(vector<ElasticReducedStateVector> & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, int subcyclingIterations,
+                                                          HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters)
+{
+    double currentTime = 0.0;
+    int currentIteration = 0;
+    vector<ElasticReducedStateVector> currentCells = initialCells;
+
+    while (currentTime < finalTime)
+    {
+        vector<ElasticReducedStateVector> currentCellsWithBoundary = Solvers::insertBoundaryCells(currentCells, 1);
+        double timeStep = Solvers::computeStableTimeStep(currentCellsWithBoundary, cellSpacing, CFLCoefficient, currentTime, finalTime, currentIteration, material1Parameters,
+                                                         material2Parameters);
+
+        computeFORCETimeStep(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, material1Parameters, material2Parameters);
+
+        currentTime += timeStep;
+        currentIteration += 1;
+
+        Solvers::outputStatus(currentIteration, currentTime, timeStep);
+    }
+
+    return currentCells;
+}
+
 vector<vector<EulerStateVector> > FirstOrderSolver::solve2D(vector<vector<EulerStateVector> > & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, int subcyclingIterations,
                                                             EulerMaterialParameters materialParameters)
 {
@@ -630,6 +782,33 @@ vector<vector<ElasticStateVector> > FirstOrderSolver::solve2D(vector<vector<Elas
         computeXFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, materialParameters);
         currentCellsWithBoundary = Solvers::insertBoundaryCells2D(currentCells, 1);
         computeYFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, materialParameters);
+
+        currentTime += timeStep;
+        currentIteration += 1;
+
+        Solvers::outputStatus(currentIteration, currentTime, timeStep);
+    }
+
+    return currentCells;
+}
+
+vector<vector<ElasticReducedStateVector> > FirstOrderSolver::solve2D(vector<vector<ElasticReducedStateVector> > & initialCells, double cellSpacing, double CFLCoefficient, double finalTime,
+                                                                     int subcyclingIterations, HyperelasticMaterialParameters material1Parameters,
+                                                                     HyperelasticMaterialParameters material2Parameters)
+{
+    double currentTime = 0.0;
+    int currentIteration = 0;
+    vector<vector<ElasticReducedStateVector> > currentCells = initialCells;
+
+    while (currentTime < finalTime)
+    {
+        vector<vector<ElasticReducedStateVector> > currentCellsWithBoundary = Solvers::insertBoundaryCells2D(currentCells, 1);
+        double timeStep = Solvers::computeStableTimeStep2D(currentCellsWithBoundary, cellSpacing, CFLCoefficient, currentTime, finalTime, currentIteration, material1Parameters,
+                                                           material2Parameters);
+
+        computeXFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, material1Parameters, material2Parameters);
+        currentCellsWithBoundary = Solvers::insertBoundaryCells2D(currentCells, 1);
+        computeYFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, material1Parameters, material2Parameters);
 
         currentTime += timeStep;
         currentIteration += 1;
