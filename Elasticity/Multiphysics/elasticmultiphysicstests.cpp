@@ -48,7 +48,7 @@ void ElasticMultiphysicsTests::solveBartonTest1(int cellCount, int reinitialisat
         }
     }
 
-    outputSolution(SecondOrderSolver::solve(initialCells, cellSpacing, 0.8, 0.06, 0.0, 0, 0, reinitialisationFrequency, materialParameters, materialParameters));
+    outputSolution(ElasticSecondOrderSolver::solve(initialCells, cellSpacing, 0.8, 0.06, 0.0, 0, 0, reinitialisationFrequency, materialParameters, materialParameters));
 }
 
 void ElasticMultiphysicsTests::solveBartonTest2(int cellCount, int reinitialisationFrequency)
@@ -95,7 +95,7 @@ void ElasticMultiphysicsTests::solveBartonTest2(int cellCount, int reinitialisat
         }
     }
 
-    outputSolution(SecondOrderSolver::solve(initialCells, cellSpacing, 0.8, 0.06, 0.0, 0, 0, reinitialisationFrequency, materialParameters, materialParameters));
+    outputSolution(ElasticSecondOrderSolver::solve(initialCells, cellSpacing, 0.8, 0.06, 0.0, 0, 0, reinitialisationFrequency, materialParameters, materialParameters));
 }
 
 void ElasticMultiphysicsTests::solveZhangTest(int cellCount, int reinitialisationFrequency)
@@ -143,7 +143,7 @@ void ElasticMultiphysicsTests::solveZhangTest(int cellCount, int reinitialisatio
         }
     }
 
-    outputSolution(SecondOrderSolver::solve(initialCells, cellSpacing, 0.8, 0.05, 0.0, 0, 0, reinitialisationFrequency, material1Parameters, material2Parameters));
+    outputSolution(ElasticSecondOrderSolver::solve(initialCells, cellSpacing, 0.8, 0.05, 0.0, 0, 0, reinitialisationFrequency, material1Parameters, material2Parameters));
 }
 
 void ElasticMultiphysicsTests::outputSolution(vector<ElasticMultiphysicsStateVector> solution)

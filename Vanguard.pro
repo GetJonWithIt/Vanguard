@@ -34,7 +34,10 @@ SOURCES += main.cpp \
     Elasticity/Multiphysics/elasticreducedstatevector.cpp \
     Elasticity/Multiphysics/elasticreducedtests.cpp \
     Euler/Multiphysics/eulerreducedstatevector.cpp \
-    Euler/Multiphysics/eulerreducedtests.cpp
+    Euler/Multiphysics/eulerreducedtests.cpp \
+    Solvers/elasticsolvers.cpp \
+    Solvers/elasticfirstordersolver.cpp \
+    Solvers/elasticsecondordersolver.cpp
 
 HEADERS += \
     Solvers/firstordersolver.h \
@@ -63,5 +66,8 @@ HEADERS += \
     Elasticity/Multiphysics/elasticreducedstatevector.h \
     Elasticity/Multiphysics/elasticreducedtests.h \
     Euler/Multiphysics/eulerreducedstatevector.h \
-    Euler/Multiphysics/eulerreducedtests.h
+    Euler/Multiphysics/eulerreducedtests.h \
+    Solvers/elasticsolvers.h \
+    Solvers/elasticfirstordersolver.h \
+    Solvers/elasticsecondordersolver.h
 

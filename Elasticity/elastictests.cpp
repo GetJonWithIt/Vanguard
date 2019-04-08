@@ -48,7 +48,7 @@ void ElasticTests::solveBartonTest1(int cellCount)
         }
     }
 
-    outputSolution(SecondOrderSolver::solve(initialCells, cellSpacing, 0.8, 0.06, 0.0, 0, 0, materialParameters));
+    outputSolution(ElasticSecondOrderSolver::solve(initialCells, cellSpacing, 0.8, 0.06, 0.0, 0, 0, materialParameters));
 }
 
 void ElasticTests::solveBartonTest2(int cellCount)
@@ -95,7 +95,7 @@ void ElasticTests::solveBartonTest2(int cellCount)
         }
     }
 
-    outputSolution(SecondOrderSolver::solve(initialCells, cellSpacing, 0.8, 0.06, 0.0, 0, 0, materialParameters));
+    outputSolution(ElasticSecondOrderSolver::solve(initialCells, cellSpacing, 0.8, 0.06, 0.0, 0, 0, materialParameters));
 }
 
 void ElasticTests::solve2DBartonTest1(int cellCount)
@@ -145,7 +145,7 @@ void ElasticTests::solve2DBartonTest1(int cellCount)
         }
     }
 
-    outputSolution2D(SecondOrderSolver::solve2D(initialCells, cellSpacing, 0.8, 0.03, 0.0, 0, 0, materialParameters));
+    outputSolution2D(ElasticSecondOrderSolver::solve2D(initialCells, cellSpacing, 0.8, 0.03, 0.0, 0, 0, materialParameters));
 }
 
 void ElasticTests::solve2DBartonTest2(int cellCount)
@@ -195,7 +195,7 @@ void ElasticTests::solve2DBartonTest2(int cellCount)
         }
     }
 
-    outputSolution2D(SecondOrderSolver::solve2D(initialCells, cellSpacing, 0.8, 0.03, 0.0, 0, 0, materialParameters));
+    outputSolution2D(ElasticSecondOrderSolver::solve2D(initialCells, cellSpacing, 0.8, 0.03, 0.0, 0, 0, materialParameters));
 }
 
 void ElasticTests::outputSolution(vector<ElasticStateVector> solution)

@@ -20,10 +20,10 @@ int main(int argc, char *argv[])
     //EulerMultiphysicsTests::solve2DToroTest1(100, 3);
     //EulerMultiphysicsTests::solve2DFedkiwTest(100, 3);
 
-    EulerReducedTests::solveToroTest1(100, 0);
+    //EulerReducedTests::solveToroTest1(100, 0);
     //EulerReducedTests::solveFedkiwTest(100, 0);
 
-    //ElasticTests::solveBartonTest1(500);
+    ElasticTests::solveBartonTest1(100);
     //ElasticTests::solveBartonTest2(200);
     //ElasticTests::solve2DBartonTest1(100);
     //ElasticTests::solve2DBartonTest2(20);

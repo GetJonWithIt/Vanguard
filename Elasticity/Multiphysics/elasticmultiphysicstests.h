@@ -1,7 +1,7 @@
 #ifndef ELASTICMULTIPHYSICSTESTS_H
 #define ELASTICMULTIPHYSICSTESTS_H
 
-#include "Solvers/secondordersolver.h"
+#include "Solvers/elasticsecondordersolver.h"
 #include <fstream>
 using namespace std;
 
