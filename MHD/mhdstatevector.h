@@ -1,11 +1,36 @@
 #ifndef MHDSTATEVECTOR_H
 #define MHDSTATEVECTOR_H
 
+#include "mhdwavespeeds.h"
+using namespace std;
 
 class MHDStateVector
 {
 public:
     MHDStateVector();
+    MHDStateVector(double newDensity, double newXVelocity, double newYVelocity, double newZVelocity, double newPressure, double newXMagneticField, double newYMagneticField,
+                   double newZMagneticField, double newAuxiliaryField);
+
+    void setPrimitiveVariableVector(vector<double> newPrimitiveVariableVector);
+    void setConservedVariableVector(vector<double> newConservedVariableVector, MHDMaterialParameters materialParameters);
+
+    vector<double> computePrimitiveVariableVector();
+    vector<double> computeConservedVariableVector(MHDMaterialParameters materialParameters);
+
+    static vector<double> computeXFluxVector(vector<double> conservedVariableVector, MHDMaterialParameters materialParameters);
+    vector<double> computeXFluxVector(MHDMaterialParameters materialParameters);
+
+    static vector<double> computeSourceTermVector(vector<double> conservedVariableVector, MHDMaterialParameters materialParameters);
+    vector<double> computeSourceTermVector(MHDMaterialParameters materialParameters);
+
+    double computeSpecificInternalEnergy(MHDMaterialParameters materialParameters);
+    double computeTotalEnergy(MHDMaterialParameters materialParameters);
+    double computeSoundSpeed(MHDMaterialParameters materialParameters);
+    double computeEntropy(MHDMaterialParameters materialParameters);
+
+    double computeAlfvenWaveSpeed();
+    double computeSlowMagnetoAcousticSpeed(MHDMaterialParameters materialParameters);
+    double computeFastMagnetoAcousticSpeed(MHDMaterialParameters materialParameters);
 
     void setDensity(double newDensity);
     void setXVelocity(double newXVelocity);

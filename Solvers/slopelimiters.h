@@ -7,6 +7,7 @@
 #include "Elasticity/elasticstatevector.h"
 #include "Elasticity/Multiphysics/elasticmultiphysicsstatevector.h"
 #include "Elasticity/Multiphysics/elasticreducedstatevector.h"
+#include "MHD/mhdstatevector.h"
 #include "Mathematics/vectoralgebra.h"
 using namespace std;
 
@@ -36,6 +37,9 @@ public:
                                              double bias, int slopeLimiter, HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
     static vector<double> computeSlopeVector(ElasticReducedStateVector leftStateVector, ElasticReducedStateVector middleStateVector, ElasticReducedStateVector rightStateVector, double bias,
                                              int slopeLimiter, HyperelasticMaterialParameters material1Parameters, HyperelasticMaterialParameters material2Parameters);
+
+    static vector<double> computeSlopeVector(MHDStateVector leftStateVector, MHDStateVector middleStateVector, MHDStateVector rightStateVector, double bias, int slopeLimiter,
+                                             MHDMaterialParameters materialParameters);
 
     static vector<double> computeSlopeVector(vector<double> leftConservedVariableVector, vector<double> middleConservedVariableVector, vector<double> rightConservedVariableVector,
                                              double bias, int slopeLimiter);

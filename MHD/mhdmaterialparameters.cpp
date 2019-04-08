@@ -9,6 +9,15 @@ MHDMaterialParameters::MHDMaterialParameters()
     parabolicDamping = sqrt(0.18);
 }
 
+MHDMaterialParameters::MHDMaterialParameters(double newAdiabaticIndex)
+{
+    adiabaticIndex = newAdiabaticIndex;
+    stiffeningParameter = 0.0;
+
+    hyperbolicWaveSpeed = 0.0;
+    parabolicDamping = 0.0;
+}
+
 void MHDMaterialParameters::setAdiabaticIndex(double newAdiabaticIndex)
 {
     adiabaticIndex = newAdiabaticIndex;

@@ -6,6 +6,7 @@
 #include "Elasticity/elastictests.h"
 #include "Elasticity/Multiphysics/elasticmultiphysicstests.h"
 #include "Elasticity/Multiphysics/elasticreducedtests.h"
+#include "MHD/mhdtests.h"
 
 int main(int argc, char *argv[])
 {
@@ -23,7 +24,7 @@ int main(int argc, char *argv[])
     //EulerReducedTests::solveToroTest1(100, 0);
     //EulerReducedTests::solveFedkiwTest(100, 0);
 
-    ElasticTests::solveBartonTest1(100);
+    //ElasticTests::solveBartonTest1(100);
     //ElasticTests::solveBartonTest2(200);
     //ElasticTests::solve2DBartonTest1(100);
     //ElasticTests::solve2DBartonTest2(20);
@@ -36,6 +37,9 @@ int main(int argc, char *argv[])
     //ElasticReducedTests::solveZhangTest(20, 0);
     //ElasticReducedTests::solve2DBartonTest1(100, 3);
     //ElasticReducedTests::solve2DZhangTest(100, 3);
+
+    //MHDTests::solveDumbserTest2(400);
+    MHDTests::solveDumbserTest3(400);
 
     return a.exec();
 }

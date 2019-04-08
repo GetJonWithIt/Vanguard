@@ -8,6 +8,7 @@ class MHDMaterialParameters
 {
 public:
     MHDMaterialParameters();
+    MHDMaterialParameters(double newAdiabaticIndex);
 
     void setAdiabaticIndex(double newAdiabaticIndex);
     void setStiffeningParameter(double newStiffeningParameter);

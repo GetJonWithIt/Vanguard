@@ -2,6 +2,7 @@
 #define ELASTICSECONDORDERSOLVER_H
 
 #include "elasticfirstordersolver.h"
+using namespace std;
 
 class ElasticSecondOrderSolver
 {

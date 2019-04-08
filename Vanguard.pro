@@ -37,7 +37,13 @@ SOURCES += main.cpp \
     Euler/Multiphysics/eulerreducedtests.cpp \
     Solvers/elasticsolvers.cpp \
     Solvers/elasticfirstordersolver.cpp \
-    Solvers/elasticsecondordersolver.cpp
+    Solvers/elasticsecondordersolver.cpp \
+    MHD/mhdequationofstate.cpp \
+    MHD/mhdwavespeeds.cpp \
+    Solvers/mhdsolvers.cpp \
+    Solvers/mhdfirstordersolver.cpp \
+    MHD/mhdtests.cpp \
+    Solvers/mhdsecondordersolver.cpp
 
 HEADERS += \
     Solvers/firstordersolver.h \
@@ -69,5 +75,11 @@ HEADERS += \
     Euler/Multiphysics/eulerreducedtests.h \
     Solvers/elasticsolvers.h \
     Solvers/elasticfirstordersolver.h \
-    Solvers/elasticsecondordersolver.h
+    Solvers/elasticsecondordersolver.h \
+    MHD/mhdequationofstate.h \
+    MHD/mhdwavespeeds.h \
+    Solvers/mhdsolvers.h \
+    Solvers/mhdfirstordersolver.h \
+    MHD/mhdtests.h \
+    Solvers/mhdsecondordersolver.h
 
