@@ -14,6 +14,9 @@ public:
     static vector<double> computeXSLICFlux(EulerMultiphysicsStateVector leftLeftStateVector, EulerMultiphysicsStateVector leftStateVector, EulerMultiphysicsStateVector rightStateVector,
                                            EulerMultiphysicsStateVector rightRightStateVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
                                            EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
+    static vector<double> computeXSLICFlux(EulerReducedStateVector leftLeftStateVector, EulerReducedStateVector leftStateVector, EulerReducedStateVector rightStateVector,
+                                           EulerReducedStateVector rightRightStateVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
+                                           EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
 
     static vector<double> computeXSLICFlux(ElasticStateVector leftLeftStateVector, ElasticStateVector leftStateVector, ElasticStateVector rightStateVector,
                                            ElasticStateVector rightRightStateVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
@@ -41,6 +44,8 @@ public:
     static void computeSLICTimeStep(vector<EulerStateVector> & currentCells, vector<EulerStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep, double bias,
                                     int slopeLimiter, EulerMaterialParameters materialParameters);
     static void computeSLICTimeStep(vector<EulerMultiphysicsStateVector> & currentCells, vector<EulerMultiphysicsStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep,
+                                    double bias, int slopeLimiter, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
+    static void computeSLICTimeStep(vector<EulerReducedStateVector> & currentCells, vector<EulerReducedStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep,
                                     double bias, int slopeLimiter, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
 
     static void computeSLICTimeStep(vector<ElasticStateVector> & currentCells, vector<ElasticStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep, double bias,
@@ -77,6 +82,9 @@ public:
     static vector<EulerMultiphysicsStateVector> solve(vector<EulerMultiphysicsStateVector> & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, double bias,
                                                       int slopeLimiter, int subcyclingIterations, int reinitialisationFrequency, EulerMaterialParameters material1Parameters,
                                                       EulerMaterialParameters material2Parameters);
+    static vector<EulerReducedStateVector> solve(vector<EulerReducedStateVector> & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, double bias, int slopeLimiter,
+                                                 int subcyclingIterations, int reinitialisationFrequency, EulerMaterialParameters material1Parameters,
+                                                 EulerMaterialParameters material2Parameters);
 
     static vector<ElasticStateVector> solve(vector<ElasticStateVector> & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, double bias, int slopeLimiter,
                                             int subcyclingIterations, HyperelasticMaterialParameters materialParameters);

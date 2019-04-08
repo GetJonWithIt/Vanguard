@@ -148,7 +148,7 @@ void ElasticReducedTests::solve2DBartonTest1(int cellCount, int reinitialisation
         }
     }
 
-    outputSolution2D(SecondOrderSolver::solve2D(initialCells, cellSpacing, 0.8, 0.03, 0.0, 0, 0, reinitialisationFrequency, materialParameters, materialParameters));
+    outputSolution2D(SecondOrderSolver::solve2D(initialCells, cellSpacing, 0.8, 0.015, 0.0, 0, 0, reinitialisationFrequency, materialParameters, materialParameters));
 }
 
 void ElasticReducedTests::solve2DZhangTest(int cellCount, int reinitialisationFrequency)
@@ -199,7 +199,7 @@ void ElasticReducedTests::solve2DZhangTest(int cellCount, int reinitialisationFr
         }
     }
 
-    outputSolution2D(SecondOrderSolver::solve2D(initialCells, cellSpacing, 0.8, 0.025, 0.0, 0, 0, reinitialisationFrequency, material1Parameters, material2Parameters));
+    outputSolution2D(SecondOrderSolver::solve2D(initialCells, cellSpacing, 0.8, 0.0125, 0.0, 0, 0, reinitialisationFrequency, material1Parameters, material2Parameters));
 }
 
 void ElasticReducedTests::outputSolution(vector<ElasticReducedStateVector> solution)

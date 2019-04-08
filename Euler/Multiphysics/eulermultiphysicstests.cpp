@@ -9,7 +9,7 @@ void EulerMultiphysicsTests::solveToroTest1(int cellCount, int reinitialisationF
     double cellSpacing = 1.0 / cellCount;
 
     vector<EulerMultiphysicsStateVector> initialCells(cellCount);
-    EulerMaterialParameters materialParameters = EulerMaterialParameters(1.4);
+    EulerMaterialParameters materialParameters(1.4);
 
     for (int i = 0; i < cellCount; i++)
     {
@@ -31,8 +31,8 @@ void EulerMultiphysicsTests::solveFedkiwTest(int cellCount, int reinitialisation
     double cellSpacing = 1.0 / cellCount;
 
     vector<EulerMultiphysicsStateVector> initialCells(cellCount);
-    EulerMaterialParameters material1Parameters = EulerMaterialParameters(1.4);
-    EulerMaterialParameters material2Parameters = EulerMaterialParameters(1.67);
+    EulerMaterialParameters material1Parameters(1.4);
+    EulerMaterialParameters material2Parameters(1.67);
 
     for (int i = 0; i < cellCount; i++)
     {
@@ -61,7 +61,7 @@ void EulerMultiphysicsTests::solve2DToroTest1(int cellCount, int reinitialisatio
     double cellSpacing = 1.0 / cellCount;
 
     vector<vector<EulerMultiphysicsStateVector> > initialCells(cellCount, vector<EulerMultiphysicsStateVector>(cellCount));
-    EulerMaterialParameters materialParameters = EulerMaterialParameters(1.4);
+    EulerMaterialParameters materialParameters(1.4);
 
     for (int i = 0; i < cellCount; i++)
     {
@@ -86,8 +86,8 @@ void EulerMultiphysicsTests::solve2DFedkiwTest(int cellCount, int reinitialisati
     double cellSpacing = 1.0 / cellCount;
 
     vector<vector<EulerMultiphysicsStateVector> > initialCells(cellCount, vector<EulerMultiphysicsStateVector>(cellCount));
-    EulerMaterialParameters material1Parameters = EulerMaterialParameters(1.4);
-    EulerMaterialParameters material2Parameters = EulerMaterialParameters(1.67);
+    EulerMaterialParameters material1Parameters(1.4);
+    EulerMaterialParameters material2Parameters(1.67);
 
     for (int i = 0; i < cellCount; i++)
     {

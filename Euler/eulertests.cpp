@@ -9,7 +9,7 @@ void EulerTests::solveToroTest1(int cellCount)
     double cellSpacing = 1.0 / cellCount;
 
     vector<EulerStateVector> initialCells(cellCount);
-    EulerMaterialParameters materialParameters = EulerMaterialParameters(1.4);
+    EulerMaterialParameters materialParameters(1.4);
 
     for (int i = 0; i < cellCount; i++)
     {
@@ -31,7 +31,7 @@ void EulerTests::solve2DToroTest1(int cellCount)
     double cellSpacing = 1.0 / cellCount;
 
     vector<vector<EulerStateVector> > initialCells(cellCount, vector<EulerStateVector>(cellCount));
-    EulerMaterialParameters materialParameters = EulerMaterialParameters(1.4);
+    EulerMaterialParameters materialParameters(1.4);
 
     for (int i = 0; i < cellCount; i++)
     {

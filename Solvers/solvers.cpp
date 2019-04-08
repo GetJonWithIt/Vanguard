@@ -56,6 +56,32 @@ vector<EulerMultiphysicsStateVector> Solvers::insertBoundaryCells(vector<EulerMu
     return currentCellsWithBoundary;
 }
 
+vector<EulerReducedStateVector> Solvers::insertBoundaryCells(vector<EulerReducedStateVector> & currentCells, int boundarySize)
+{
+    int cellCount = currentCells.size();
+    vector<EulerReducedStateVector> currentCellsWithBoundary(cellCount + (2 * boundarySize));
+
+    if (boundarySize == 1)
+    {
+        currentCellsWithBoundary[0] = currentCells[0];
+        currentCellsWithBoundary[cellCount + 1] = currentCells[cellCount - 1];
+    }
+    else if (boundarySize == 2)
+    {
+        currentCellsWithBoundary[0] = currentCells[1];
+        currentCellsWithBoundary[1] = currentCells[0];
+        currentCellsWithBoundary[cellCount + 2] = currentCells[cellCount - 1];
+        currentCellsWithBoundary[cellCount + 3] = currentCells[cellCount - 2];
+    }
+
+    for (int i = 0; i < cellCount; i++)
+    {
+        currentCellsWithBoundary[i + boundarySize] = currentCells[i];
+    }
+
+    return currentCellsWithBoundary;
+}
+
 vector<ElasticStateVector> Solvers::insertBoundaryCells(vector<ElasticStateVector> & currentCells, int boundarySize)
 {
     int cellCount = currentCells.size();
@@ -368,7 +394,26 @@ double Solvers::computeMaximumWaveSpeed(vector<EulerMultiphysicsStateVector> & c
     for (int i = 0; i < cellCount; i++)
     {
         double waveSpeed = abs(currentCells[i].getInterfaceXVelocity()) + max(currentCells[i].computeMaterial1SoundSpeed(material1Parameters),
-                                                                             currentCells[i].computeMaterial2SoundSpeed(material2Parameters));
+                                                                              currentCells[i].computeMaterial2SoundSpeed(material2Parameters));
+
+        if (waveSpeed > maximumWaveSpeed)
+        {
+            maximumWaveSpeed = waveSpeed;
+        }
+    }
+
+    return maximumWaveSpeed;
+}
+
+double Solvers::computeMaximumWaveSpeed(vector<EulerReducedStateVector> & currentCells, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters)
+{
+    double maximumWaveSpeed = 0.0;
+    int cellCount = currentCells.size();
+
+    for (int i = 0; i < cellCount; i++)
+    {
+        double waveSpeed = abs(currentCells[i].getInterfaceXVelocity()) + max(currentCells[i].computeMaterial1SoundSpeed(material1Parameters),
+                                                                              currentCells[i].computeMaterial2SoundSpeed(material2Parameters));
 
         if (waveSpeed > maximumWaveSpeed)
         {
@@ -545,6 +590,14 @@ double Solvers::computeStableTimeStep(vector<EulerMultiphysicsStateVector> & cur
     return computeStableTimeStep(timeStep, currentTime, finalTime, currentIteration);
 }
 
+double Solvers::computeStableTimeStep(vector<EulerReducedStateVector> & currentCells, double cellSpacing, double CFLCoefficient, double currentTime, double finalTime, int currentIteration,
+                                      EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters)
+{
+    double timeStep = CFLCoefficient * (cellSpacing / computeMaximumWaveSpeed(currentCells, material1Parameters, material2Parameters));
+
+    return computeStableTimeStep(timeStep, currentTime, finalTime, currentIteration);
+}
+
 double Solvers::computeStableTimeStep(vector<ElasticStateVector> & currentCells, double cellSpacing, double CFLCoefficient, double currentTime, double finalTime, int currentIteration,
                                       HyperelasticMaterialParameters materialParameters)
 {
@@ -647,6 +700,23 @@ EulerMultiphysicsStateVector Solvers::evolveStateByHalfXTimeStep(EulerMultiphysi
     vector<double> evolutionVector = computeEvolutionVector(leftFluxVector, rightFluxVector, cellSpacing, timeStep);
 
     return evolveStateByHalfTimeStep(leftExtrapolatedValue, rightExtrapolatedValue, evolutionVector, side, material1Parameters, material2Parameters);
+}
+
+EulerReducedStateVector Solvers::evolveStateByHalfXTimeStep(EulerReducedStateVector leftStateVector, EulerReducedStateVector middleStateVector, EulerReducedStateVector rightStateVector,
+                                                            double cellSpacing, double timeStep, double bias, int slopeLimiter, int side, EulerMaterialParameters material1Parameters,
+                                                            EulerMaterialParameters material2Parameters)
+{
+    vector<double> slopeVector = SlopeLimiters::computeSlopeVector(leftStateVector, middleStateVector, rightStateVector, bias, slopeLimiter, material1Parameters, material2Parameters);
+    vector<double> leftExtrapolatedValue = VectorAlgebra::subtractVectors(middleStateVector.computeConservedVariableVector(material1Parameters, material2Parameters),
+                                                                          VectorAlgebra::multiplyVector(0.5, slopeVector));
+    vector<double> rightExtrapolatedValue = VectorAlgebra::addVectors(middleStateVector.computeConservedVariableVector(material1Parameters, material2Parameters),
+                                                                      VectorAlgebra::multiplyVector(0.5, slopeVector));
+
+    vector<double> leftFluxVector = EulerReducedStateVector::computeXFluxVector(leftExtrapolatedValue, material1Parameters, material2Parameters);
+    vector<double> rightFluxVector = EulerReducedStateVector::computeXFluxVector(rightExtrapolatedValue, material1Parameters, material2Parameters);
+    vector<double> evolutionVector = computeEvolutionVector(leftFluxVector, rightFluxVector, cellSpacing, timeStep);
+
+    return evolveStateByHalfTimeStepReduced(leftExtrapolatedValue, rightExtrapolatedValue, evolutionVector, side, material1Parameters, material2Parameters);
 }
 
 ElasticStateVector Solvers::evolveStateByHalfXTimeStep(ElasticStateVector leftStateVector, ElasticStateVector middleStateVector, ElasticStateVector rightStateVector, double cellSpacing,
@@ -780,6 +850,23 @@ EulerMultiphysicsStateVector Solvers::evolveStateByHalfTimeStep(vector<double> l
                                                                 EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters)
 {
     EulerMultiphysicsStateVector evolvedStateVector;
+
+    if (side == 0)
+    {
+        evolvedStateVector.setConservedVariableVector(VectorAlgebra::addVectors(leftExtrapolatedValue, evolutionVector), material1Parameters, material2Parameters);
+    }
+    else
+    {
+        evolvedStateVector.setConservedVariableVector(VectorAlgebra::addVectors(rightExtrapolatedValue, evolutionVector), material1Parameters, material2Parameters);
+    }
+
+    return evolvedStateVector;
+}
+
+EulerReducedStateVector Solvers::evolveStateByHalfTimeStepReduced(vector<double> leftExtrapolatedValue, vector<double> rightExtrapolatedValue, vector<double> evolutionVector, int side,
+                                                                  EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters)
+{
+    EulerReducedStateVector evolvedStateVector;
 
     if (side == 0)
     {

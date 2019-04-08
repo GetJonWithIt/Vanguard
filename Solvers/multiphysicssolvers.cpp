@@ -63,7 +63,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<EulerMultiphy
 
         for (int k = 0; k < interfaceCount1; k++)
         {
-            for (int j = interfaceLocations1[k] - 1; j < interfaceLocations1[k] + 2; j++)
+            for (int j = interfaceLocations1[k] - 2; j < interfaceLocations1[k] + 2; j++)
             {
                 currentCells[i][j].relaxTotalDensity();
                 currentCells[i][j].relaxTotalPressure(material1Parameters, material2Parameters);
@@ -81,7 +81,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<EulerMultiphy
 
         for (int k = 0; k < interfaceCount2; k++)
         {
-            for (int j = interfaceLocations2[k] - 2; j < interfaceLocations2[k] + 1; j++)
+            for (int j = interfaceLocations2[k] - 2; j < interfaceLocations2[k] + 2; j++)
             {
                 currentCells[i][j].relaxTotalDensity();
                 currentCells[i][j].relaxTotalPressure(material1Parameters, material2Parameters);
@@ -122,7 +122,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<EulerMultiphy
 
         for (int k = 0; k < interfaceCount1; k++)
         {
-            for (int j = interfaceLocations1[k] - 1; j < interfaceLocations1[k] + 2; j++)
+            for (int j = interfaceLocations1[k] - 2; j < interfaceLocations1[k] + 2; j++)
             {
                 currentCells[j][i].relaxTotalDensity();
                 currentCells[j][i].relaxTotalPressure(material1Parameters, material2Parameters);
@@ -140,7 +140,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<EulerMultiphy
 
         for (int k = 0; k < interfaceCount2; k++)
         {
-            for (int j = interfaceLocations2[k] - 2; j < interfaceLocations2[k] + 1; j++)
+            for (int j = interfaceLocations2[k] - 2; j < interfaceLocations2[k] + 2; j++)
             {
                 currentCells[j][i].relaxTotalDensity();
                 currentCells[j][i].relaxTotalPressure(material1Parameters, material2Parameters);
@@ -172,7 +172,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<ElasticMultiphysicsS
         }
     }
 
-    for (int i = interfaceLocation - 1; i < interfaceLocation + 2; i++)
+    for (int i = interfaceLocation - 2; i < interfaceLocation + 2; i++)
     {
         currentCells[i].relaxTotalDensity();
         currentCells[i].relaxTotalDistortionTensor();
@@ -202,7 +202,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<ElasticReducedStateV
         }
     }
 
-    for (int i = interfaceLocation - 1; i < interfaceLocation + 2; i++)
+    for (int i = interfaceLocation - 2; i < interfaceLocation + 2; i++)
     {
         currentCells[i].relaxTotalDensity();
 
@@ -246,7 +246,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<ElasticReduce
 
         for (int k = 0; k < interfaceCount1; k++)
         {
-            for (int j = interfaceLocations1[k] - 1; j < interfaceLocations1[k] + 2; j++)
+            for (int j = interfaceLocations1[k] - 2; j < interfaceLocations1[k] + 2; j++)
             {
                 currentCells[i][j].relaxTotalDensity();
 
@@ -263,7 +263,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<ElasticReduce
 
         for (int k = 0; k < interfaceCount2; k++)
         {
-            for (int j = interfaceLocations2[k] - 2; j < interfaceLocations2[k] + 1; j++)
+            for (int j = interfaceLocations2[k] - 2; j < interfaceLocations2[k] + 2; j++)
             {
                 currentCells[i][j].relaxTotalDensity();
 
@@ -303,7 +303,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<ElasticReduce
 
         for (int k = 0; k < interfaceCount1; k++)
         {
-            for (int j = interfaceLocations1[k] - 1; j < interfaceLocations1[k] + 2; j++)
+            for (int j = interfaceLocations1[k] - 2; j < interfaceLocations1[k] + 2; j++)
             {
                 currentCells[j][i].relaxTotalDensity();
 
@@ -320,7 +320,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<ElasticReduce
 
         for (int k = 0; k < interfaceCount2; k++)
         {
-            for (int j = interfaceLocations2[k] - 2; j < interfaceLocations2[k] + 1; j++)
+            for (int j = interfaceLocations2[k] - 2; j < interfaceLocations2[k] + 2; j++)
             {
                 currentCells[j][i].relaxTotalDensity();
 

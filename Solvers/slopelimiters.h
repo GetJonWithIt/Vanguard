@@ -3,6 +3,7 @@
 
 #include "Euler/eulerstatevector.h"
 #include "Euler/Multiphysics/eulermultiphysicsstatevector.h"
+#include "Euler/Multiphysics/eulerreducedstatevector.h"
 #include "Elasticity/elasticstatevector.h"
 #include "Elasticity/Multiphysics/elasticmultiphysicsstatevector.h"
 #include "Elasticity/Multiphysics/elasticreducedstatevector.h"
@@ -26,6 +27,8 @@ public:
                                              EulerMaterialParameters materialParameters);
     static vector<double> computeSlopeVector(EulerMultiphysicsStateVector leftStateVector, EulerMultiphysicsStateVector middleStateVector, EulerMultiphysicsStateVector rightStateVector,
                                              double bias, int slopeLimiter, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
+    static vector<double> computeSlopeVector(EulerReducedStateVector leftStateVector, EulerReducedStateVector middleStateVector, EulerReducedStateVector rightStateVector, double bias,
+                                             int slopeLimiter, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
 
     static vector<double> computeSlopeVector(ElasticStateVector leftStateVector, ElasticStateVector middleStateVector, ElasticStateVector rightStateVector, double bias, int slopeLimiter,
                                              HyperelasticMaterialParameters materialParameters);
