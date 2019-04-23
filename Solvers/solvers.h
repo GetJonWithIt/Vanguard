@@ -64,6 +64,7 @@ public:
                                                                     int side, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
 
     static vector<double> computeEvolutionVector(vector<double> leftFluxVector, vector<double> rightFluxVector, double cellSpacing, double timeStep);
+    static vector<double> computeFractionalEvolutionVector(double stepFraction, vector<double> leftFluxVector, vector<double> rightFluxVector, double cellSpacing, double timeStep);
 
     static void outputStatus(int currentIteration, double currentTime, double timeStep);
 };

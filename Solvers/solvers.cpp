@@ -476,7 +476,12 @@ EulerReducedStateVector Solvers::evolveStateByHalfTimeStepReduced(vector<double>
 
 vector<double> Solvers::computeEvolutionVector(vector<double> leftFluxVector, vector<double> rightFluxVector, double cellSpacing, double timeStep)
 {
-    return VectorAlgebra::multiplyVector(0.5 * (timeStep / cellSpacing), VectorAlgebra::subtractVectors(leftFluxVector, rightFluxVector));
+    return computeFractionalEvolutionVector(0.5, leftFluxVector, rightFluxVector, cellSpacing, timeStep);
+}
+
+vector<double> Solvers::computeFractionalEvolutionVector(double stepFraction, vector<double> leftFluxVector, vector<double> rightFluxVector, double cellSpacing, double timeStep)
+{
+    return VectorAlgebra::multiplyVector(stepFraction * (timeStep / cellSpacing), VectorAlgebra::subtractVectors(leftFluxVector, rightFluxVector));
 }
 
 void Solvers::outputStatus(int currentIteration, double currentTime, double timeStep)

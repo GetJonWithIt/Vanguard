@@ -43,7 +43,20 @@ SOURCES += main.cpp \
     Solvers/mhdsolvers.cpp \
     Solvers/mhdfirstordersolver.cpp \
     MHD/mhdtests.cpp \
-    Solvers/mhdsecondordersolver.cpp
+    Solvers/mhdsecondordersolver.cpp \
+    HPR/hprmaterialparameters.cpp \
+    HPR/hprmiegruneisen.cpp \
+    HPR/hprderivatives.cpp \
+    HPR/hprequationofstate.cpp \
+    HPR/hprsourceterms.cpp \
+    HPR/hprstatevector.cpp \
+    HPR/hprwavespeeds.cpp \
+    HPR/hpracoustictensor.cpp \
+    Solvers/hprsolvers.cpp \
+    Solvers/hprfirstordersolver.cpp \
+    HPR/hprtests.cpp \
+    Solvers/hprsecondordersolver.cpp \
+    Solvers/hprforcingsolver.cpp
 
 HEADERS += \
     Solvers/firstordersolver.h \
@@ -81,5 +94,18 @@ HEADERS += \
     Solvers/mhdsolvers.h \
     Solvers/mhdfirstordersolver.h \
     MHD/mhdtests.h \
-    Solvers/mhdsecondordersolver.h
+    Solvers/mhdsecondordersolver.h \
+    HPR/hprmaterialparameters.h \
+    HPR/hprmiegruneisen.h \
+    HPR/hprderivatives.h \
+    HPR/hprequationofstate.h \
+    HPR/hprsourceterms.h \
+    HPR/hprstatevector.h \
+    HPR/hprwavespeeds.h \
+    HPR/hpracoustictensor.h \
+    Solvers/hprsolvers.h \
+    Solvers/hprfirstordersolver.h \
+    HPR/hprtests.h \
+    Solvers/hprsecondordersolver.h \
+    Solvers/hprforcingsolver.h
 

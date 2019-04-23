@@ -189,7 +189,7 @@ double MatrixAlgebra::computeLargestEigenvalue(vector<vector<double> > matrix1)
         eigenvectorGuess[i] = 1.0;
     }
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 10; i++)
     {
         eigenvectorGuess = multiplyMatrixByVector(matrix1, eigenvectorGuess);
         eigenvectorGuess = VectorAlgebra::multiplyVector((1.0 / VectorAlgebra::computeNorm(eigenvectorGuess)), eigenvectorGuess);

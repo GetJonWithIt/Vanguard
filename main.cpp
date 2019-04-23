@@ -7,6 +7,7 @@
 #include "Elasticity/Multiphysics/elasticmultiphysicstests.h"
 #include "Elasticity/Multiphysics/elasticreducedtests.h"
 #include "MHD/mhdtests.h"
+#include "HPR/hprtests.h"
 
 int main(int argc, char *argv[])
 {
@@ -37,9 +38,17 @@ int main(int argc, char *argv[])
     //ElasticReducedTests::solveZhangTest(20, 0);
     //ElasticReducedTests::solve2DBartonTest1(100, 3);
     //ElasticReducedTests::solve2DZhangTest(100, 3);
+    //ElasticReducedTests::solve2DZhangTest2(100, 0);
 
     //MHDTests::solveDumbserTest2(400);
-    MHDTests::solveDumbserTest3(400);
+    //MHDTests::solveDumbserTest1(400);
+
+    //HPRTests::solveStokesFirstProblem(100, 1);
+    //HPRTests::solveHeatConductionProblem(50, 5);
+    //HPRTests::solveBartonTest1(200, 0);
+    //HPRTests::solveZhangElasticPlasticTest(100, 1);
+    //HPRTests::solve2DBartonTest1(50, 0);
+    HPRTests::solve2DZhangElasticPlasticTest(50, 1);
 
     return a.exec();
 }
