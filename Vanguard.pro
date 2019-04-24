@@ -56,7 +56,10 @@ SOURCES += main.cpp \
     Solvers/hprfirstordersolver.cpp \
     HPR/hprtests.cpp \
     Solvers/hprsecondordersolver.cpp \
-    Solvers/hprforcingsolver.cpp
+    Solvers/hprforcingsolver.cpp \
+    HPR/Multiphysics/hprreducedstatevector.cpp \
+    HPR/Multiphysics/hprreducedacoustictensor.cpp \
+    HPR/Multiphysics/hprreducedtests.cpp
 
 HEADERS += \
     Solvers/firstordersolver.h \
@@ -107,5 +110,8 @@ HEADERS += \
     Solvers/hprfirstordersolver.h \
     HPR/hprtests.h \
     Solvers/hprsecondordersolver.h \
-    Solvers/hprforcingsolver.h
+    Solvers/hprforcingsolver.h \
+    HPR/Multiphysics/hprreducedstatevector.h \
+    HPR/Multiphysics/hprreducedacoustictensor.h \
+    HPR/Multiphysics/hprreducedtests.h
 

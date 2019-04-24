@@ -22,7 +22,7 @@ public:
     static void computeRungeKuttaTimeStep(vector<HPRStateVector> & currentCells, vector<HPRStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep, double bias,
                                           int slopeLimiter, HPRMaterialParameters materialParameters);
 
-    static void computeRungeKuttaTimeStep2D(vector<vector<HPRStateVector> > & currentCells, vector<vector<HPRStateVector> > & currentCellsWithBoundar, double cellSpacing, double timStep,
+    static void computeRungeKuttaTimeStep2D(vector<vector<HPRStateVector> > & currentCells, vector<vector<HPRStateVector> > & currentCellsWithBoundary, double cellSpacing, double timStep,
                                             double bias, int slopeLimiter, HPRMaterialParameters materialParameters);
 };
 

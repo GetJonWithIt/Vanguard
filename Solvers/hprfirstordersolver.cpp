@@ -16,6 +16,18 @@ vector<double> HPRFirstOrderSolver::computeXLaxFriedrichsFlux(HPRStateVector lef
     return FirstOrderSolver::computeLaxFriedrichsFlux(leftConservedVariableVector, rightConservedVariableVector, leftFluxVector, rightFluxVector, cellSpacing, timeStep);
 }
 
+vector<double> HPRFirstOrderSolver::computeXLaxFriedrichsFlux(HPRReducedStateVector leftStateVector, HPRReducedStateVector rightStateVector, double cellSpacing, double timeStep,
+                                                              HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    vector<double> leftConservedVariableVector = leftStateVector.computeConservedVariableVector(material1Parameters, material2Parameters);
+    vector<double> rightConservedVariableVector = rightStateVector.computeConservedVariableVector(material1Parameters, material2Parameters);
+
+    vector<double> leftFluxVector = leftStateVector.computeXFluxVector(material1Parameters, material2Parameters);
+    vector<double> rightFluxVector = rightStateVector.computeXFluxVector(material1Parameters, material2Parameters);
+
+    return FirstOrderSolver::computeLaxFriedrichsFlux(leftConservedVariableVector, rightConservedVariableVector, leftFluxVector, rightFluxVector, cellSpacing, timeStep);
+}
+
 vector<double> HPRFirstOrderSolver::computeYLaxFriedrichsFlux(HPRStateVector topStateVector, HPRStateVector bottomStateVector, double cellSpacing, double timeStep,
                                                               HPRMaterialParameters materialParameters)
 {
@@ -41,6 +53,19 @@ vector<double> HPRFirstOrderSolver::computeXRichtmyerFlux(HPRStateVector leftSta
     return HPRStateVector::computeXFluxVector(intermediateStateVector, materialParameters);
 }
 
+vector<double> HPRFirstOrderSolver::computeXRichtmyerFlux(HPRReducedStateVector leftStateVector, HPRReducedStateVector rightStateVector, double cellSpacing, double timeStep,
+                                                          HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    vector<double> leftConservedVariableVector = leftStateVector.computeConservedVariableVector(material1Parameters, material2Parameters);
+    vector<double> rightConservedVariableVector = rightStateVector.computeConservedVariableVector(material1Parameters, material2Parameters);
+
+    vector<double> leftFluxVector = leftStateVector.computeXFluxVector(material1Parameters, material2Parameters);
+    vector<double> rightFluxVector = rightStateVector.computeXFluxVector(material1Parameters, material2Parameters);
+    vector<double> intermediateStateVector = FirstOrderSolver::computeRichtmyerFlux(leftConservedVariableVector, rightConservedVariableVector, leftFluxVector, rightFluxVector, cellSpacing, timeStep);
+
+    return HPRReducedStateVector::computeXFluxVector(intermediateStateVector, material1Parameters, material2Parameters);
+}
+
 vector<double> HPRFirstOrderSolver::computeYRichtmyerFlux(HPRStateVector topStateVector, HPRStateVector bottomStateVector, double cellSpacing, double timeStep,
                                                           HPRMaterialParameters materialParameters)
 {
@@ -58,6 +83,15 @@ vector<double> HPRFirstOrderSolver::computeXFORCEFlux(HPRStateVector leftStateVe
 {
     vector<double> laxFriedrichsFlux = computeXLaxFriedrichsFlux(leftStateVector, rightStateVector, cellSpacing, timeStep, materialParameters);
     vector<double> richtmyerFlux = computeXRichtmyerFlux(leftStateVector, rightStateVector, cellSpacing, timeStep, materialParameters);
+
+    return FirstOrderSolver::computeFORCEFlux(laxFriedrichsFlux, richtmyerFlux);
+}
+
+vector<double> HPRFirstOrderSolver::computeXFORCEFlux(HPRReducedStateVector leftStateVector, HPRReducedStateVector rightStateVector, double cellSpacing, double timeStep,
+                                                      HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    vector<double> laxFriedrichsFlux = computeXLaxFriedrichsFlux(leftStateVector, rightStateVector, cellSpacing, timeStep, material1Parameters, material2Parameters);
+    vector<double> richtmyerFlux = computeXRichtmyerFlux(leftStateVector, rightStateVector, cellSpacing, timeStep, material1Parameters, material2Parameters);
 
     return FirstOrderSolver::computeFORCEFlux(laxFriedrichsFlux, richtmyerFlux);
 }
@@ -82,6 +116,22 @@ void HPRFirstOrderSolver::computeFORCETimeStep(vector<HPRStateVector> & currentC
         vector<double> rightFluxVector = computeXFORCEFlux(currentCellsWithBoundary[i + 1], currentCellsWithBoundary[i + 2], cellSpacing, timeStep, materialParameters);
 
         currentCells[i].setConservedVariableVector(FirstOrderSolver::computeFORCEUpdate(conservedVariableVector, leftFluxVector, rightFluxVector, cellSpacing, timeStep), materialParameters);
+    }
+}
+
+void HPRFirstOrderSolver::computeFORCETimeStep(vector<HPRReducedStateVector> & currentCells, vector<HPRReducedStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep,
+                                               HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    int cellCount = currentCells.size();
+
+    for (int i = 0; i < cellCount; i++)
+    {
+        vector<double> conservedVariableVector = currentCells[i].computeConservedVariableVector(material1Parameters, material2Parameters);
+        vector<double> leftFluxVector = computeXFORCEFlux(currentCellsWithBoundary[i], currentCellsWithBoundary[i + 1], cellSpacing, timeStep, material1Parameters, material2Parameters);
+        vector<double> rightFluxVector = computeXFORCEFlux(currentCellsWithBoundary[i + 1], currentCellsWithBoundary[i + 2], cellSpacing, timeStep, material1Parameters, material2Parameters);
+
+        currentCells[i].setConservedVariableVector(FirstOrderSolver::computeFORCEUpdate(conservedVariableVector, leftFluxVector, rightFluxVector, cellSpacing, timeStep), material1Parameters,
+                                                   material2Parameters);
     }
 }
 
@@ -138,6 +188,29 @@ vector<HPRStateVector> HPRFirstOrderSolver::solve(vector<HPRStateVector> & initi
         double timeStep = HPRSolvers::computeStableTimeStep(currentCells, cellSpacing, CFLCoefficient, currentTime, finalTime, currentIteration, materialParameters);
 
         computeFORCETimeStep(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, materialParameters);
+
+        currentTime += timeStep;
+        currentIteration += 1;
+
+        Solvers::outputStatus(currentIteration, currentTime, timeStep);
+    }
+
+    return currentCells;
+}
+
+vector<HPRReducedStateVector> HPRFirstOrderSolver::solve(vector<HPRReducedStateVector> & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, int subcyclingIterations,
+                                                         HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    double currentTime = 0.0;
+    int currentIteration = 0;
+    vector<HPRReducedStateVector> currentCells = initialCells;
+
+    while (currentTime < finalTime)
+    {
+        vector<HPRReducedStateVector> currentCellsWithBoundary = HPRSolvers::insertBoundaryCells(currentCells, 1);
+        double timeStep = HPRSolvers::computeStableTimeStep(currentCells, cellSpacing, CFLCoefficient, currentTime, finalTime, currentIteration, material1Parameters, material2Parameters);
+
+        computeFORCETimeStep(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, material1Parameters, material2Parameters);
 
         currentTime += timeStep;
         currentIteration += 1;

@@ -8,6 +8,7 @@
 #include "Elasticity/Multiphysics/elasticreducedtests.h"
 #include "MHD/mhdtests.h"
 #include "HPR/hprtests.h"
+#include "HPR/Multiphysics/hprreducedtests.h"
 
 int main(int argc, char *argv[])
 {
@@ -23,7 +24,7 @@ int main(int argc, char *argv[])
     //EulerMultiphysicsTests::solve2DFedkiwTest(100, 3);
 
     //EulerReducedTests::solveToroTest1(100, 0);
-    //EulerReducedTests::solveFedkiwTest(100, 0);
+    //EulerReducedTests::solveFedkiwTest(100, 3);
 
     //ElasticTests::solveBartonTest1(100);
     //ElasticTests::solveBartonTest2(200);
@@ -34,8 +35,8 @@ int main(int argc, char *argv[])
     //ElasticMultiphysicsTests::solveBartonTest2(100, 3);
     //ElasticMultiphysicsTests::solveZhangTest(100, 0);
 
-    //ElasticReducedTests::solveBartonTest1(100, 3);
-    //ElasticReducedTests::solveZhangTest(20, 0);
+    //ElasticReducedTests::solveBartonTest1(100, 0);
+    //ElasticReducedTests::solveZhangTest(200, 0);
     //ElasticReducedTests::solve2DBartonTest1(100, 3);
     //ElasticReducedTests::solve2DZhangTest(100, 3);
     //ElasticReducedTests::solve2DZhangTest2(100, 0);
@@ -48,7 +49,10 @@ int main(int argc, char *argv[])
     //HPRTests::solveBartonTest1(200, 0);
     //HPRTests::solveZhangElasticPlasticTest(100, 1);
     //HPRTests::solve2DBartonTest1(50, 0);
-    HPRTests::solve2DZhangElasticPlasticTest(50, 1);
+    //HPRTests::solve2DZhangElasticPlasticTest(50, 1);
+
+    //HPRReducedTests::solveBartonTest1(100, 3);
+    HPRReducedTests::solveZhangTest(50, 3);
 
     return a.exec();
 }

@@ -111,7 +111,7 @@ vector<double> ElasticReducedStateVector::computePrimitiveVariableVector()
     {
         for (int j = 0; j < 3; j++)
         {
-            primitiveVariableVector[4 + (i * 3) + j]= interfaceDistortionTensor[i][j];
+            primitiveVariableVector[4 + (i * 3) + j] = interfaceDistortionTensor[i][j];
         }
     }
     primitiveVariableVector[13] = interfaceEntropy;

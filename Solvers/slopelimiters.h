@@ -9,6 +9,7 @@
 #include "Elasticity/Multiphysics/elasticreducedstatevector.h"
 #include "MHD/mhdstatevector.h"
 #include "HPR/hprstatevector.h"
+#include "HPR/Multiphysics/hprreducedstatevector.h"
 #include "Mathematics/vectoralgebra.h"
 using namespace std;
 
@@ -44,6 +45,8 @@ public:
 
     static vector<double> computeSlopeVector(HPRStateVector leftStateVector, HPRStateVector middleStateVector, HPRStateVector rightStateVector, double bias, int slopeLimiter,
                                              HPRMaterialParameters materialParameters);
+    static vector<double> computeSlopeVector(HPRReducedStateVector leftStateVector, HPRReducedStateVector middleStateVector, HPRReducedStateVector rightStateVector, double bias,
+                                             int slopeLimiter, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
 
     static vector<double> computeSlopeVector(vector<double> leftConservedVariableVector, vector<double> middleConservedVariableVector, vector<double> rightConservedVariableVector,
                                              double bias, int slopeLimiter);

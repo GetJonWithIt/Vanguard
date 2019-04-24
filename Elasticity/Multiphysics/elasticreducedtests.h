@@ -18,6 +18,8 @@ public:
 
     static void solve2DZhangTest(int cellCount, int reinitialisationFrequency);
 
+    static void solve2DZhangTest2(int cellCount, int reinitialisationFrequency);
+
     static void outputSolution(vector<ElasticReducedStateVector> solution);
     static void outputSolution2D(vector<vector<ElasticReducedStateVector> > solution);
 };

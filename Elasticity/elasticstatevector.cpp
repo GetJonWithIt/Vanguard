@@ -11,7 +11,8 @@ ElasticStateVector::ElasticStateVector()
     entropy = 0.0;
 }
 
-ElasticStateVector::ElasticStateVector(double newXVelocity, double newYVelocity, double newZVelocity, vector<vector<double> > newDistortionTensor, double newEntropy, HyperelasticMaterialParameters materialParameters)
+ElasticStateVector::ElasticStateVector(double newXVelocity, double newYVelocity, double newZVelocity, vector<vector<double> > newDistortionTensor, double newEntropy,
+                                       HyperelasticMaterialParameters materialParameters)
 {
     double referenceMassDensity = materialParameters.getReferenceMassDensity();
     density = referenceMassDensity * MatrixAlgebra::computeDeterminant(newDistortionTensor);

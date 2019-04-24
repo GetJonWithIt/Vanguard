@@ -202,6 +202,43 @@ void ElasticReducedTests::solve2DZhangTest(int cellCount, int reinitialisationFr
     outputSolution2D(ElasticSecondOrderSolver::solve2D(initialCells, cellSpacing, 0.8, 0.0125, 0.0, 0, 0, reinitialisationFrequency, material1Parameters, material2Parameters));
 }
 
+void ElasticReducedTests::solve2DZhangTest2(int cellCount, int reinitialisationFrequency)
+{
+    double cellSpacing = 1.0 / cellCount;
+
+    vector<vector<ElasticReducedStateVector> > initialCells(cellCount, vector<ElasticReducedStateVector>(cellCount));
+    HyperelasticMaterialParameters material1Parameters(8.9, 4.6, 2.1, 3.9 * pow(10.0, -4.0), 300.0, 1.0, 3.0, 2.0);
+    HyperelasticMaterialParameters material2Parameters(0.01, 4.6, 2.1, 3.9 * pow(10.0, -4.0), 300.0, 1.0, 3.0, 2.0);
+
+    vector<vector<double> > distortionTensor = MatrixAlgebra::computeIdentityMatrix(3);
+
+    for (int i = 0; i < cellCount; i++)
+    {
+        for (int j = 0; j < cellCount; j++)
+        {
+            initialCells[i][j] = ElasticReducedStateVector(0.001, 0.0, 0.0, 0.0, distortionTensor, 0.0, distortionTensor, 0.0, material1Parameters, material2Parameters);
+        }
+    }
+
+    for (int i = (0.4 * cellCount); i < (0.5 * cellCount); i++)
+    {
+        for (int j = (0.45 * cellCount); j < (0.55 * cellCount); j++)
+        {
+            initialCells[i][j] = ElasticReducedStateVector(0.999, 0.0, 800.0, 0.0, distortionTensor, 0.0, distortionTensor, 0.0, material1Parameters, material2Parameters);
+        }
+    }
+
+    for (int i = (0.5 * cellCount); i < (0.6 * cellCount); i++)
+    {
+        for (int j = (0.25 * cellCount); j < (0.75 * cellCount); j++)
+        {
+            initialCells[i][j] = ElasticReducedStateVector(0.999, 0.0, 0.0, 0.0, distortionTensor, 0.0, distortionTensor, 0.0, material1Parameters, material2Parameters);
+        }
+    }
+
+    outputSolution2D(ElasticSecondOrderSolver::solve2D(initialCells, cellSpacing, 0.8, 2.3 * pow(10.0, -4.0), 0.0, 0, 0, reinitialisationFrequency, material1Parameters, material2Parameters));
+}
+
 void ElasticReducedTests::outputSolution(vector<ElasticReducedStateVector> solution)
 {
     int cellCount = solution.size();
