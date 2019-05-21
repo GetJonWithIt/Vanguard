@@ -38,6 +38,18 @@ vector<double> HPRSecondOrderSolver::computeYSLICFlux(HPRStateVector topTopState
     return HPRFirstOrderSolver::computeYFORCEFlux(evolvedBottomStateVector, evolvedTopStateVector, cellSpacing, timeStep, materialParameters);
 }
 
+vector<double> HPRSecondOrderSolver::computeYSLICFlux(HPRReducedStateVector topTopStateVector, HPRReducedStateVector topStateVector, HPRReducedStateVector bottomStateVector,
+                                                      HPRReducedStateVector bottomBottomStateVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
+                                                      HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    HPRReducedStateVector evolvedBottomStateVector = HPRSolvers::evolveStateByHalfYTimeStep(topTopStateVector, topStateVector, bottomStateVector, cellSpacing, timeStep, bias,
+                                                                                            slopeLimiter, 1, material1Parameters, material2Parameters);
+    HPRReducedStateVector evolvedTopStateVector = HPRSolvers::evolveStateByHalfYTimeStep(topStateVector, bottomStateVector, bottomBottomStateVector, cellSpacing, timeStep, bias,
+                                                                                         slopeLimiter, 0, material1Parameters, material2Parameters);
+
+    return HPRFirstOrderSolver::computeYFORCEFlux(evolvedBottomStateVector, evolvedTopStateVector, cellSpacing, timeStep, material1Parameters, material2Parameters);
+}
+
 void HPRSecondOrderSolver::computeSLICTimeStep(vector<HPRStateVector> & currentCells, vector<HPRStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep, double bias,
                                                int slopeLimiter, HPRMaterialParameters materialParameters)
 {
@@ -98,6 +110,29 @@ void HPRSecondOrderSolver::computeXSLICTimeStep2D(vector<vector<HPRStateVector> 
     }
 }
 
+void HPRSecondOrderSolver::computeXSLICTimeStep2D(vector<vector<HPRReducedStateVector> > & currentCells, vector<vector<HPRReducedStateVector> > & currentCellsWithBoundary, double cellSpacing,
+                                                  double timeStep, double bias, int slopeLimiter, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    int rowCount = currentCells.size();
+    int columnCount = currentCells[0].size();
+
+    for (int i = 0; i < rowCount; i++)
+    {
+        for (int j = 0; j < columnCount; j++)
+        {
+            vector<double> conservedVariableVector = currentCells[i][j].computeConservedVariableVector(material1Parameters, material2Parameters);
+
+            vector<double> leftFluxVector = computeXSLICFlux(currentCellsWithBoundary[i + 2][j], currentCellsWithBoundary[i + 2][j + 1], currentCellsWithBoundary[i + 2][j + 2],
+                    currentCellsWithBoundary[i + 2][j + 3], cellSpacing, timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+            vector<double> rightFluxVector = computeXSLICFlux(currentCellsWithBoundary[i + 2][j + 1], currentCellsWithBoundary[i + 2][j + 2], currentCellsWithBoundary[i + 2][j + 3],
+                    currentCellsWithBoundary[i + 2][j + 4], cellSpacing, timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+
+            currentCells[i][j].setConservedVariableVector(FirstOrderSolver::computeFORCEUpdate(conservedVariableVector, leftFluxVector, rightFluxVector, cellSpacing, timeStep),
+                                                          material1Parameters, material2Parameters);
+        }
+    }
+}
+
 void HPRSecondOrderSolver::computeYSLICTimeStep2D(vector<vector<HPRStateVector> > & currentCells, vector<vector<HPRStateVector> > & currentCellsWithBoundary, double cellSpacing, double timeStep,
                                                   double bias, int slopeLimiter, HPRMaterialParameters materialParameters)
 {
@@ -117,6 +152,29 @@ void HPRSecondOrderSolver::computeYSLICTimeStep2D(vector<vector<HPRStateVector> 
 
             currentCells[i][j].setConservedVariableVector(FirstOrderSolver::computeFORCEUpdate(conservedVariableVector, topFluxVector, bottomFluxVector, cellSpacing, timeStep),
                                                           materialParameters);
+        }
+    }
+}
+
+void HPRSecondOrderSolver::computeYSLICTimeStep2D(vector<vector<HPRReducedStateVector> > & currentCells, vector<vector<HPRReducedStateVector> > & currentCellsWithBoundary, double cellSpacing,
+                                                  double timeStep, double bias, int slopeLimiter, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    int rowCount = currentCells.size();
+    int columnCount = currentCells[0].size();
+
+    for (int i = 0; i < rowCount; i++)
+    {
+        for (int j = 0; j < columnCount; j++)
+        {
+            vector<double> conservedVariableVector = currentCells[i][j].computeConservedVariableVector(material1Parameters, material2Parameters);
+
+            vector<double> topFluxVector = computeYSLICFlux(currentCellsWithBoundary[i][j + 2], currentCellsWithBoundary[i + 1][j + 2], currentCellsWithBoundary[i + 2][j + 2],
+                    currentCellsWithBoundary[i + 3][j + 2], cellSpacing, timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+            vector<double> bottomFluxVector = computeYSLICFlux(currentCellsWithBoundary[i + 1][j + 2], currentCellsWithBoundary[i + 2][j + 2], currentCellsWithBoundary[i + 3][j + 2],
+                    currentCellsWithBoundary[i + 4][j + 2], cellSpacing, timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+
+            currentCells[i][j].setConservedVariableVector(FirstOrderSolver::computeFORCEUpdate(conservedVariableVector, topFluxVector, bottomFluxVector, cellSpacing, timeStep),
+                                                          material1Parameters, material2Parameters);
         }
     }
 }
@@ -169,7 +227,10 @@ vector<HPRReducedStateVector> HPRSecondOrderSolver::solve(vector<HPRReducedState
 
         for (int i = 0; i < subcyclingIterations; i++)
         {
-            // Runge-Kutta goes here.
+            currentCellsWithBoundary = HPRSolvers::insertBoundaryCells(currentCells, 1);
+
+            HPRForcingSolver::computeRungeKuttaTimeStep(currentCells, currentCellsWithBoundary, cellSpacing, (timeStep / subcyclingIterations), bias, slopeLimiter, material1Parameters,
+                                                        material2Parameters);
         }
 
         currentTime += timeStep;
@@ -211,6 +272,42 @@ vector<vector<HPRStateVector> > HPRSecondOrderSolver::solve2D(vector<vector<HPRS
             currentCellsWithBoundary = HPRSolvers::insertBoundaryCells2D(currentCells, 1);
 
             HPRForcingSolver::computeRungeKuttaTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, (timeStep / subcyclingIterations), bias, slopeLimiter, materialParameters);
+        }
+
+        currentTime += timeStep;
+        currentIteration += 1;
+
+        Solvers::outputStatus(currentIteration, currentTime, timeStep);
+    }
+
+    return currentCells;
+}
+
+vector<vector<HPRReducedStateVector> > HPRSecondOrderSolver::solve2D(vector<vector<HPRReducedStateVector> > & initialCells, double cellSpacing, double CFLCoefficient, double finalTime,
+                                                                     double bias, int slopeLimiter, int subcyclingIterations, int reinitialisationFrequency,
+                                                                     HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    double currentTime = 0.0;
+    int currentIteration = 0;
+    vector<vector<HPRReducedStateVector> > currentCells = initialCells;
+
+    while (currentTime < finalTime)
+    {
+        vector<vector<HPRReducedStateVector> > currentCellsWithBoundary = HPRSolvers::insertBoundaryCells2D(currentCells, 2);
+        double timeStep = HPRSolvers::computeStableTimeStep2D(currentCellsWithBoundary, cellSpacing, CFLCoefficient, currentTime, finalTime, currentIteration, material1Parameters,
+                                                              material2Parameters);
+
+        computeXSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+
+        currentCellsWithBoundary = HPRSolvers::insertBoundaryCells2D(currentCells, 2);
+        computeYSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+
+        for (int i = 0; i < subcyclingIterations; i++)
+        {
+            currentCellsWithBoundary = HPRSolvers::insertBoundaryCells2D(currentCells, 1);
+
+            HPRForcingSolver::computeRungeKuttaTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, (timeStep / subcyclingIterations), bias, slopeLimiter, material1Parameters,
+                                                          material2Parameters);
         }
 
         currentTime += timeStep;

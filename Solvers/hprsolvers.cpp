@@ -108,6 +108,58 @@ vector<vector<HPRStateVector> > HPRSolvers::insertBoundaryCells2D(vector<vector<
     return currentCellsWithBoundary;
 }
 
+vector<vector<HPRReducedStateVector> > HPRSolvers::insertBoundaryCells2D(vector<vector<HPRReducedStateVector> > & currentCells, int boundarySize)
+{
+    int rowCount = currentCells.size();
+    int columnCount = currentCells[0].size();
+    vector<vector<HPRReducedStateVector> > currentCellsWithBoundary(rowCount + (2 * boundarySize), vector<HPRReducedStateVector>(columnCount + (2 * boundarySize)));
+
+    if (boundarySize == 1)
+    {
+        for (int i = 0; i < rowCount; i++)
+        {
+            currentCellsWithBoundary[i + 1][0] = currentCells[i][0];
+            currentCellsWithBoundary[i + 1][columnCount + 1] = currentCells[i][columnCount - 1];
+        }
+
+        for (int i = 0; i < columnCount; i++)
+        {
+            currentCellsWithBoundary[0][i + 1] = currentCells[0][i];
+            currentCellsWithBoundary[rowCount + 1][i + 1] = currentCells[rowCount - 1][i];
+        }
+    }
+    else if (boundarySize == 2)
+    {
+        for (int i = 0; i < rowCount; i++)
+        {
+            currentCellsWithBoundary[i + 2][0] = currentCells[i][1];
+            currentCellsWithBoundary[i + 2][1] = currentCells[i][0];
+
+            currentCellsWithBoundary[i + 2][columnCount + 2] = currentCells[i][columnCount - 1];
+            currentCellsWithBoundary[i + 2][columnCount + 3] = currentCells[i][columnCount - 2];
+        }
+
+        for (int i = 0; i < columnCount; i++)
+        {
+            currentCellsWithBoundary[0][i + 2] = currentCells[1][i];
+            currentCellsWithBoundary[1][i + 2] = currentCells[0][i];
+
+            currentCellsWithBoundary[rowCount + 2][i + 2] = currentCells[rowCount - 1][i];
+            currentCellsWithBoundary[rowCount + 3][i + 2] = currentCells[rowCount - 2][i];
+        }
+    }
+
+    for (int i = 0; i < rowCount; i++)
+    {
+        for (int j = 0; j < columnCount; j++)
+        {
+            currentCellsWithBoundary[i + boundarySize][j + boundarySize] = currentCells[i][j];
+        }
+    }
+
+    return currentCellsWithBoundary;
+}
+
 double HPRSolvers::computeMaximumWaveSpeed(vector<HPRStateVector> & currentCells, HPRMaterialParameters materialParameters)
 {
     double maximumWaveSpeed = 0.0;
@@ -168,6 +220,30 @@ double HPRSolvers::computeMaximumWaveSpeed2D(vector<vector<HPRStateVector> > & c
     return maximumWaveSpeed;
 }
 
+double HPRSolvers::computeMaximumWaveSpeed2D(vector<vector<HPRReducedStateVector> > & currentCells, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    double maximumWaveSpeed = 0.0;
+    int rowCount = currentCells.size();
+    int columnCount = currentCells[0].size();
+
+    for (int i = 0; i < rowCount; i++)
+    {
+        for (int j = 0; j < columnCount; j++)
+        {
+            double waveSpeed = max(abs(currentCells[i][j].getInterfaceXVelocity()), abs(currentCells[i][j].getInterfaceYVelocity())) + max(
+                                       HPRReducedAcousticTensor::computeMaximumWaveSpeed(currentCells[i][j], material1Parameters, material2Parameters, 0),
+                                       HPRReducedAcousticTensor::computeMaximumWaveSpeed(currentCells[i][j], material1Parameters, material2Parameters, 1));
+
+            if (waveSpeed > maximumWaveSpeed)
+            {
+                maximumWaveSpeed = waveSpeed;
+            }
+        }
+    }
+
+    return maximumWaveSpeed;
+}
+
 double HPRSolvers::computeStableTimeStep(vector<HPRStateVector> & currentCells, double cellSpacing, double CFLCoefficient, double currentTime, double finalTime, int currentIteration,
                                          HPRMaterialParameters materialParameters)
 {
@@ -188,6 +264,14 @@ double HPRSolvers::computeStableTimeStep2D(vector<vector<HPRStateVector> > & cur
                                            HPRMaterialParameters materialParameters)
 {
     double timeStep = CFLCoefficient * (cellSpacing / computeMaximumWaveSpeed2D(currentCells, materialParameters));
+
+    return Solvers::computeStableTimeStep(timeStep, currentTime, finalTime, currentIteration);
+}
+
+double HPRSolvers::computeStableTimeStep2D(vector<vector<HPRReducedStateVector> > & currentCells, double cellSpacing, double CFLCoefficient, double currentTime, double finalTime,
+                                           int currentIteration, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    double timeStep = CFLCoefficient * (cellSpacing / computeMaximumWaveSpeed2D(currentCells, material1Parameters, material2Parameters));
 
     return Solvers::computeStableTimeStep(timeStep, currentTime, finalTime, currentIteration);
 }
@@ -237,6 +321,23 @@ HPRStateVector HPRSolvers::evolveStateByHalfYTimeStep(HPRStateVector topStateVec
     return evolveStateByHalfTimeStep(topExtrapolatedValue, bottomExtrapolatedValue, evolutionVector, side, materialParameters);
 }
 
+HPRReducedStateVector HPRSolvers::evolveStateByHalfYTimeStep(HPRReducedStateVector topStateVector, HPRReducedStateVector middleStateVector, HPRReducedStateVector bottomStateVector,
+                                                             double cellSpacing, double timeStep, double bias, int slopeLimiter, int side, HPRMaterialParameters material1Parameters,
+                                                             HPRMaterialParameters material2Parameters)
+{
+    vector<double> slopeVector = SlopeLimiters::computeSlopeVector(topStateVector, middleStateVector, bottomStateVector, bias, slopeLimiter, material1Parameters, material2Parameters);
+    vector<double> topExtrapolatedValue = VectorAlgebra::subtractVectors(middleStateVector.computeConservedVariableVector(material1Parameters, material2Parameters),
+                                                                         VectorAlgebra::multiplyVector(0.5, slopeVector));
+    vector<double> bottomExtrapolatedValue = VectorAlgebra::addVectors(middleStateVector.computeConservedVariableVector(material1Parameters, material2Parameters),
+                                                                       VectorAlgebra::multiplyVector(0.5, slopeVector));
+
+    vector<double> topFluxVector = HPRReducedStateVector::computeYFluxVector(topExtrapolatedValue, material1Parameters, material2Parameters);
+    vector<double> bottomFluxVector = HPRReducedStateVector::computeYFluxVector(bottomExtrapolatedValue, material1Parameters, material2Parameters);
+    vector<double> evolutionVector = Solvers::computeEvolutionVector(topFluxVector, bottomFluxVector, cellSpacing, timeStep);
+
+    return evolveStateByHalfTimeStep(topExtrapolatedValue, bottomExtrapolatedValue, evolutionVector, side, material1Parameters, material2Parameters);
+}
+
 HPRStateVector HPRSolvers::evolveStateByFractionalXTimeStep(double stepFraction, HPRStateVector leftStateVector, HPRStateVector middleStateVector, HPRStateVector rightStateVector,
                                                             double cellSpacing, double timeStep, double bias, int slopeLimiter, HPRMaterialParameters materialParameters)
 {
@@ -284,6 +385,23 @@ HPRStateVector HPRSolvers::evolveStateByFractionalYTimeStep(double stepFraction,
     vector<double> evolutionVector = Solvers::computeFractionalEvolutionVector(stepFraction, topFluxVector, bottomFluxVector, cellSpacing, timeStep);
 
     return evolveStateByFractionalTimeStep(middleConservedVariableVector, evolutionVector, materialParameters);
+}
+
+HPRReducedStateVector HPRSolvers::evolveStateByFractionalYTimeStep(double stepFraction, HPRReducedStateVector topStateVector, HPRReducedStateVector middleStateVector,
+                                                                   HPRReducedStateVector bottomStateVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
+                                                                   HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    vector<double> slopeVector = SlopeLimiters::computeSlopeVector(topStateVector, middleStateVector, bottomStateVector, bias, slopeLimiter, material1Parameters, material2Parameters);
+
+    vector<double> middleConservedVariableVector = middleStateVector.computeConservedVariableVector(material1Parameters, material2Parameters);
+    vector<double> topConservedVariableVector = VectorAlgebra::subtractVectors(middleConservedVariableVector, VectorAlgebra::multiplyVector(0.5, slopeVector));
+    vector<double> bottomConservedVariableVector = VectorAlgebra::addVectors(middleConservedVariableVector, VectorAlgebra::multiplyVector(0.5, slopeVector));
+
+    vector<double> topFluxVector = HPRReducedStateVector::computeYFluxVector(topConservedVariableVector, material1Parameters, material2Parameters);
+    vector<double> bottomFluxVector = HPRReducedStateVector::computeYFluxVector(bottomConservedVariableVector, material1Parameters, material2Parameters);
+    vector<double> evolutionVector = Solvers::computeFractionalEvolutionVector(stepFraction, topFluxVector, bottomFluxVector, cellSpacing, timeStep);
+
+    return evolveStateByFractionalTimeStep(middleConservedVariableVector, evolutionVector, material1Parameters, material2Parameters);
 }
 
 HPRStateVector HPRSolvers::evolveStateByHalfTimeStep(vector<double> leftExtrapolatedValue, vector<double> rightExtrapolatedValue, vector<double> evolutionVector, int side,

@@ -25,6 +25,9 @@ public:
     static vector<double> computeYSLICFlux(EulerMultiphysicsStateVector topTopStateVector, EulerMultiphysicsStateVector topStateVector,
                                            EulerMultiphysicsStateVector bottomStateVector, EulerMultiphysicsStateVector bottomBottomStateVector, double cellSpacing, double timeStep,
                                            double bias, int slopeLimiter, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
+    static vector<double> computeYSLICFlux(EulerReducedStateVector topTopStateVector, EulerReducedStateVector topStateVector, EulerReducedStateVector bottomStateVector,
+                                           EulerReducedStateVector bottomBottomStateVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
+                                           EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
 
     static void computeSLICTimeStep(vector<EulerStateVector> & currentCells, vector<EulerStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep, double bias,
                                     int slopeLimiter, EulerMaterialParameters materialParameters);
@@ -38,12 +41,16 @@ public:
     static void computeXSLICTimeStep2D(vector<vector<EulerMultiphysicsStateVector> > & currentCells, vector<vector<EulerMultiphysicsStateVector> > & currentCellsWithBoundary,
                                        double cellSpacing, double timeStep, double bias, int slopeLimiter, EulerMaterialParameters material1Parameters,
                                        EulerMaterialParameters material2Parameters);
+    static void computeXSLICTimeStep2D(vector<vector<EulerReducedStateVector> > & currentCells, vector<vector<EulerReducedStateVector> > & currentCellsWithBoundary, double cellSpacing,
+                                       double timeStep, double bias, int slopeLimiter, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
 
     static void computeYSLICTimeStep2D(vector<vector<EulerStateVector> > & currentCells, vector<vector<EulerStateVector> > & currentCellsWithBoundary, double cellSpacing,
                                        double timeStep, double bias, int slopeLimiter, EulerMaterialParameters materialParameters);
     static void computeYSLICTimeStep2D(vector<vector<EulerMultiphysicsStateVector> > & currentCells, vector<vector<EulerMultiphysicsStateVector> > & currentCellsWithBoundary,
                                        double cellSpacing, double timeStep, double bias, int slopeLimiter, EulerMaterialParameters material1Parameters,
                                        EulerMaterialParameters material2Parameters);
+    static void computeYSLICTimeStep2D(vector<vector<EulerReducedStateVector> > & currentCells, vector<vector<EulerReducedStateVector> > & currentCellsWithBoundary, double cellSpacing,
+                                       double timeStep, double bias, int slopeLimiter, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameter);
 
     static vector<EulerStateVector> solve(vector<EulerStateVector> & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, double bias, int slopeLimiter,
                                           int subcyclingIterations, EulerMaterialParameters materialParameters);
@@ -59,6 +66,9 @@ public:
     static vector<vector<EulerMultiphysicsStateVector> > solve2D(vector<vector<EulerMultiphysicsStateVector> > & initialCells, double cellSpacing, double CFLCoefficient,
                                                                  double finalTime, double bias, int slopeLimiter, int subcyclingIterations, int reinitialisationFrequency,
                                                                  EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
+    static vector<vector<EulerReducedStateVector> > solve2D(vector<vector<EulerReducedStateVector> > & initialCells, double cellSpacing, double CFLCoefficient, double finalTime,
+                                                            double bias, int slopeLimiter, int subcyclingIterations, int reinitialisationFrequency,
+                                                            EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
 };
 
 #endif // SECONDORDERSOLVER_H

@@ -17,6 +17,9 @@ public:
 
     static vector<double> computeYSLICFlux(HPRStateVector topTopStateVector, HPRStateVector topStateVector, HPRStateVector bottomStateVector, HPRStateVector bottomBottomStateVector,
                                            double cellSpacing, double timeStep, double bias, int slopeLimiter, HPRMaterialParameters materialParameters);
+    static vector<double> computeYSLICFlux(HPRReducedStateVector topTopStateVector, HPRReducedStateVector topStateVector, HPRReducedStateVector bottomStateVector,
+                                           HPRReducedStateVector bottomBottomStateVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
+                                           HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
 
     static void computeSLICTimeStep(vector<HPRStateVector> & currentCells, vector<HPRStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep, double bias,int slopeLimiter,
                                     HPRMaterialParameters materialParameters);
@@ -25,9 +28,13 @@ public:
 
     static void computeXSLICTimeStep2D(vector<vector<HPRStateVector> > & currentCells, vector<vector<HPRStateVector> > & currentCellsWithBoundary, double cellSpacing, double timeStep, double bias,
                                        int slopeLimiter, HPRMaterialParameters materialParameters);
+    static void computeXSLICTimeStep2D(vector<vector<HPRReducedStateVector> > & currentCells, vector<vector<HPRReducedStateVector> > & currentCellsWithBoundary, double cellSpacing,
+                                       double timeStep, double bias, int slopeLimiter, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
 
     static void computeYSLICTimeStep2D(vector<vector<HPRStateVector> > & currentCells, vector<vector<HPRStateVector> > & currentCellsWithBoundary, double cellSpacing, double timeStep, double bias,
                                        int slopeLimiter, HPRMaterialParameters materialParameters);
+    static void computeYSLICTimeStep2D(vector<vector<HPRReducedStateVector> > & currentCells, vector<vector<HPRReducedStateVector> > & currentCellsWithBoundary, double cellSpacing,
+                                       double timeStep, double bias, int slopeLimiter, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
 
     static vector<HPRStateVector> solve(vector<HPRStateVector> & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, double bias, int slopeLimiter,
                                         int subcyclingIterations, HPRMaterialParameters materialParameters);
@@ -36,6 +43,9 @@ public:
 
     static vector<vector<HPRStateVector> > solve2D(vector<vector<HPRStateVector> > & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, double bias, int slopeLimiter,
                                                    int subcyclingIterations, HPRMaterialParameters materialParameters);
+    static vector<vector<HPRReducedStateVector> > solve2D(vector<vector<HPRReducedStateVector> > & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, double bias,
+                                                          int slopeLimiter, int subcyclingIterations, int reinitialisationFrequency, HPRMaterialParameters material1Parameters,
+                                                          HPRMaterialParameters material2Parameters);
 };
 
 #endif // HPRSECONDORDERSOLVER_H

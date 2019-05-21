@@ -20,6 +20,8 @@ public:
                                                     EulerMaterialParameters materialParameters);
     static vector<double> computeYLaxFriedrichsFlux(EulerMultiphysicsStateVector topStateVector, EulerMultiphysicsStateVector bottomStateVector, double cellSpacing, double timeStep,
                                                     EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
+    static vector<double> computeYLaxFriedrichsFlux(EulerReducedStateVector topStateVector, EulerReducedStateVector bottomStateVector, double cellSpacing, double timeStep,
+                                                    EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
 
     static vector<double> computeLaxFriedrichsFlux(vector<double> leftConservedVariableVector, vector<double> rightConservedVariableVector, vector<double> leftFluxVector,
                                                    vector<double> rightFluxVector, double cellSpacing, double timeStep);
@@ -34,6 +36,8 @@ public:
     static vector<double> computeYRichtmyerFlux(EulerStateVector topStateVector, EulerStateVector bottomStateVector, double cellSpacing, double timeStep,
                                                 EulerMaterialParameters materialParameters);
     static vector<double> computeYRichtmyerFlux(EulerMultiphysicsStateVector topStateVector, EulerMultiphysicsStateVector bottomStateVector, double cellSpacing, double timeStep,
+                                                EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
+    static vector<double> computeYRichtmyerFlux(EulerReducedStateVector topStateaVector, EulerReducedStateVector bottomStateVector, double cellSpacing, double timeStep,
                                                 EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
 
     static vector<double> computeRichtmyerFlux(vector<double> leftConservedVariableVector, vector<double> rightConservedVariableVector, vector<double> leftFluxVector,
@@ -51,6 +55,8 @@ public:
                                             EulerMaterialParameters materialParameters);
     static vector<double> computeYFORCEFlux(EulerMultiphysicsStateVector topStateVector, EulerMultiphysicsStateVector bottomStateVector, double cellspacing, double timeStep,
                                             EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
+    static vector<double> computeYFORCEFlux(EulerReducedStateVector topStateVector, EulerReducedStateVector bottomStateVector, double cellSpacing, double timeStep,
+                                            EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
 
     static vector<double> computeFORCEFlux(vector<double> laxFriedrichsFlux, vector<double> richtmyerFlux);
 
@@ -65,10 +71,14 @@ public:
                                         double timeStep, EulerMaterialParameters materialParameters);
     static void computeXFORCETimeStep2D(vector<vector<EulerMultiphysicsStateVector> > & currentCells, vector<vector<EulerMultiphysicsStateVector> > & currentCellsWithBoundary,
                                         double cellSpacing, double timeStep, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
+    static void computeXFORCETimeStep2D(vector<vector<EulerReducedStateVector> > & currentCells, vector<vector<EulerReducedStateVector> > & currentCellsWithBoundary,
+                                        double cellSpacing, double timeStep, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
 
     static void computeYFORCETimeStep2D(vector<vector<EulerStateVector> > & currentCells, vector<vector<EulerStateVector> > & currentCellsWithBoundary, double cellSpacing,
                                         double timeStep, EulerMaterialParameters materialParameters);
     static void computeYFORCETimeStep2D(vector<vector<EulerMultiphysicsStateVector> > & currentCells, vector<vector<EulerMultiphysicsStateVector> > & currentCellsWithBoundary,
+                                        double cellSpacing, double timeStep, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
+    static void computeYFORCETimeStep2D(vector<vector<EulerReducedStateVector> > & currentCells, vector<vector<EulerReducedStateVector> > & currentCellsWithBoundary,
                                         double cellSpacing, double timeStep, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
 
     static vector<double> computeFORCEUpdate(vector<double> conservedVariableVector, vector<double> leftFluxVector, vector<double> rightFluxVector, double cellSpacing,
@@ -86,6 +96,8 @@ public:
     static vector<vector<EulerMultiphysicsStateVector> > solve2D(vector<vector<EulerMultiphysicsStateVector> > & initialCells, double cellSpacing, double CFLCoefficient,
                                                                  double finalTime, int subcyclingIterations, EulerMaterialParameters material1Parameters,
                                                                  EulerMaterialParameters material2Parameters);
+    static vector<vector<EulerReducedStateVector> > solve2D(vector<vector<EulerReducedStateVector> > & initialCells, double cellSpacing, double CFLCoefficient, double finalTime,
+                                                            int subcyclingIterations, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
 };
 
 #endif // FIRSTORDERSOLVER_H

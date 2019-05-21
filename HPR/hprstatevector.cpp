@@ -280,7 +280,7 @@ vector<double> HPRStateVector::computeYFluxVector(vector<double> conservedVariab
     fluxVector[1] -= VectorAlgebra::computeDotProduct(computedShearStressTensor[1], computedVelocityVector);
     for (int i = 0; i < 3; i++)
     {
-        fluxVector[11 + i] -= computedShearStressTensor[0][i];
+        fluxVector[11 + i] -= computedShearStressTensor[1][i];
     }
 
     for (int i = 0; i < 3; i++)

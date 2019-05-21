@@ -14,18 +14,24 @@ public:
                                                     HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
 
     static vector<double> computeYLaxFriedrichsFlux(HPRStateVector topStateVector, HPRStateVector bottomStateVector, double cellSpacing, double timeStep, HPRMaterialParameters materialParameters);
+    static vector<double> computeYLaxFriedrichsFlux(HPRReducedStateVector topStateVector, HPRReducedStateVector bottomStateVector, double cellSpacing, double timeStep,
+                                                    HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
 
     static vector<double> computeXRichtmyerFlux(HPRStateVector leftStateVector, HPRStateVector rightStateVector, double cellSpacing, double timeStep, HPRMaterialParameters materialParameters);
     static vector<double> computeXRichtmyerFlux(HPRReducedStateVector leftStateVector, HPRReducedStateVector rightStateVector, double cellSpacing, double timeStep,
                                                 HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
 
     static vector<double> computeYRichtmyerFlux(HPRStateVector topStateVector, HPRStateVector bottomStateVector, double cellSpacing, double timeStep, HPRMaterialParameters materialParameters);
+    static vector<double> computeYRichtmyerFlux(HPRReducedStateVector topStateVector, HPRReducedStateVector bottomStateVector, double cellSpacing, double timeStep,
+                                                HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
 
     static vector<double> computeXFORCEFlux(HPRStateVector leftStateVector, HPRStateVector rightStateVector, double cellSpacing, double timeStep, HPRMaterialParameters materialParameters);
     static vector<double> computeXFORCEFlux(HPRReducedStateVector leftStateVector, HPRReducedStateVector rightStateVector, double cellSpacing, double timeStep,
                                             HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
 
     static vector<double> computeYFORCEFlux(HPRStateVector topStateVector, HPRStateVector bottomStateVector, double cellSpacing, double timeStep, HPRMaterialParameters materialParameters);
+    static vector<double> computeYFORCEFlux(HPRReducedStateVector topStateVector, HPRReducedStateVector bottomStateVector, double cellSpacing, double timeStep,
+                                            HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
 
     static void computeFORCETimeStep(vector<HPRStateVector> & currentCells, vector<HPRStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep,
                                      HPRMaterialParameters materialParameters);
@@ -34,9 +40,13 @@ public:
 
     static void computeXFORCETimeStep2D(vector<vector<HPRStateVector> > & currentCells, vector<vector<HPRStateVector> > & currentCellsWithBoundary, double cellSpacing, double timeStep,
                                         HPRMaterialParameters materialParameters);
+    static void computeXFORCETimeStep2D(vector<vector<HPRReducedStateVector> > & currentCells, vector<vector<HPRReducedStateVector> > & currentCellsWithBoundary, double cellSpacing,
+                                        double timeStep, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
 
     static void computeYFORCETimeStep2D(vector<vector<HPRStateVector> > & currentCells, vector<vector<HPRStateVector> > & currentCellsWithBoundary, double cellSpacing, double timeStep,
                                         HPRMaterialParameters materialParameters);
+    static void computeYFORCETimeStep2D(vector<vector<HPRReducedStateVector> > & currentCells, vector<vector<HPRReducedStateVector> > & currentCellsWithBoundary, double cellSpacing,
+                                        double timeStep, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
 
     static vector<HPRStateVector> solve(vector<HPRStateVector> & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, int subcyclingIterations,
                                         HPRMaterialParameters materialParameters);
@@ -45,6 +55,8 @@ public:
 
     static vector<vector<HPRStateVector> > solve2D(vector<vector<HPRStateVector> > & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, int subcyclingIterations,
                                                    HPRMaterialParameters materialParameters);
+    static vector<vector<HPRReducedStateVector> > solve2D(vector<vector<HPRReducedStateVector> > & initialCells, double cellSpacing, double CFLCoefficient, double finalTime,
+                                                          int subcyclingIterations, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
 };
 
 #endif // HPRFIRSTORDERSOLVER_H
