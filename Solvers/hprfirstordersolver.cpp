@@ -217,6 +217,7 @@ void HPRFirstOrderSolver::computeFORCETimeStep(vector<HPRStateVector> & currentC
 {
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         vector<double> conservedVariableVector = currentCells[i].computeConservedVariableVector(materialParameters);
@@ -232,6 +233,7 @@ void HPRFirstOrderSolver::computeFORCETimeStep(vector<HPRIntermediateStateVector
 {
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         vector<double> conservedVariableVector = currentCells[i].computeConservedVariableVector(material1Parameters, material2Parameters);
@@ -248,6 +250,7 @@ void HPRFirstOrderSolver::computeFORCETimeStep(vector<HPRReducedStateVector> & c
 {
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         vector<double> conservedVariableVector = currentCells[i].computeConservedVariableVector(material1Parameters, material2Parameters);
@@ -265,6 +268,7 @@ void HPRFirstOrderSolver::computeXFORCETimeStep2D(vector<vector<HPRStateVector> 
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -285,6 +289,7 @@ void HPRFirstOrderSolver::computeXFORCETimeStep2D(vector<vector<HPRIntermediateS
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -308,6 +313,7 @@ void HPRFirstOrderSolver::computeXFORCETimeStep2D(vector<vector<HPRReducedStateV
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -331,6 +337,7 @@ void HPRFirstOrderSolver::computeYFORCETimeStep2D(vector<vector<HPRStateVector> 
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -351,6 +358,7 @@ void HPRFirstOrderSolver::computeYFORCETimeStep2D(vector<vector<HPRIntermediateS
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -374,6 +382,7 @@ void HPRFirstOrderSolver::computeYFORCETimeStep2D(vector<vector<HPRReducedStateV
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)

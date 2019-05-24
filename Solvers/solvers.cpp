@@ -22,6 +22,7 @@ vector<EulerStateVector> Solvers::insertBoundaryCells(vector<EulerStateVector> &
         currentCellsWithBoundary[cellCount + 3] = currentCells[cellCount - 2];
     }
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         currentCellsWithBoundary[i + boundarySize] = currentCells[i];
@@ -48,6 +49,7 @@ vector<EulerMultiphysicsStateVector> Solvers::insertBoundaryCells(vector<EulerMu
         currentCellsWithBoundary[cellCount + 3] = currentCells[cellCount - 2];
     }
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         currentCellsWithBoundary[i + boundarySize] = currentCells[i];
@@ -74,6 +76,7 @@ vector<EulerReducedStateVector> Solvers::insertBoundaryCells(vector<EulerReduced
         currentCellsWithBoundary[cellCount + 3] = currentCells[cellCount - 2];
     }
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         currentCellsWithBoundary[i + boundarySize] = currentCells[i];
@@ -90,12 +93,14 @@ vector<vector<EulerStateVector> > Solvers::insertBoundaryCells2D(vector<vector<E
 
     if (boundarySize == 1)
     {
+#pragma omp parallel for
         for (int i = 0; i < rowCount; i++)
         {
             currentCellsWithBoundary[i + 1][0] = currentCells[i][0];
             currentCellsWithBoundary[i + 1][columnCount + 1] = currentCells[i][columnCount - 1];
         }
 
+#pragma omp parallel for
         for (int i = 0; i < columnCount; i++)
         {
             currentCellsWithBoundary[0][i + 1] = currentCells[0][i];
@@ -104,6 +109,7 @@ vector<vector<EulerStateVector> > Solvers::insertBoundaryCells2D(vector<vector<E
     }
     else if (boundarySize == 2)
     {
+#pragma omp parallel for
         for (int i = 0; i < rowCount; i++)
         {
             currentCellsWithBoundary[i + 2][0] = currentCells[i][1];
@@ -113,6 +119,7 @@ vector<vector<EulerStateVector> > Solvers::insertBoundaryCells2D(vector<vector<E
             currentCellsWithBoundary[i + 2][columnCount + 3] = currentCells[i][columnCount - 2];
         }
 
+#pragma omp parallel for
         for (int i = 0; i < columnCount; i++)
         {
             currentCellsWithBoundary[0][i + 2] = currentCells[1][i];
@@ -123,6 +130,7 @@ vector<vector<EulerStateVector> > Solvers::insertBoundaryCells2D(vector<vector<E
         }
     }
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -142,12 +150,14 @@ vector<vector<EulerMultiphysicsStateVector> > Solvers::insertBoundaryCells2D(vec
 
     if (boundarySize == 1)
     {
+#pragma omp parallel for
         for (int i = 0; i < rowCount; i++)
         {
             currentCellsWithBoundary[i + 1][0] = currentCells[i][0];
             currentCellsWithBoundary[i + 1][columnCount + 1] = currentCells[i][columnCount - 1];
         }
 
+#pragma omp parallel for
         for (int i = 0; i < columnCount; i++)
         {
             currentCellsWithBoundary[0][i + 1] = currentCells[0][i];
@@ -156,6 +166,7 @@ vector<vector<EulerMultiphysicsStateVector> > Solvers::insertBoundaryCells2D(vec
     }
     else if (boundarySize == 2)
     {
+#pragma omp parallel for
         for (int i = 0; i < rowCount; i++)
         {
             currentCellsWithBoundary[i + 2][0] = currentCells[i][1];
@@ -165,6 +176,7 @@ vector<vector<EulerMultiphysicsStateVector> > Solvers::insertBoundaryCells2D(vec
             currentCellsWithBoundary[i + 2][columnCount + 3] = currentCells[i][columnCount - 2];
         }
 
+#pragma omp parallel for
         for (int i = 0; i < columnCount; i++)
         {
             currentCellsWithBoundary[0][i + 2] = currentCells[1][i];
@@ -175,6 +187,7 @@ vector<vector<EulerMultiphysicsStateVector> > Solvers::insertBoundaryCells2D(vec
         }
     }
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -194,12 +207,14 @@ vector<vector<EulerReducedStateVector> > Solvers::insertBoundaryCells2D(vector<v
 
     if (boundarySize == 1)
     {
+#pragma omp parallel for
         for (int i = 0; i < rowCount; i++)
         {
             currentCellsWithBoundary[i + 1][0] = currentCells[i][0];
             currentCellsWithBoundary[i + 1][columnCount + 1] = currentCells[i][columnCount - 1];
         }
 
+#pragma omp parallel for
         for (int i = 0; i < columnCount; i++)
         {
             currentCellsWithBoundary[0][i + 1] = currentCells[0][i];
@@ -208,6 +223,7 @@ vector<vector<EulerReducedStateVector> > Solvers::insertBoundaryCells2D(vector<v
     }
     else if (boundarySize == 2)
     {
+#pragma omp parallel for
         for (int i = 0; i < rowCount; i++)
         {
             currentCellsWithBoundary[i + 2][0] = currentCells[i][1];
@@ -217,6 +233,7 @@ vector<vector<EulerReducedStateVector> > Solvers::insertBoundaryCells2D(vector<v
             currentCellsWithBoundary[i + 2][columnCount + 3] = currentCells[i][columnCount - 2];
         }
 
+#pragma omp parallel for
         for (int i = 0; i < columnCount; i++)
         {
             currentCellsWithBoundary[0][i + 2] = currentCells[1][i];
@@ -227,6 +244,7 @@ vector<vector<EulerReducedStateVector> > Solvers::insertBoundaryCells2D(vector<v
         }
     }
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -243,6 +261,7 @@ double Solvers::computeMaximumWaveSpeed(vector<EulerStateVector> & currentCells,
     double maximumWaveSpeed = 0.0;
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         double waveSpeed = abs(currentCells[i].getXVelocity()) + currentCells[i].computeSoundSpeed(materialParameters);
@@ -261,6 +280,7 @@ double Solvers::computeMaximumWaveSpeed(vector<EulerMultiphysicsStateVector> & c
     double maximumWaveSpeed = 0.0;
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         double waveSpeed = abs(currentCells[i].getInterfaceXVelocity()) + max(currentCells[i].computeMaterial1SoundSpeed(material1Parameters),
@@ -280,6 +300,7 @@ double Solvers::computeMaximumWaveSpeed(vector<EulerReducedStateVector> & curren
     double maximumWaveSpeed = 0.0;
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         double waveSpeed = abs(currentCells[i].getInterfaceXVelocity()) + max(currentCells[i].computeMaterial1SoundSpeed(material1Parameters),
@@ -300,6 +321,7 @@ double Solvers::computeMaximumWaveSpeed2D(vector<vector<EulerStateVector> > & cu
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -322,6 +344,7 @@ double Solvers::computeMaximumWaveSpeed2D(vector<vector<EulerMultiphysicsStateVe
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -345,6 +368,7 @@ double Solvers::computeMaximumWaveSpeed2D(vector<vector<EulerReducedStateVector>
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)

@@ -259,6 +259,7 @@ void HPRForcingSolver::computeRungeKuttaTimeStep(vector<HPRStateVector> & curren
 {
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         vector<double> leftConservedVariableVector = currentCellsWithBoundary[i].computeConservedVariableVector(materialParameters);
@@ -275,6 +276,7 @@ void HPRForcingSolver::computeRungeKuttaTimeStep(vector<HPRIntermediateStateVect
 {
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         vector<double> leftConservedVariableVector = currentCellsWithBoundary[i].computeConservedVariableVector(material1Parameters, material2Parameters);
@@ -292,6 +294,7 @@ void HPRForcingSolver::computeRungeKuttaTimeStep(vector<HPRReducedStateVector> &
 {
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         vector<double> leftConservedVariableVector = currentCellsWithBoundary[i].computeConservedVariableVector(material1Parameters, material2Parameters);
@@ -310,6 +313,7 @@ void HPRForcingSolver::computeRungeKuttaTimeStep2D(vector<vector<HPRStateVector>
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -335,6 +339,7 @@ void HPRForcingSolver::computeRungeKuttaTimeStep2D(vector<vector<HPRReducedState
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)

@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 
     //EulerTests::solveToroTest1(1000);
     //EulerTests::solve2DToroTest1(100);
-    //EulerMultiphysicsTests::solveToroTest1(100, 3);
+    //EulerMultiphysicsTests::solveToroTest1(400, 3);
     //EulerMultiphysicsTests::solveFedkiwTest(100, 3);
     //EulerMultiphysicsTests::solveChinnayyaTest(100);
 
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     //MHDTests::solveDumbserTest2(400);
     //MHDTests::solveDumbserTest1(400);
 
-    //HPRTests::solveStokesFirstProblem(400, 100);
+    //HPRTests::solveStokesFirstProblem(200, 1);
     //HPRTests::solveHeatConductionProblem(100, 20);
     //HPRTests::solveBartonTest1(100, 0);
     //HPRTests::solveZhangElasticPlasticTest(100, 1);
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     //HPRIntermediateTests::solveBartonTest1(400, 3);
     //HPRIntermediateTests::solveZhangTest(400, 3);
     //HPRIntermediateTests::solveZhangElasticPlasticTest(100, 1, 3);
-    HPRIntermediateTests::solve2DBartonTest1(100, 0);
+    //HPRIntermediateTests::solve2DBartonTest1(100, 0);
 
     //HPRReducedTests::solveBartonTest1(200, 0);
     //HPRReducedTests::solveZhangTest(800, 0);

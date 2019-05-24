@@ -9,6 +9,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<EulerMultiphysicsSta
     int interfaceLocation = 0;
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         if (currentCells[i].getMaterial1VolumeFraction() < 0.5 && currentCells[i - 1].getMaterial1VolumeFraction() >= 0.5)
@@ -39,6 +40,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<EulerMultiphy
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         int interfaceCount1 = 0;
@@ -98,6 +100,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<EulerMultiphy
         }
     }
 
+#pragma omp parallel for
     for (int i = 0; i < columnCount; i++)
     {
         int interfaceCount1 = 0;
@@ -163,6 +166,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<EulerReducedStateVec
     int interfaceLocation = 0;
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         if (currentCells[i].getMaterial1VolumeFraction() < 0.5 && currentCells[i - 1].getMaterial1VolumeFraction() >= 0.5)
@@ -192,6 +196,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<EulerReducedS
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         int interfaceCount1 = 0;
@@ -249,6 +254,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<EulerReducedS
         }
     }
 
+#pragma omp parallel for
     for (int i = 0; i < columnCount; i++)
     {
         int interfaceCount1 = 0;
@@ -313,6 +319,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<ElasticMultiphysicsS
     int interfaceLocation = 0;
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         if (currentCells[i].getMaterial1VolumeFraction() < 0.5 && currentCells[i - 1].getMaterial1VolumeFraction() >= 0.5)
@@ -343,6 +350,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<ElasticReducedStateV
     int interfaceLocation = 0;
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         if (currentCells[i].getMaterial1VolumeFraction() < 0.5 && currentCells[i - 1].getMaterial1VolumeFraction() >= 0.5)
@@ -371,6 +379,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<ElasticReduce
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         int interfaceCount1 = 0;
@@ -428,6 +437,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<ElasticReduce
         }
     }
 
+#pragma omp parallel for
     for (int i = 0; i < columnCount; i++)
     {
         int interfaceCount1 = 0;
@@ -491,6 +501,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<HPRIntermediateState
     int interfaceLocation = 0;
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         if (currentCells[i].getMaterial1VolumeFraction() < 0.5 && currentCells[i - 1].getMaterial1VolumeFraction() >= 0.5)
@@ -520,6 +531,7 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<HPRReducedStateVecto
     int interfaceLocation = 0;
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         if (currentCells[i].getMaterial1VolumeFraction() < 0.5 && currentCells[i - 1].getMaterial1VolumeFraction() >= 0.5)

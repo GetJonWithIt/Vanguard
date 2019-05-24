@@ -22,6 +22,7 @@ vector<HPRStateVector> HPRSolvers::insertBoundaryCells(vector<HPRStateVector> & 
         currentCellsWithBoundary[cellCount + 3] = currentCells[cellCount - 2];
     }
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         currentCellsWithBoundary[i + boundarySize] = currentCells[i];
@@ -48,6 +49,7 @@ vector<HPRIntermediateStateVector> HPRSolvers::insertBoundaryCells(vector<HPRInt
         currentCellsWithBoundary[cellCount + 3] = currentCells[cellCount - 2];
     }
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         currentCellsWithBoundary[i + boundarySize] = currentCells[i];
@@ -74,6 +76,7 @@ vector<HPRReducedStateVector> HPRSolvers::insertBoundaryCells(vector<HPRReducedS
         currentCellsWithBoundary[cellCount + 3] = currentCells[cellCount - 2];
     }
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         currentCellsWithBoundary[i + boundarySize] = currentCells[i];
@@ -90,12 +93,14 @@ vector<vector<HPRStateVector> > HPRSolvers::insertBoundaryCells2D(vector<vector<
 
     if (boundarySize == 1)
     {
+#pragma omp parallel for
         for (int i = 0; i < rowCount; i++)
         {
             currentCellsWithBoundary[i + 1][0] = currentCells[i][0];
             currentCellsWithBoundary[i + 1][columnCount + 1] = currentCells[i][columnCount - 1];
         }
 
+#pragma omp parallel for
         for (int i = 0; i < columnCount; i++)
         {
             currentCellsWithBoundary[0][i + 1] = currentCells[0][i];
@@ -104,6 +109,7 @@ vector<vector<HPRStateVector> > HPRSolvers::insertBoundaryCells2D(vector<vector<
     }
     else if (boundarySize == 2)
     {
+#pragma omp parallel for
         for (int i = 0; i < rowCount; i++)
         {
             currentCellsWithBoundary[i + 2][0] = currentCells[i][1];
@@ -113,6 +119,7 @@ vector<vector<HPRStateVector> > HPRSolvers::insertBoundaryCells2D(vector<vector<
             currentCellsWithBoundary[i + 2][columnCount + 3] = currentCells[i][columnCount - 2];
         }
 
+#pragma omp parallel for
         for (int i = 0; i < columnCount; i++)
         {
             currentCellsWithBoundary[0][i + 2] = currentCells[1][i];
@@ -123,6 +130,7 @@ vector<vector<HPRStateVector> > HPRSolvers::insertBoundaryCells2D(vector<vector<
         }
     }
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -142,12 +150,14 @@ vector<vector<HPRIntermediateStateVector> > HPRSolvers::insertBoundaryCells2D(ve
 
     if (boundarySize == 1)
     {
+#pragma omp parallel for
         for (int i = 0; i < rowCount; i++)
         {
             currentCellsWithBoundary[i + 1][0] = currentCells[i][0];
             currentCellsWithBoundary[i + 1][columnCount + 1] = currentCells[i][columnCount - 1];
         }
 
+#pragma omp parallel for
         for (int i = 0; i < columnCount; i++)
         {
             currentCellsWithBoundary[0][i + 1] = currentCells[0][i];
@@ -156,6 +166,7 @@ vector<vector<HPRIntermediateStateVector> > HPRSolvers::insertBoundaryCells2D(ve
     }
     else if (boundarySize == 2)
     {
+#pragma omp parallel for
         for (int i = 0; i < rowCount; i++)
         {
             currentCellsWithBoundary[i + 2][0] = currentCells[i][1];
@@ -165,6 +176,7 @@ vector<vector<HPRIntermediateStateVector> > HPRSolvers::insertBoundaryCells2D(ve
             currentCellsWithBoundary[i + 2][columnCount + 3] = currentCells[i][columnCount - 2];
         }
 
+#pragma omp parallel for
         for (int i = 0 ; i < columnCount; i++)
         {
             currentCellsWithBoundary[0][i + 2] = currentCells[1][i];
@@ -175,6 +187,7 @@ vector<vector<HPRIntermediateStateVector> > HPRSolvers::insertBoundaryCells2D(ve
         }
     }
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -194,12 +207,14 @@ vector<vector<HPRReducedStateVector> > HPRSolvers::insertBoundaryCells2D(vector<
 
     if (boundarySize == 1)
     {
+#pragma omp parallel for
         for (int i = 0; i < rowCount; i++)
         {
             currentCellsWithBoundary[i + 1][0] = currentCells[i][0];
             currentCellsWithBoundary[i + 1][columnCount + 1] = currentCells[i][columnCount - 1];
         }
 
+#pragma omp parallel for
         for (int i = 0; i < columnCount; i++)
         {
             currentCellsWithBoundary[0][i + 1] = currentCells[0][i];
@@ -208,6 +223,7 @@ vector<vector<HPRReducedStateVector> > HPRSolvers::insertBoundaryCells2D(vector<
     }
     else if (boundarySize == 2)
     {
+#pragma omp parallel for
         for (int i = 0; i < rowCount; i++)
         {
             currentCellsWithBoundary[i + 2][0] = currentCells[i][1];
@@ -217,6 +233,7 @@ vector<vector<HPRReducedStateVector> > HPRSolvers::insertBoundaryCells2D(vector<
             currentCellsWithBoundary[i + 2][columnCount + 3] = currentCells[i][columnCount - 2];
         }
 
+#pragma omp parallel for
         for (int i = 0; i < columnCount; i++)
         {
             currentCellsWithBoundary[0][i + 2] = currentCells[1][i];
@@ -227,6 +244,7 @@ vector<vector<HPRReducedStateVector> > HPRSolvers::insertBoundaryCells2D(vector<
         }
     }
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -243,6 +261,7 @@ double HPRSolvers::computeMaximumWaveSpeed(vector<HPRStateVector> & currentCells
     double maximumWaveSpeed = 0.0;
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         double waveSpeed = abs(currentCells[i].getXVelocity()) + HPRAcousticTensor::computeMaximumWaveSpeed(currentCells[i], materialParameters, 0);
@@ -261,6 +280,7 @@ double HPRSolvers::computeMaximumWaveSpeed(vector<HPRIntermediateStateVector> & 
     double maximumWaveSpeed = 0.0;
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         double waveSpeed = abs(currentCells[i].getInterfaceXVelocity()) + HPRIntermediateAcousticTensor::computeMaximumWaveSpeed(currentCells[i], material1Parameters, material2Parameters, 0);
@@ -279,6 +299,7 @@ double HPRSolvers::computeMaximumWaveSpeed(vector<HPRReducedStateVector> & curre
     double maximumWaveSpeed = 0.0;
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         double waveSpeed = abs(currentCells[i].getInterfaceXVelocity()) + HPRReducedAcousticTensor::computeMaximumWaveSpeed(currentCells[i], material1Parameters, material2Parameters, 0);
@@ -298,6 +319,7 @@ double HPRSolvers::computeMaximumWaveSpeed2D(vector<vector<HPRStateVector> > & c
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -322,6 +344,7 @@ double HPRSolvers::computeMaximumWaveSpeed2D(vector<vector<HPRIntermediateStateV
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -346,6 +369,7 @@ double HPRSolvers::computeMaximumWaveSpeed2D(vector<vector<HPRReducedStateVector
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)

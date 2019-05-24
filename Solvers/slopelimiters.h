@@ -12,6 +12,8 @@
 #include "HPR/Multiphysics/hprreducedstatevector.h"
 #include "HPR/Multiphysics/hprintermediatestatevector.h"
 #include "Mathematics/vectoralgebra.h"
+
+#include <omp.h>
 using namespace std;
 
 class SlopeLimiters

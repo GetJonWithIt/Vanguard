@@ -82,6 +82,7 @@ void SecondOrderSolver::computeSLICTimeStep(vector<EulerStateVector> & currentCe
 {
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         vector<double> conservedVariableVector = currentCells[i].computeConservedVariableVector(materialParameters);
@@ -101,6 +102,7 @@ void SecondOrderSolver::computeSLICTimeStep(vector<EulerMultiphysicsStateVector>
 {
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         vector<double> conservedVariableVector = currentCells[i].computeConservedVariableVector(material1Parameters, material2Parameters);
@@ -120,6 +122,7 @@ void SecondOrderSolver::computeSLICTimeStep(vector<EulerReducedStateVector> & cu
 {
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         vector<double> conservedVariableVector = currentCells[i].computeConservedVariableVector(material1Parameters, material2Parameters);
@@ -140,6 +143,7 @@ void SecondOrderSolver::computeXSLICTimeStep2D(vector<vector<EulerStateVector> >
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -164,6 +168,7 @@ void SecondOrderSolver::computeXSLICTimeStep2D(vector<vector<EulerMultiphysicsSt
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -188,6 +193,7 @@ void SecondOrderSolver::computeXSLICTimeStep2D(vector<vector<EulerReducedStateVe
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -211,6 +217,7 @@ void SecondOrderSolver::computeYSLICTimeStep2D(vector<vector<EulerStateVector> >
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -235,6 +242,7 @@ void SecondOrderSolver::computeYSLICTimeStep2D(vector<vector<EulerMultiphysicsSt
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -259,6 +267,7 @@ void SecondOrderSolver::computeYSLICTimeStep2D(vector<vector<EulerReducedStateVe
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)

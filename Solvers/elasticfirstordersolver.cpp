@@ -184,6 +184,7 @@ void ElasticFirstOrderSolver::computeFORCETimeStep(vector<ElasticStateVector> & 
 {
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         vector<double> conservedVariableVector = currentCells[i].computeConservedVariableVector(materialParameters);
@@ -201,6 +202,7 @@ void ElasticFirstOrderSolver::computeFORCETimeStep(vector<ElasticMultiphysicsSta
 {
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         vector<double> conservedVariableVector = currentCells[i].computeConservedVariableVector(material1Parameters, material2Parameters);
@@ -220,6 +222,7 @@ void ElasticFirstOrderSolver::computeFORCETimeStep(vector<ElasticReducedStateVec
 {
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         vector<double> conservedVariableVector = currentCells[i].computeConservedVariableVector(material1Parameters, material2Parameters);
@@ -239,6 +242,7 @@ void ElasticFirstOrderSolver::computeXFORCETimeStep2D(vector<vector<ElasticState
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -263,6 +267,7 @@ void ElasticFirstOrderSolver::computeXFORCETimeStep2D(vector<vector<ElasticReduc
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -286,6 +291,7 @@ void ElasticFirstOrderSolver::computeYFORCETimeStep2D(vector<vector<ElasticState
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -310,6 +316,7 @@ void ElasticFirstOrderSolver::computeYFORCETimeStep2D(vector<vector<ElasticReduc
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)

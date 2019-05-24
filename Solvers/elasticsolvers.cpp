@@ -22,6 +22,7 @@ vector<ElasticStateVector> ElasticSolvers::insertBoundaryCells(vector<ElasticSta
         currentCellsWithBoundary[cellCount + 3] = currentCells[cellCount - 2];
     }
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         currentCellsWithBoundary[i + boundarySize] = currentCells[i];
@@ -48,6 +49,7 @@ vector<ElasticMultiphysicsStateVector> ElasticSolvers::insertBoundaryCells(vecto
         currentCellsWithBoundary[cellCount + 3] = currentCells[cellCount - 2];
     }
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         currentCellsWithBoundary[i + boundarySize] = currentCells[i];
@@ -74,6 +76,7 @@ vector<ElasticReducedStateVector> ElasticSolvers::insertBoundaryCells(vector<Ela
         currentCellsWithBoundary[cellCount + 3] = currentCells[cellCount - 2];
     }
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         currentCellsWithBoundary[i + boundarySize] = currentCells[i];
@@ -90,12 +93,14 @@ vector<vector<ElasticStateVector> > ElasticSolvers::insertBoundaryCells2D(vector
 
     if (boundarySize == 1)
     {
+#pragma omp parallel for
         for (int i = 0; i < rowCount; i++)
         {
             currentCellsWithBoundary[i + 1][0] = currentCells[i][0];
             currentCellsWithBoundary[i + 1][columnCount + 1] = currentCells[i][columnCount - 1];
         }
 
+#pragma omp parallel for
         for (int i = 0; i < columnCount; i++)
         {
             currentCellsWithBoundary[0][i + 1] = currentCells[0][i];
@@ -104,6 +109,7 @@ vector<vector<ElasticStateVector> > ElasticSolvers::insertBoundaryCells2D(vector
     }
     else if (boundarySize == 2)
     {
+#pragma omp parallel for
         for (int i = 0; i < rowCount; i++)
         {
             currentCellsWithBoundary[i + 2][0] = currentCells[i][1];
@@ -113,6 +119,7 @@ vector<vector<ElasticStateVector> > ElasticSolvers::insertBoundaryCells2D(vector
             currentCellsWithBoundary[i + 2][columnCount + 3] = currentCells[i][columnCount - 2];
         }
 
+#pragma omp parallel for
         for (int i = 0; i < columnCount; i++)
         {
             currentCellsWithBoundary[0][i + 2] = currentCells[1][i];
@@ -123,6 +130,7 @@ vector<vector<ElasticStateVector> > ElasticSolvers::insertBoundaryCells2D(vector
         }
     }
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -142,12 +150,14 @@ vector<vector<ElasticReducedStateVector> > ElasticSolvers::insertBoundaryCells2D
 
     if (boundarySize == 1)
     {
+#pragma omp parallel for
         for (int i = 0; i < rowCount; i++)
         {
             currentCellsWithBoundary[i + 1][0] = currentCells[i][0];
             currentCellsWithBoundary[i + 1][columnCount + 1] = currentCells[i][columnCount - 1];
         }
 
+#pragma omp parallel for
         for (int i = 0; i < columnCount; i++)
         {
             currentCellsWithBoundary[0][i + 1] = currentCells[0][i];
@@ -156,6 +166,7 @@ vector<vector<ElasticReducedStateVector> > ElasticSolvers::insertBoundaryCells2D
     }
     else if (boundarySize == 2)
     {
+#pragma omp parallel for
         for (int i = 0; i < rowCount; i++)
         {
             currentCellsWithBoundary[i + 2][0] = currentCells[i][1];
@@ -165,6 +176,7 @@ vector<vector<ElasticReducedStateVector> > ElasticSolvers::insertBoundaryCells2D
             currentCellsWithBoundary[i + 2][columnCount + 3] = currentCells[i][columnCount - 2];
         }
 
+#pragma omp parallel for
         for (int i = 0; i < columnCount; i++)
         {
             currentCellsWithBoundary[0][i + 2] = currentCells[1][i];
@@ -175,6 +187,7 @@ vector<vector<ElasticReducedStateVector> > ElasticSolvers::insertBoundaryCells2D
         }
     }
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -191,6 +204,7 @@ double ElasticSolvers::computeMaximumWaveSpeed(vector<ElasticStateVector> & curr
     double maximumWaveSpeed = 0.0;
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         double waveSpeed = abs(currentCells[i].getXVelocity()) + currentCells[i].computeSoundSpeed(materialParameters, 0);
@@ -210,6 +224,7 @@ double ElasticSolvers::computeMaximumWaveSpeed(vector<ElasticMultiphysicsStateVe
     double maximumWaveSpeed = 0.0;
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         double waveSpeed = abs(currentCells[i].getInterfaceXVelocity()) + max(currentCells[i].computeMaterial1SoundSpeed(material1Parameters, 0),
@@ -230,6 +245,7 @@ double ElasticSolvers::computeMaximumWaveSpeed(vector<ElasticReducedStateVector>
     double maximumWaveSpeed = 0.0;
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         double waveSpeed = abs(currentCells[i].getInterfaceXVelocity()) + max(currentCells[i].computeMaterial1SoundSpeed(material1Parameters, 0),
@@ -250,6 +266,7 @@ double ElasticSolvers::computeMaximumWaveSpeed2D(vector<vector<ElasticStateVecto
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -274,6 +291,7 @@ double ElasticSolvers::computeMaximumWaveSpeed2D(vector<vector<ElasticReducedSta
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)

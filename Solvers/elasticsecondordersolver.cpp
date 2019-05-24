@@ -72,6 +72,7 @@ void ElasticSecondOrderSolver::computeSLICTimeStep(vector<ElasticStateVector> & 
 {
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         vector<double> conservedVariableVector = currentCells[i].computeConservedVariableVector(materialParameters);
@@ -92,6 +93,7 @@ void ElasticSecondOrderSolver::computeSLICTimeStep(vector<ElasticMultiphysicsSta
 {
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         vector<double> conservedVariableVector = currentCells[i].computeConservedVariableVector(material1Parameters, material2Parameters);
@@ -112,6 +114,7 @@ void ElasticSecondOrderSolver::computeSLICTimeStep(vector<ElasticReducedStateVec
 {
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         vector<double> conservedVariableVector = currentCells[i].computeConservedVariableVector(material1Parameters, material2Parameters);
@@ -132,6 +135,7 @@ void ElasticSecondOrderSolver::computeXSLICTimeStep2D(vector<vector<ElasticState
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -156,6 +160,7 @@ void ElasticSecondOrderSolver::computeXSLICTimeStep2D(vector<vector<ElasticReduc
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -179,6 +184,7 @@ void ElasticSecondOrderSolver::computeYSLICTimeStep2D(vector<vector<ElasticState
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -203,6 +209,7 @@ void ElasticSecondOrderSolver::computeYSLICTimeStep2D(vector<vector<ElasticReduc
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)

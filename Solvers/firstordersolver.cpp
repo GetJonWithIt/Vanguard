@@ -234,6 +234,7 @@ void FirstOrderSolver::computeFORCETimeStep(vector<EulerStateVector> & currentCe
 {
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         vector<double> conservedVariableVector = currentCells[i].computeConservedVariableVector(materialParameters);
@@ -249,6 +250,7 @@ void FirstOrderSolver::computeFORCETimeStep(vector<EulerMultiphysicsStateVector>
 {
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         vector<double> conservedVariableVector = currentCells[i].computeConservedVariableVector(material1Parameters, material2Parameters);
@@ -267,6 +269,7 @@ void FirstOrderSolver::computeFORCETimeStep(vector<EulerReducedStateVector> & cu
 {
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         vector<double> conservedVariableVector = currentCells[i].computeConservedVariableVector(material1Parameters, material2Parameters);
@@ -286,6 +289,7 @@ void FirstOrderSolver::computeXFORCETimeStep2D(vector<vector<EulerStateVector> >
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -308,6 +312,7 @@ void FirstOrderSolver::computeXFORCETimeStep2D(vector<vector<EulerMultiphysicsSt
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -331,6 +336,7 @@ void FirstOrderSolver::computeXFORCETimeStep2D(vector<vector<EulerReducedStateVe
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -354,6 +360,7 @@ void FirstOrderSolver::computeYFORCETimeStep2D(vector<vector<EulerStateVector> >
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -376,6 +383,7 @@ void FirstOrderSolver::computeYFORCETimeStep2D(vector<vector<EulerMultiphysicsSt
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
@@ -399,6 +407,7 @@ void FirstOrderSolver::computeYFORCETimeStep2D(vector<vector<EulerReducedStateVe
     int rowCount = currentCells.size();
     int columnCount = currentCells[0].size();
 
+#pragma omp parallel for
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < columnCount; j++)
