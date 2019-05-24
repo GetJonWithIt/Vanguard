@@ -9,17 +9,17 @@ void MHDTests::solveDumbserTest1(int cellCount)
     double cellSpacing = 1.0 / cellCount;
 
     vector<MHDStateVector> initialCells(cellCount);
-    MHDMaterialParameters materialParameters(5.0 / 3.0);
+    MHDMaterialParameters materialParameters(2.0);
 
     for (int i = 0; i < cellCount; i++)
     {
         if (i <= (0.5 * cellCount))
         {
-            initialCells[i] = MHDStateVector(1.0, 0.0, 0.0, 0.0, 1.0, 3.0 / 4.0, 1.0, 0.0, 0.0);
+            initialCells[i] = MHDStateVector(1.0, 0.0, 0.0, 0.0, 1.0, 0.75, 1.0, 0.0, 0.0);
         }
         else
         {
-            initialCells[i] = MHDStateVector(0.125, 0.0, 0.0, 0.0, 0.1, 3.0 / 4.0, -1.0, 0.0, 0.0);
+            initialCells[i] = MHDStateVector(0.125, 0.0, 0.0, 0.0, 0.1, 0.75, -1.0, 0.0, 0.0);
         }
     }
 

@@ -69,8 +69,8 @@ void EulerReducedStateVector::setConservedVariableVector(vector<double> newConse
     double velocitySquared = (interfaceXVelocity * interfaceXVelocity) + (interfaceYVelocity * interfaceYVelocity) + (interfaceZVelocity * interfaceZVelocity);
     double totalSpecificInternalEnergy = (newConservedVariableVector[7] / totalDensity) - (0.5 * velocitySquared);
 
-    double material1Pressure = EulerEquationOfState::computePressure(material1Density, totalSpecificInternalEnergy, material1Parameters);
-    double material2Pressure = EulerEquationOfState::computePressure(material2Density, totalSpecificInternalEnergy, material2Parameters);
+    double material1Pressure = EulerEquationOfState::computePressure(totalDensity, totalSpecificInternalEnergy, material1Parameters);
+    double material2Pressure = EulerEquationOfState::computePressure(totalDensity, totalSpecificInternalEnergy, material2Parameters);
     interfacePressure = (material1VolumeFraction * material1Pressure) + (material2VolumeFraction * material2Pressure);
 }
 
@@ -116,16 +116,17 @@ vector<double> EulerReducedStateVector::computeConservedVariableVector(EulerMate
     conservedVariableVector[5] = material1VolumeFraction * material1Density;
     conservedVariableVector[6] = material2VolumeFraction * material2Density;
 
-    double material1TotalEnergy = computeMaterial1TotalEnergy(material1Parameters);
-    double material2TotalEnergy = computeMaterial2TotalEnergy(material2Parameters);
+    double velocitySquared = (interfaceXVelocity * interfaceXVelocity) + (interfaceYVelocity * interfaceYVelocity) + (interfaceZVelocity * interfaceZVelocity);
+
+    double material1TotalEnergy = EulerEquationOfState::computeSpecificInternalEnergy(totalDensity, interfacePressure, material1Parameters) + (0.5 * velocitySquared);
+    double material2TotalEnergy = EulerEquationOfState::computeSpecificInternalEnergy(totalDensity, interfacePressure, material2Parameters) + (0.5 * velocitySquared);
     double computedTotalEnergy = (material1VolumeFraction * material1TotalEnergy) + (material2VolumeFraction * material2TotalEnergy);
 
     conservedVariableVector[7] = totalDensity * computedTotalEnergy;
     return conservedVariableVector;
 }
 
-vector<double> EulerReducedStateVector::computeXFluxVector(vector<double> conservedVariableVector, EulerMaterialParameters material1Parameters,
-                                                           EulerMaterialParameters material2Parameters)
+vector<double> EulerReducedStateVector::computeXFluxVector(vector<double> conservedVariableVector, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters)
 {
     vector<double> fluxVector(8);
 
@@ -158,8 +159,8 @@ vector<double> EulerReducedStateVector::computeXFluxVector(vector<double> conser
             (computedInterfaceZVelocity * computedInterfaceZVelocity);
     double totalSpecificInternalEnergy = computedTotalEnergy - (0.5 * velocitySquared);
 
-    double computedMaterial1Pressure = EulerEquationOfState::computePressure(computedMaterial1Density, totalSpecificInternalEnergy, material1Parameters);
-    double computedMaterial2Pressure = EulerEquationOfState::computePressure(computedMaterial2Density, totalSpecificInternalEnergy, material2Parameters);
+    double computedMaterial1Pressure = EulerEquationOfState::computePressure(computedTotalDensity, totalSpecificInternalEnergy, material1Parameters);
+    double computedMaterial2Pressure = EulerEquationOfState::computePressure(computedTotalDensity, totalSpecificInternalEnergy, material2Parameters);
     double computedInterfacePressure = (computedMaterial1VolumeFraction * computedMaterial1Pressure) + (computedMaterial2VolumeFraction * computedMaterial2Pressure);
 
     fluxVector[0] = computedTotalDensity * computedInterfaceXVelocity;
@@ -179,6 +180,62 @@ vector<double> EulerReducedStateVector::computeXFluxVector(vector<double> conser
 vector<double> EulerReducedStateVector::computeXFluxVector(EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters)
 {
     return computeXFluxVector(computeConservedVariableVector(material1Parameters, material2Parameters), material1Parameters, material2Parameters);
+}
+
+vector<double> EulerReducedStateVector::computeYFluxVector(vector<double> conservedVariableVector, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters)
+{
+    vector<double> fluxVector(8);
+
+    double computedTotalDensity = conservedVariableVector[0];
+
+    double computedMaterial1VolumeFraction;
+    if ((conservedVariableVector[1] / computedTotalDensity) < 0.001)
+    {
+        computedMaterial1VolumeFraction = 0.001;
+    }
+    else if ((conservedVariableVector[1] / computedTotalDensity) > 0.999)
+    {
+        computedMaterial1VolumeFraction = 0.999;
+    }
+    else
+    {
+        computedMaterial1VolumeFraction = conservedVariableVector[1] / computedTotalDensity;
+    }
+    double computedMaterial2VolumeFraction = 1.0 - computedMaterial1VolumeFraction;
+
+    double computedInterfaceXVelocity = conservedVariableVector[2] / computedTotalDensity;
+    double computedInterfaceYVelocity = conservedVariableVector[3] / computedTotalDensity;
+    double computedInterfaceZVelocity = conservedVariableVector[4] / computedTotalDensity;
+
+    double computedMaterial1Density = conservedVariableVector[5] / computedMaterial1VolumeFraction;
+    double computedMaterial2Density = conservedVariableVector[6] / computedMaterial2VolumeFraction;
+
+    double computedTotalEnergy = conservedVariableVector[7] / computedTotalDensity;
+    double velocitySquared = (computedInterfaceXVelocity * computedInterfaceXVelocity) + (computedInterfaceYVelocity * computedInterfaceYVelocity) +
+            (computedInterfaceZVelocity * computedInterfaceZVelocity);
+    double totalSpecificInternalEnergy = computedTotalEnergy - (0.5 * velocitySquared);
+
+    double computedMaterial1Pressure = EulerEquationOfState::computePressure(computedTotalDensity, totalSpecificInternalEnergy, material1Parameters);
+    double computedMaterial2Pressure = EulerEquationOfState::computePressure(computedTotalDensity, totalSpecificInternalEnergy, material2Parameters);
+    double computedInterfacePressure = (computedMaterial1VolumeFraction * computedMaterial1Pressure) + (computedMaterial2VolumeFraction * computedMaterial2Pressure);
+
+    fluxVector[0] = computedTotalDensity * computedInterfaceYVelocity;
+    fluxVector[1] = computedTotalDensity * (computedInterfaceYVelocity * computedMaterial1VolumeFraction);
+    fluxVector[2] = computedTotalDensity * (computedInterfaceYVelocity * computedInterfaceXVelocity);
+    fluxVector[3] = (computedTotalDensity * (computedInterfaceYVelocity * computedInterfaceYVelocity)) + computedInterfacePressure;
+    fluxVector[4] = computedTotalDensity * (computedInterfaceYVelocity * computedInterfaceZVelocity);
+
+    fluxVector[5] = computedMaterial1VolumeFraction * (computedMaterial1Density * computedInterfaceYVelocity);
+    fluxVector[6] = computedMaterial2VolumeFraction * (computedMaterial2Density * computedInterfaceYVelocity);
+
+    fluxVector[7] = (computedTotalDensity * (computedInterfaceYVelocity * computedTotalEnergy)) + (computedInterfaceYVelocity * computedInterfacePressure);
+
+    return fluxVector;
+}
+
+vector<double> EulerReducedStateVector::computeYFluxVector(EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters)
+{
+    return computeYFluxVector(computeConservedVariableVector(material1Parameters, material2Parameters), material1Parameters, material2Parameters);
 }
 
 double EulerReducedStateVector::computeMaterial1SpecificInternalEnergy(EulerMaterialParameters material1Parameters)

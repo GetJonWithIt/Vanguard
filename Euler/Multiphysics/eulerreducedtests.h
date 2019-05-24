@@ -14,7 +14,12 @@ public:
 
     static void solveFedkiwTest(int cellCount, int reinitialisationFrequency);
 
+    static void solve2DToroTest1(int cellCount, int reinitialisationFrequency);
+
+    static void solve2DFedkiwTest(int cellCount, int reinitialisationFrequency);
+
     static void outputSolution(vector<EulerReducedStateVector> solution);
+    static void outputSolution2D(vector<vector<EulerReducedStateVector> > solution);
 };
 
 #endif // EULERREDUCEDTESTS_H

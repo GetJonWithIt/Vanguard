@@ -236,7 +236,7 @@ void ElasticReducedTests::solve2DZhangTest2(int cellCount, int reinitialisationF
         }
     }
 
-    outputSolution2D(ElasticSecondOrderSolver::solve2D(initialCells, cellSpacing, 0.8, 2.3 * pow(10.0, -4.0), 0.0, 0, 0, reinitialisationFrequency, material1Parameters, material2Parameters));
+    outputSolution2D(ElasticSecondOrderSolver::solve2D(initialCells, cellSpacing, 0.8, 3.25 * pow(10.0, -4.0), 0.0, 0, 0, reinitialisationFrequency, material1Parameters, material2Parameters));
 }
 
 void ElasticReducedTests::outputSolution(vector<ElasticReducedStateVector> solution)
@@ -246,15 +246,18 @@ void ElasticReducedTests::outputSolution(vector<ElasticReducedStateVector> solut
 
     ofstream volumeFractionFile("volumeFraction.dat");
     ofstream densityFile("density.dat");
+    ofstream yVelocityFile("yVelocity.dat");
 
     for (int i = 0; i < cellCount; i++)
     {
         volumeFractionFile << (cellSpacing * i) << " " << solution[i].getMaterial1VolumeFraction() << endl;
         densityFile << (cellSpacing * i) << " " << solution[i].computeTotalDensity() << endl;
+        yVelocityFile << (cellSpacing * i) << " " << solution[i].getInterfaceYVelocity() << endl;
     }
 
     volumeFractionFile.close();
     densityFile.close();
+    yVelocityFile.close();
 }
 
 void ElasticReducedTests::outputSolution2D(vector<vector<ElasticReducedStateVector> > solution)
@@ -265,6 +268,7 @@ void ElasticReducedTests::outputSolution2D(vector<vector<ElasticReducedStateVect
 
     ofstream volumeFractionFile("volumeFraction.dat");
     ofstream densityFile("density.dat");
+    ofstream yVelocityFile("yVelocity.dat");
 
     for (int i = 0; i < rowCount; i++)
     {
@@ -272,9 +276,11 @@ void ElasticReducedTests::outputSolution2D(vector<vector<ElasticReducedStateVect
         {
             volumeFractionFile << (cellSpacing * i) << " " << (cellSpacing * j) << " " << solution[i][j].getMaterial1VolumeFraction() << endl;
             densityFile << (cellSpacing * i) << " " << (cellSpacing * j) << " " << solution[i][j].computeTotalDensity() << endl;
+            yVelocityFile << (cellSpacing * i) << " " << (cellSpacing * j) << " " << solution[i][j].getInterfaceYVelocity() << endl;
         }
     }
 
     volumeFractionFile.close();
     densityFile.close();
+    yVelocityFile.close();
 }

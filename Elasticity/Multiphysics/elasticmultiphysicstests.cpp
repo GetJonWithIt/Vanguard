@@ -153,16 +153,16 @@ void ElasticMultiphysicsTests::outputSolution(vector<ElasticMultiphysicsStateVec
 
     ofstream volumeFractionFile("volumeFraction.dat");
     ofstream densityFile("density.dat");
-    ofstream xVelocityFile("xVelocity.dat");
+    ofstream yVelocityFile("yVelocity.dat");
 
     for (int i = 0; i < cellCount; i++)
     {
         volumeFractionFile << (cellSpacing * i) << " " << solution[i].getMaterial1VolumeFraction() << endl;
         densityFile << (cellSpacing * i) << " " << solution[i].computeTotalDensity() << endl;
-        xVelocityFile << (cellSpacing * i) << " " << solution[i].getMaterial2Entropy() << endl;
+        yVelocityFile << (cellSpacing * i) << " " << solution[i].getInterfaceYVelocity() << endl;
     }
 
     volumeFractionFile.close();
     densityFile.close();
-    xVelocityFile.close();
+    yVelocityFile.close();
 }

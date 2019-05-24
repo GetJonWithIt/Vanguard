@@ -21,6 +21,9 @@ public:
     static vector<double> computeXFluxVector(vector<double> conservedVariableVector, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
     vector<double> computeXFluxVector(EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
 
+    static vector<double> computeYFluxVector(vector<double> conservedVariableVector, EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
+    vector<double> computeYFluxVector(EulerMaterialParameters material1Parameters, EulerMaterialParameters material2Parameters);
+
     double computeMaterial1SpecificInternalEnergy(EulerMaterialParameters material1Parameters);
     double computeMaterial1TotalEnergy(EulerMaterialParameters material1Parameters);
     double computeMaterial1SoundSpeed(EulerMaterialParameters material1Parameters);

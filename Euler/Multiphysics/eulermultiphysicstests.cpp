@@ -121,15 +121,18 @@ void EulerMultiphysicsTests::outputSolution(vector<EulerMultiphysicsStateVector>
 
     ofstream volumeFractionFile("volumeFraction.dat");
     ofstream densityFile("density.dat");
+    ofstream pressureFile("pressure.dat");
 
     for (int i = 0; i < cellCount; i++)
     {
         volumeFractionFile << (cellSpacing * i) << " " << solution[i].getMaterial1VolumeFraction() << endl;
         densityFile << (cellSpacing * i) << " " << solution[i].computeTotalDensity() << endl;
+        pressureFile << (cellSpacing * i) << " " << solution[i].computeTotalPressure() << endl;
     }
 
     volumeFractionFile.close();
     densityFile.close();
+    pressureFile.close();
 }
 
 void EulerMultiphysicsTests::outputSolution2D(vector<vector<EulerMultiphysicsStateVector> > solution)
@@ -140,6 +143,7 @@ void EulerMultiphysicsTests::outputSolution2D(vector<vector<EulerMultiphysicsSta
 
     ofstream volumeFractionFile("volumeFraction.dat");
     ofstream densityFile("density.dat");
+    ofstream pressureFile("pressure.dat");
 
     for (int i = 0; i < rowCount; i++)
     {
@@ -147,6 +151,11 @@ void EulerMultiphysicsTests::outputSolution2D(vector<vector<EulerMultiphysicsSta
         {
             volumeFractionFile << (cellSpacing * i) << " " << (cellSpacing * j) << " " << solution[i][j].getMaterial1VolumeFraction() << endl;
             densityFile << (cellSpacing * i) << " " << (cellSpacing * j) << " " << solution[i][j].computeTotalDensity() << endl;
+            pressureFile << (cellSpacing * i) << " " << (cellSpacing * j) << " " << solution[i][j].computeTotalPressure() << endl;
         }
     }
+
+    volumeFractionFile.close();
+    densityFile.close();
+    pressureFile.close();
 }

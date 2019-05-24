@@ -320,8 +320,12 @@ void EulerMultiphysicsStateVector::relaxTotalPressure(EulerMaterialParameters ma
     double totalSpecificInternalEnergy = ((material1VolumeFraction * material1Density * computeMaterial1SpecificInternalEnergy(material1Parameters)) +
             (material2VolumeFraction * material2Density * computeMaterial2SpecificInternalEnergy(material2Parameters))) / totalDensity;
 
-    material1Pressure = EulerEquationOfState::computePressure(material1Density, totalSpecificInternalEnergy, material1Parameters);
-    material2Pressure = EulerEquationOfState::computePressure(material2Density, totalSpecificInternalEnergy, material2Parameters);
+    //material1Pressure = EulerEquationOfState::computePressure(material1Density, totalSpecificInternalEnergy, material1Parameters);
+    //material2Pressure = EulerEquationOfState::computePressure(material2Density, totalSpecificInternalEnergy, material2Parameters);
+
+    double totalPressure = computeTotalPressure();
+    material1Pressure = totalPressure;
+    material2Pressure = totalPressure;
 }
 
 void EulerMultiphysicsStateVector::setMaterial1VolumeFraction(double newMaterial1VolumeFraction)
