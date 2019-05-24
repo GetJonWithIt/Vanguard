@@ -33,6 +33,48 @@ public:
     static vector<double> computeSourceTermVector(vector<double> conservedVariableVector, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
     vector<double> computeSourceTermVector(HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
 
+    double computeMaterial1TotalEnergy(HPRMaterialParameters material1Parameters);
+    double computeMaterial1Temperature(HPRMaterialParameters material1Parameters);
+    vector<double> computeMaterial1HeatFluxVector(HPRMaterialParameters material1Parameters);
+
+    double computeMaterial1TotalEnergyDerivativeDensity(HPRMaterialParameters material1Parameters);
+    double computeMaterial1TotalEnergyDerivativePressure(HPRMaterialParameters material1Parameters);
+
+    double computeMaterial1TemperatureDerivativeDensity(HPRMaterialParameters material1Parameters);
+    double computeMaterial1TemperatureDerivativePressure(HPRMaterialParameters material1Parameters);
+
+    double computeMaterial1Theta1Reciprocal(HPRMaterialParameters material1Parameters);
+    double computeMaterial1Theta2Reciprocal(HPRMaterialParameters material1Parameters);
+
+    vector<vector<double> > computeMaterial1ShearStressTensor(HPRMaterialParameters material1Parameters);
+    vector<vector<vector<vector<double> > > > computeMaterial1ShearStressTensorDerivativeDistortionTensor(HPRMaterialParameters material1Parameters);
+
+    double computeMaterial2TotalEnergy(HPRMaterialParameters material2Parameters);
+    double computeMaterial2Temperature(HPRMaterialParameters material2Parameters);
+    vector<double> computeMaterial2HeatFluxVector(HPRMaterialParameters material2Parameters);
+
+    double computeMaterial2TotalEnergyDerivativeDensity(HPRMaterialParameters material2Parameters);
+    double computeMaterial2TotalEnergyDerivativePressure(HPRMaterialParameters material2Parameters);
+
+    double computeMaterial2TemperatureDerivativeDensity(HPRMaterialParameters material2Parameters);
+    double computeMaterial2TemperatureDerivativePressure(HPRMaterialParameters material2Parameters);
+
+    double computeMaterial2Theta1Reciprocal(HPRMaterialParameters material2Parameters);
+    double computeMaterial2Theta2Reciprocal(HPRMaterialParameters material2Parameters);
+
+    vector<vector<double> > computeMaterial2ShearStressTensor(HPRMaterialParameters material2Parameters);
+    vector<vector<vector<vector<double> > > > computeMaterial2ShearStressTensorDerivativeDistortionTensor(HPRMaterialParameters material2Parameters);
+
+    vector<vector<double> > computeTotalEnergyDerivativeDistortionTensor(HPRMaterialParameters materialParameters);
+    vector<double> computeTotalEnergyDerivativeThermalImpulse(HPRMaterialParameters materialParameters);
+    vector<vector<double> > computeShearStressTensorDerivativeDensity(HPRMaterialParameters materialParameters);
+
+    double computeTotalDensity();
+    double computeTotalPressure();
+
+    void relaxTotalDensity();
+    void relaxTotalPressure();
+
     void setMaterial1VolumeFraction(double newMaterial1VolumeFraction);
     void setInterfaceDistortionTensor(vector<vector<double> > newInterfaceDistortionTensor);
 

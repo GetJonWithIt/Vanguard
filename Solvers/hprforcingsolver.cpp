@@ -43,6 +43,50 @@ vector<double> HPRForcingSolver::evolveConservedVariableVector(vector<double> le
     return computeEvolvedConservedVariableVector(middleConservedVariableVector, firstStep, secondStep, thirdStep, fourthStep);
 }
 
+vector<double> HPRForcingSolver::evolveIntermediateConservedVariableVector(vector<double> leftConservedVariableVector, vector<double> middleConservedVariableVector,
+                                                                           vector<double> rightConservedVariableVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
+                                                                           HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    HPRIntermediateStateVector leftStateVector;
+    HPRIntermediateStateVector middleStateVector;
+    HPRIntermediateStateVector rightStateVector;
+
+    leftStateVector.setConservedVariableVector(leftConservedVariableVector, material1Parameters, material2Parameters);
+    rightStateVector.setConservedVariableVector(rightConservedVariableVector, material1Parameters, material2Parameters);
+
+    vector<double> firstStep = VectorAlgebra::multiplyVector(timeStep, HPRIntermediateStateVector::computeSourceTermVector(middleConservedVariableVector, material1Parameters,
+                                                                                                                           material2Parameters));
+
+    vector<double> middleConservedVariableVectorFirstStep = VectorAlgebra::addVectors(middleConservedVariableVector, VectorAlgebra::multiplyVector(0.5, firstStep));
+    middleStateVector.setConservedVariableVector(middleConservedVariableVectorFirstStep, material1Parameters, material2Parameters);
+    HPRIntermediateStateVector middleStateVectorFirstStepEvolved = HPRSolvers::evolveStateByFractionalXTimeStep(0.5, leftStateVector, middleStateVector, rightStateVector, cellSpacing,
+                                                                                                                timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+
+    vector<double> middleConservedVariableVectorFirstStepEvolved = middleStateVectorFirstStepEvolved.computeConservedVariableVector(material1Parameters, material2Parameters);
+    vector<double> secondStep = VectorAlgebra::multiplyVector(timeStep, HPRIntermediateStateVector::computeSourceTermVector(middleConservedVariableVectorFirstStepEvolved, material1Parameters,
+                                                                                                                            material2Parameters));
+
+    vector<double> middleConservedVariableVectorSecondStep = VectorAlgebra::addVectors(middleConservedVariableVector, VectorAlgebra::multiplyVector(0.5, secondStep));
+    middleStateVector.setConservedVariableVector(middleConservedVariableVectorSecondStep, material1Parameters, material2Parameters);
+    HPRIntermediateStateVector middleStateVectorSecondStepEvolved = HPRSolvers::evolveStateByFractionalXTimeStep(0.5, leftStateVector, middleStateVector, rightStateVector, cellSpacing,
+                                                                                                                 timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+
+    vector<double> middleConservedVariableVectorSecondStepEvolved = middleStateVectorSecondStepEvolved.computeConservedVariableVector(material1Parameters, material2Parameters);
+    vector<double> thirdStep = VectorAlgebra::multiplyVector(timeStep, HPRIntermediateStateVector::computeSourceTermVector(middleConservedVariableVectorSecondStepEvolved, material1Parameters,
+                                                                                                                           material2Parameters));
+
+    vector<double> middleConservedVariableVectorThirdStep = VectorAlgebra::addVectors(middleConservedVariableVector, thirdStep);
+    middleStateVector.setConservedVariableVector(middleConservedVariableVectorThirdStep, material1Parameters, material2Parameters);
+    HPRIntermediateStateVector middleStateVectorThirdStepEvolved = HPRSolvers::evolveStateByFractionalXTimeStep(1.0, leftStateVector, middleStateVector, rightStateVector, cellSpacing,
+                                                                                                                timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+
+    vector<double> middleConservedVariableVectorThirdStepEvolved = middleStateVectorThirdStepEvolved.computeConservedVariableVector(material1Parameters, material2Parameters);
+    vector<double> fourthStep = VectorAlgebra::multiplyVector(timeStep, HPRIntermediateStateVector::computeSourceTermVector(middleConservedVariableVectorThirdStepEvolved, material1Parameters,
+                                                                                                                            material2Parameters));
+
+    return computeEvolvedConservedVariableVector(middleConservedVariableVector, firstStep, secondStep, thirdStep, fourthStep);
+}
+
 vector<double> HPRForcingSolver::evolveReducedConservedVariableVector(vector<double> leftConservedVariableVector, vector<double> middleConservedVariableVector,
                                                                       vector<double> rightConservedVariableVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
                                                                       HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
@@ -223,6 +267,23 @@ void HPRForcingSolver::computeRungeKuttaTimeStep(vector<HPRStateVector> & curren
 
         currentCells[i].setConservedVariableVector(evolveConservedVariableVector(leftConservedVariableVector, middleConservedVariableVector, rightConservedVariableVector, cellSpacing,
                                                                                  timeStep, bias, slopeLimiter, materialParameters), materialParameters);
+    }
+}
+
+void HPRForcingSolver::computeRungeKuttaTimeStep(vector<HPRIntermediateStateVector> & currentCells, vector<HPRIntermediateStateVector> & currentCellsWithBoundary, double cellSpacing,
+                                                 double timeStep, double bias, int slopeLimiter, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    int cellCount = currentCells.size();
+
+    for (int i = 0; i < cellCount; i++)
+    {
+        vector<double> leftConservedVariableVector = currentCellsWithBoundary[i].computeConservedVariableVector(material1Parameters, material2Parameters);
+        vector<double> middleConservedVariableVector = currentCellsWithBoundary[i + 1].computeConservedVariableVector(material1Parameters, material2Parameters);
+        vector<double> rightConservedVariableVector = currentCellsWithBoundary[i + 2].computeConservedVariableVector(material1Parameters, material2Parameters);
+
+        currentCells[i].setConservedVariableVector(evolveIntermediateConservedVariableVector(leftConservedVariableVector, middleConservedVariableVector, rightConservedVariableVector, cellSpacing,
+                                                                                             timeStep, bias, slopeLimiter, material1Parameters, material2Parameters), material1Parameters,
+                                                   material2Parameters);
     }
 }
 

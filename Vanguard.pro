@@ -60,7 +60,9 @@ SOURCES += main.cpp \
     HPR/Multiphysics/hprreducedstatevector.cpp \
     HPR/Multiphysics/hprreducedacoustictensor.cpp \
     HPR/Multiphysics/hprreducedtests.cpp \
-    HPR/Multiphysics/hprintermediatestatevector.cpp
+    HPR/Multiphysics/hprintermediatestatevector.cpp \
+    HPR/Multiphysics/hprintermediateacoustictensor.cpp \
+    HPR/Multiphysics/hprintermediatetests.cpp
 
 HEADERS += \
     Solvers/firstordersolver.h \
@@ -115,5 +117,7 @@ HEADERS += \
     HPR/Multiphysics/hprreducedstatevector.h \
     HPR/Multiphysics/hprreducedacoustictensor.h \
     HPR/Multiphysics/hprreducedtests.h \
-    HPR/Multiphysics/hprintermediatestatevector.h
+    HPR/Multiphysics/hprintermediatestatevector.h \
+    HPR/Multiphysics/hprintermediateacoustictensor.h \
+    HPR/Multiphysics/hprintermediatetests.h
 

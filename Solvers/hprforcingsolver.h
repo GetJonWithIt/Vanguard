@@ -11,6 +11,9 @@ public:
 
     static vector<double> evolveConservedVariableVector(vector<double> leftConservedVariableVector, vector<double> middleConservedVariableVector, vector<double> rightConservedVariableVector,
                                                         double cellSpacing, double timeStep, double bias, int slopeLimiter, HPRMaterialParameters materialParameters);
+    static vector<double> evolveIntermediateConservedVariableVector(vector<double> leftConservedVariableVector, vector<double> middleConservedVariableVector,
+                                                                    vector<double> rightConservedVariableVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
+                                                                    HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
     static vector<double> evolveReducedConservedVariableVector(vector<double> leftConservedVariableVector, vector<double> middleConservedVariableVector,
                                                                vector<double> rightConservedVariableVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
                                                                HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
@@ -28,6 +31,8 @@ public:
 
     static void computeRungeKuttaTimeStep(vector<HPRStateVector> & currentCells, vector<HPRStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep, double bias,
                                           int slopeLimiter, HPRMaterialParameters materialParameters);
+    static void computeRungeKuttaTimeStep(vector<HPRIntermediateStateVector> & currentCells, vector<HPRIntermediateStateVector> & currentCellsWithBoundary, double cellSpacing,
+                                          double timeStep, double bias, int slopeLimiter, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
     static void computeRungeKuttaTimeStep(vector<HPRReducedStateVector> & currentCells, vector<HPRReducedStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep,
                                           double bias, int slopeLimiter, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
 

@@ -568,6 +568,11 @@ vector<double> HPRReducedStateVector::computeSourceTermVector(vector<double> con
     return sourceTermVector;
 }
 
+vector<double> HPRReducedStateVector::computeSourceTermVector(HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    return computeSourceTermVector(computeConservedVariableVector(material1Parameters, material2Parameters), material1Parameters, material2Parameters);
+}
+
 double HPRReducedStateVector::computeMaterial1TotalEnergy(HPRMaterialParameters material1Parameters)
 {
     return HPREquationOfState::computeTotalEnergy(material1Density, interfacePressure, interfaceXVelocity, interfaceYVelocity, interfaceZVelocity, interfaceDistortionTensor,

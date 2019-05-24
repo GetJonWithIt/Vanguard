@@ -297,8 +297,580 @@ vector<double> HPRIntermediateStateVector::computeXFluxVector(vector<double> con
                                                                            computedInterfaceZVelocity, computedInterfaceDistortionTensor, computedInterfaceXThermalImpulse,
                                                                            computedInterfaceYThermalImpulse, computedInterfaceZThermalImpulse, material2Parameters);
 
-    //vector<vector<double> > computedMaterial1ShearStressTensor = HPREquationOfState::computeShearStressTensor(computedMaterial1Density, computedInterfaceDistortionTensor, material1Parameters);
-    //vector<vector<double> > computedMaterial2ShearStressTensor = HPREquationOfState::computeShearStressTensor(computedMaterial2Density, computedInterfaceDistortionTensor, material2Parameters);
+    double computedInterfacePressure = (computedMaterial1VolumeFraction * computedMaterial1Pressure) + (computedMaterial2VolumeFraction * computedMaterial2Pressure);
+
+    vector<vector<double> > computedMaterial1ShearStressTensor = HPREquationOfState::computeShearStressTensor(computedMaterial1Density, computedInterfaceDistortionTensor, material1Parameters);
+    vector<vector<double> > computedMaterial2ShearStressTensor = HPREquationOfState::computeShearStressTensor(computedMaterial2Density, computedInterfaceDistortionTensor, material2Parameters);
+    vector<vector<double> > computedInterfaceShearStressTensor = MatrixAlgebra::addMatrices(MatrixAlgebra::multiplyMatrix(computedMaterial1VolumeFraction, computedMaterial1ShearStressTensor),
+                                                                                            MatrixAlgebra::multiplyMatrix(computedMaterial2VolumeFraction, computedMaterial2ShearStressTensor));
+
+    for (int i = 0; i < 21; i++)
+    {
+        fluxVector[i] = 0.0;
+    }
+
+    fluxVector[0] = computedTotalDensity * computedInterfaceXVelocity;
+    fluxVector[1] = computedTotalDensity * (computedInterfaceXVelocity * computedMaterial1VolumeFraction);
+
+    fluxVector[18] = computedMaterial1VolumeFraction * ((computedMaterial1Density * (computedInterfaceXVelocity * computedMaterial1TotalEnergy)) +
+                                                        (computedMaterial1Pressure * computedInterfaceXVelocity));
+    fluxVector[20] = computedMaterial2VolumeFraction * ((computedMaterial2Density * (computedInterfaceXVelocity * computedMaterial2TotalEnergy)) +
+                                                        (computedMaterial2Pressure * computedInterfaceXVelocity));
+
+    fluxVector[11] = (computedTotalDensity * (computedInterfaceXVelocity * computedInterfaceXVelocity)) + computedInterfacePressure;
+    fluxVector[12] = computedTotalDensity * (computedInterfaceXVelocity * computedInterfaceYVelocity);
+    fluxVector[13] = computedTotalDensity * (computedInterfaceXVelocity * computedInterfaceZVelocity);
+
+    vector<double> computedVelocityVector(3);
+    computedVelocityVector[0] = computedInterfaceXVelocity;
+    computedVelocityVector[1] = computedInterfaceYVelocity;
+    computedVelocityVector[2] = computedInterfaceZVelocity;
+    vector<double> computedDistortionTensorVelocityVectorProduct = MatrixAlgebra::multiplyMatrixByVector(computedInterfaceDistortionTensor, computedVelocityVector);
+
+    fluxVector[18] -= computedMaterial1VolumeFraction * VectorAlgebra::computeDotProduct(computedMaterial1ShearStressTensor[0], computedVelocityVector);
+    fluxVector[20] -= computedMaterial2VolumeFraction * VectorAlgebra::computeDotProduct(computedMaterial2ShearStressTensor[0], computedVelocityVector);
+
+    for (int i = 0; i < 3; i++)
+    {
+        fluxVector[11 + i] -= computedInterfaceShearStressTensor[0][i];
+    }
+
+    for (int i = 0; i < 3; i++)
+    {
+        fluxVector[2 + (i * 3)] = computedDistortionTensorVelocityVectorProduct[i];
+    }
+
+    if (material1Parameters.getIsThermal() || material2Parameters.getIsThermal())
+    {
+        double computedMaterial1Temperature = HPREquationOfState::computeTemperature(computedMaterial1Density, computedMaterial1Pressure, material1Parameters);
+        vector<double> computedMaterial1HeatFluxVector = HPREquationOfState::computeHeatFluxVector(computedMaterial1Temperature, computedInterfaceXThermalImpulse,
+                                                                                                   computedInterfaceYThermalImpulse, computedInterfaceZThermalImpulse, material1Parameters);
+
+        double computedMaterial2Temperature = HPREquationOfState::computeTemperature(computedMaterial2Density, computedMaterial2Pressure, material2Parameters);
+        vector<double> computedMaterial2HeatFluxVector = HPREquationOfState::computeHeatFluxVector(computedMaterial2Temperature, computedInterfaceXThermalImpulse,
+                                                                                                   computedInterfaceYThermalImpulse, computedInterfaceZThermalImpulse, material2Parameters);
+
+        double computedInterfaceTemperature = (computedMaterial1VolumeFraction * computedMaterial1Temperature) + (computedMaterial2VolumeFraction * computedMaterial2Temperature);
+
+        fluxVector[18] += computedMaterial1VolumeFraction * computedMaterial1HeatFluxVector[0];
+        fluxVector[20] += computedMaterial2VolumeFraction * computedMaterial2HeatFluxVector[0];
+
+        fluxVector[14] = (computedTotalDensity * (computedInterfaceXVelocity * computedInterfaceXThermalImpulse)) + computedInterfaceTemperature;
+        fluxVector[15] = computedTotalDensity * (computedInterfaceXVelocity * computedInterfaceYThermalImpulse);
+        fluxVector[16] = computedTotalDensity * (computedInterfaceXVelocity * computedInterfaceZThermalImpulse);
+    }
+
+    fluxVector[17] = computedMaterial1VolumeFraction * (computedMaterial1Density * computedInterfaceXVelocity);
+    fluxVector[19] = computedMaterial2VolumeFraction * (computedMaterial2Density * computedInterfaceXVelocity);
 
     return fluxVector;
+}
+
+vector<double> HPRIntermediateStateVector::computeXFluxVector(HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    return computeXFluxVector(computeConservedVariableVector(material1Parameters, material2Parameters), material1Parameters, material2Parameters);
+}
+
+vector<double> HPRIntermediateStateVector::computeYFluxVector(vector<double> conservedVariableVector, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    vector<double> fluxVector(21);
+
+    double computedTotalDensity = conservedVariableVector[0];
+
+    double computedMaterial1VolumeFraction;
+    if ((conservedVariableVector[1] / computedTotalDensity) < 0.001)
+    {
+        computedMaterial1VolumeFraction = 0.001;
+    }
+    else if ((conservedVariableVector[1] / computedTotalDensity) > 0.999)
+    {
+        computedMaterial1VolumeFraction = 0.999;
+    }
+    else
+    {
+        computedMaterial1VolumeFraction = conservedVariableVector[1] / computedTotalDensity;
+    }
+    double computedMaterial2VolumeFraction = 1.0 - computedMaterial1VolumeFraction;
+
+    vector<vector<double> > computedInterfaceDistortionTensor(3, vector<double>(3));
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            computedInterfaceDistortionTensor[i][j] = conservedVariableVector[2 + (i * 3) + j];
+        }
+    }
+
+    double computedInterfaceXVelocity = conservedVariableVector[11] / computedTotalDensity;
+    double computedInterfaceYVelocity = conservedVariableVector[12] / computedTotalDensity;
+    double computedInterfaceZVelocity = conservedVariableVector[13] / computedTotalDensity;
+
+    double computedInterfaceXThermalImpulse = conservedVariableVector[14] / computedTotalDensity;
+    double computedInterfaceYThermalImpulse = conservedVariableVector[15] / computedTotalDensity;
+    double computedInterfaceZThermalImpulse = conservedVariableVector[16] / computedTotalDensity;
+
+    double computedMaterial1Density = conservedVariableVector[17] / computedMaterial1VolumeFraction;
+    double computedMaterial2Density = conservedVariableVector[19] / computedMaterial2VolumeFraction;
+
+    double computedMaterial1TotalEnergy = conservedVariableVector[18] / (computedMaterial1VolumeFraction * computedMaterial1Density);
+    double computedMaterial1Pressure = HPREquationOfState::computePressure(computedMaterial1Density, computedMaterial1TotalEnergy, computedInterfaceXVelocity, computedInterfaceYVelocity,
+                                                                           computedInterfaceZVelocity, computedInterfaceDistortionTensor, computedInterfaceXThermalImpulse,
+                                                                           computedInterfaceYThermalImpulse, computedInterfaceZThermalImpulse, material1Parameters);
+
+    double computedMaterial2TotalEnergy = conservedVariableVector[20] / (computedMaterial2VolumeFraction * computedMaterial2Density);
+    double computedMaterial2Pressure = HPREquationOfState::computePressure(computedMaterial2Density, computedMaterial2TotalEnergy, computedInterfaceXVelocity, computedInterfaceYVelocity,
+                                                                           computedInterfaceZVelocity, computedInterfaceDistortionTensor, computedInterfaceXThermalImpulse,
+                                                                           computedInterfaceYThermalImpulse, computedInterfaceZThermalImpulse, material2Parameters);
+
+    double computedInterfacePressure = (computedMaterial1VolumeFraction * computedMaterial1Pressure) + (computedMaterial2VolumeFraction * computedMaterial2Pressure);
+
+    vector<vector<double> > computedMaterial1ShearStressTensor = HPREquationOfState::computeShearStressTensor(computedMaterial1Density, computedInterfaceDistortionTensor, material1Parameters);
+    vector<vector<double> > computedMaterial2ShearStressTensor = HPREquationOfState::computeShearStressTensor(computedMaterial2Density, computedInterfaceDistortionTensor, material2Parameters);
+    vector<vector<double> > computedInterfaceShearStressTensor = MatrixAlgebra::addMatrices(MatrixAlgebra::multiplyMatrix(computedMaterial1VolumeFraction, computedMaterial1ShearStressTensor),
+                                                                                            MatrixAlgebra::multiplyMatrix(computedMaterial2VolumeFraction, computedMaterial2ShearStressTensor));
+
+    for (int i = 0; i < 21; i++)
+    {
+        fluxVector[i] = 0.0;
+    }
+
+    fluxVector[0] = computedTotalDensity * computedInterfaceYVelocity;
+    fluxVector[1] = computedTotalDensity * (computedInterfaceYVelocity * computedMaterial1VolumeFraction);
+
+    fluxVector[18] = computedMaterial1VolumeFraction * ((computedMaterial1Density * (computedInterfaceYVelocity * computedMaterial1TotalEnergy)) +
+                                                        (computedMaterial1Pressure * computedInterfaceYVelocity));
+    fluxVector[20] = computedMaterial2VolumeFraction * ((computedMaterial2Density * (computedInterfaceYVelocity * computedMaterial2TotalEnergy)) +
+                                                        (computedMaterial2Pressure * computedInterfaceYVelocity));
+
+    fluxVector[11] = computedTotalDensity * (computedInterfaceYVelocity * computedInterfaceXVelocity);
+    fluxVector[12] = (computedTotalDensity * (computedInterfaceYVelocity * computedInterfaceYVelocity)) + computedInterfacePressure;
+    fluxVector[13] = computedTotalDensity * (computedInterfaceYVelocity * computedInterfaceZVelocity);
+
+    vector<double> computedVelocityVector(3);
+    computedVelocityVector[0] = computedInterfaceXVelocity;
+    computedVelocityVector[1] = computedInterfaceYVelocity;
+    computedVelocityVector[2] = computedInterfaceZVelocity;
+    vector<double> computedDistortionTensorVelocityVectorProduct = MatrixAlgebra::multiplyMatrixByVector(computedInterfaceDistortionTensor, computedVelocityVector);
+
+    fluxVector[18] -= computedMaterial1VolumeFraction * VectorAlgebra::computeDotProduct(computedMaterial1ShearStressTensor[1], computedVelocityVector);
+    fluxVector[20] -= computedMaterial2VolumeFraction * VectorAlgebra::computeDotProduct(computedMaterial2ShearStressTensor[1], computedVelocityVector);
+
+    for (int i = 0; i < 3; i++)
+    {
+        fluxVector[11 + i] -= computedInterfaceShearStressTensor[1][i];
+    }
+
+    for (int i = 0; i < 3; i++)
+    {
+        fluxVector[2 + (i * 3) + 1] = computedDistortionTensorVelocityVectorProduct[i];
+    }
+
+    if (material1Parameters.getIsThermal() || material2Parameters.getIsThermal())
+    {
+        double computedMaterial1Temperature = HPREquationOfState::computeTemperature(computedMaterial1Density, computedMaterial1Pressure, material1Parameters);
+        vector<double> computedMaterial1HeatFluxVector = HPREquationOfState::computeHeatFluxVector(computedMaterial1Temperature, computedInterfaceXThermalImpulse,
+                                                                                                   computedInterfaceYThermalImpulse, computedInterfaceZThermalImpulse, material1Parameters);
+
+        double computedMaterial2Temperature = HPREquationOfState::computeTemperature(computedMaterial2Density, computedMaterial2Pressure, material2Parameters);
+        vector<double> computedMaterial2HeatFluxVector = HPREquationOfState::computeHeatFluxVector(computedMaterial2Temperature, computedInterfaceXThermalImpulse,
+                                                                                                   computedInterfaceYThermalImpulse, computedInterfaceZThermalImpulse, material2Parameters);
+
+        double computedInterfaceTemperature = (computedMaterial1VolumeFraction * computedMaterial1Temperature) + (computedMaterial2VolumeFraction * computedMaterial2Temperature);
+
+        fluxVector[18] += computedMaterial1VolumeFraction * computedMaterial1HeatFluxVector[1];
+        fluxVector[20] += computedMaterial2VolumeFraction * computedMaterial2HeatFluxVector[1];
+
+        fluxVector[14] = computedTotalDensity * (computedInterfaceYVelocity * computedInterfaceXThermalImpulse);
+        fluxVector[15] = (computedTotalDensity * (computedInterfaceYVelocity * computedInterfaceYThermalImpulse)) + computedInterfaceTemperature;
+        fluxVector[16] = computedTotalDensity * (computedInterfaceYVelocity * computedInterfaceZThermalImpulse);
+    }
+
+    fluxVector[17] = computedMaterial1VolumeFraction * (computedMaterial1Density * computedInterfaceYVelocity);
+    fluxVector[19] = computedMaterial2VolumeFraction * (computedMaterial2Density * computedInterfaceYVelocity);
+
+    return fluxVector;
+}
+
+vector<double> HPRIntermediateStateVector::computeYFluxVector(HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    return computeYFluxVector(computeConservedVariableVector(material1Parameters, material2Parameters), material1Parameters, material2Parameters);
+}
+
+vector<double> HPRIntermediateStateVector::computeSourceTermVector(vector<double> conservedVariableVector, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    vector<double> sourceTermVector(21);
+
+    double computedTotalDensity = conservedVariableVector[0];
+
+    double computedMaterial1VolumeFraction;
+    if ((conservedVariableVector[1] / computedTotalDensity) < 0.001)
+    {
+        computedMaterial1VolumeFraction = 0.001;
+    }
+    else if ((conservedVariableVector[1] / computedTotalDensity) > 0.999)
+    {
+        computedMaterial1VolumeFraction = 0.999;
+    }
+    else
+    {
+        computedMaterial1VolumeFraction = conservedVariableVector[1] / computedTotalDensity;
+    }
+    double computedMaterial2VolumeFraction = 1.0 - computedMaterial1VolumeFraction;
+
+    vector<vector<double> > computedInterfaceDistortionTensor(3, vector<double>(3));
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            computedInterfaceDistortionTensor[i][j] = conservedVariableVector[2 + (i * 3) + j];
+        }
+    }
+
+    double computedMaterial1Density = conservedVariableVector[17] / computedMaterial1VolumeFraction;
+    double computedMaterial2Density = conservedVariableVector[19] / computedMaterial2VolumeFraction;
+
+    vector<vector<double> > material1TotalEnergyDerivativeDistortionTensor = HPRDerivatives::computeTotalEnergyDerivativeDistortionTensor(computedInterfaceDistortionTensor, material1Parameters);
+    vector<vector<double> > material2TotalEnergyDerivativeDistortionTensor = HPRDerivatives::computeTotalEnergyDerivativeDistortionTensor(computedInterfaceDistortionTensor, material2Parameters);
+    vector<vector<double> > totalEnergyDerivativeDistortionTensor = MatrixAlgebra::addMatrices(MatrixAlgebra::multiplyMatrix(computedMaterial1VolumeFraction,
+                                                                                                                             material1TotalEnergyDerivativeDistortionTensor),
+                                                                                               MatrixAlgebra::multiplyMatrix(computedMaterial2VolumeFraction,
+                                                                                                                             material2TotalEnergyDerivativeDistortionTensor));
+
+    double material1Theta1Reciprocal = HPRSourceTerms::computeTheta1Reciprocal(computedMaterial1Density, computedInterfaceDistortionTensor, material1Parameters);
+    double material2Theta1Reciprocal = HPRSourceTerms::computeTheta1Reciprocal(computedMaterial2Density, computedInterfaceDistortionTensor, material2Parameters);
+    double theta1Reciprocal = (computedMaterial1VolumeFraction * material1Theta1Reciprocal) + (computedMaterial2VolumeFraction * material2Theta1Reciprocal);
+
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            sourceTermVector[2 + (i * 3) + j] = -totalEnergyDerivativeDistortionTensor[i][j] * theta1Reciprocal;
+        }
+    }
+
+    if (material1Parameters.getIsThermal() || material2Parameters.getIsThermal())
+    {
+        double computedMaterial1TotalEnergy = conservedVariableVector[18] / (computedMaterial1VolumeFraction * computedMaterial1Density);
+        double computedMaterial2TotalEnergy = conservedVariableVector[20] / (computedMaterial2VolumeFraction * computedMaterial2Density);
+
+        double computedInterfaceXVelocity = conservedVariableVector[11] / computedTotalDensity;
+        double computedInterfaceYVelocity = conservedVariableVector[12] / computedTotalDensity;
+        double computedInterfaceZVelocity = conservedVariableVector[13] / computedTotalDensity;
+
+        double computedInterfaceXThermalImpulse = conservedVariableVector[14] / computedTotalDensity;
+        double computedInterfaceYThermalImpulse = conservedVariableVector[15] / computedTotalDensity;
+        double computedInterfaceZThermalImpulse = conservedVariableVector[16] / computedTotalDensity;
+
+        double computedMaterial1Pressure = HPREquationOfState::computePressure(computedMaterial1Density, computedMaterial1TotalEnergy, computedInterfaceXVelocity, computedInterfaceYVelocity,
+                                                                               computedInterfaceZVelocity, computedInterfaceDistortionTensor, computedInterfaceXThermalImpulse,
+                                                                               computedInterfaceYThermalImpulse, computedInterfaceZThermalImpulse, material1Parameters);
+        double computedMaterial2Pressure = HPREquationOfState::computePressure(computedMaterial2Density, computedMaterial2TotalEnergy, computedInterfaceXVelocity, computedInterfaceYVelocity,
+                                                                               computedInterfaceZVelocity, computedInterfaceDistortionTensor, computedInterfaceXThermalImpulse,
+                                                                               computedInterfaceYThermalImpulse, computedInterfaceZThermalImpulse, material2Parameters);
+
+        double computedMaterial1Temperature = HPREquationOfState::computeTemperature(computedMaterial1Density, computedMaterial1Pressure, material1Parameters);
+        double computedMaterial2Temperature = HPREquationOfState::computeTemperature(computedMaterial2Density, computedMaterial2Pressure, material2Parameters);
+
+        vector<double> material1TotalEnergyDerivativeThermalImpulse = HPRDerivatives::computeTotalEnergyDerivativeThermalImpulse(computedInterfaceXThermalImpulse, computedInterfaceYThermalImpulse,
+                                                                                                                                 computedInterfaceZThermalImpulse, material1Parameters);
+        vector<double> material2TotalEnergyDerivativeThermalImpulse = HPRDerivatives::computeTotalEnergyDerivativeThermalImpulse(computedInterfaceXThermalImpulse, computedInterfaceYThermalImpulse,
+                                                                                                                                 computedInterfaceZThermalImpulse, material2Parameters);
+        vector<double> totalEnergyDerivativeThermalImpulse = VectorAlgebra::addVectors(VectorAlgebra::multiplyVector(computedMaterial1VolumeFraction, material1TotalEnergyDerivativeThermalImpulse),
+                                                                                       VectorAlgebra::multiplyVector(computedMaterial2VolumeFraction, material2TotalEnergyDerivativeThermalImpulse));
+
+        double material1Theta2Reciprocal = HPRSourceTerms::computeTheta2Reciprocal(computedMaterial1Density, computedMaterial1Temperature, material1Parameters);
+        double material2Theta2Reciprocal = HPRSourceTerms::computeTheta2Reciprocal(computedMaterial2Density, computedMaterial2Temperature, material2Parameters);
+        double theta2Reciprocal = (computedMaterial1VolumeFraction * material1Theta2Reciprocal) + (computedMaterial2VolumeFraction * material2Theta2Reciprocal);
+
+        for (int i = 0; i < 3; i++)
+        {
+            sourceTermVector[14 + i] -= computedTotalDensity * theta2Reciprocal * totalEnergyDerivativeThermalImpulse[i];
+        }
+    }
+
+    return sourceTermVector;
+}
+
+vector<double> HPRIntermediateStateVector::computeSourceTermVector(HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    return computeSourceTermVector(computeConservedVariableVector(material1Parameters, material2Parameters), material1Parameters, material2Parameters);
+}
+
+double HPRIntermediateStateVector::computeMaterial1TotalEnergy(HPRMaterialParameters material1Parameters)
+{
+    return HPREquationOfState::computeTotalEnergy(material1Density, material1Pressure, interfaceXVelocity, interfaceYVelocity, interfaceZVelocity, interfaceDistortionTensor,
+                                                  interfaceXThermalImpulse, interfaceYThermalImpulse, interfaceZThermalImpulse, material1Parameters);
+}
+
+double HPRIntermediateStateVector::computeMaterial1Temperature(HPRMaterialParameters material1Parameters)
+{
+    return HPREquationOfState::computeTemperature(material1Density, material1Pressure, material1Parameters);
+}
+
+vector<double> HPRIntermediateStateVector::computeMaterial1HeatFluxVector(HPRMaterialParameters material1Parameters)
+{
+    return HPREquationOfState::computeHeatFluxVector(computeMaterial1Temperature(material1Parameters), interfaceXThermalImpulse, interfaceYThermalImpulse, interfaceZThermalImpulse,
+                                                     material1Parameters);
+}
+
+double HPRIntermediateStateVector::computeMaterial1TotalEnergyDerivativeDensity(HPRMaterialParameters material1Parameters)
+{
+    return HPRDerivatives::computeTotalEnergyDerivativeDensity(material1Density, material1Pressure, material1Parameters);
+}
+
+double HPRIntermediateStateVector::computeMaterial1TotalEnergyDerivativePressure(HPRMaterialParameters material1Parameters)
+{
+    return HPRDerivatives::computeTotalEnergyDerivativePressure(material1Density, material1Parameters);
+}
+
+double HPRIntermediateStateVector::computeMaterial1TemperatureDerivativeDensity(HPRMaterialParameters material1Parameters)
+{
+    return HPRDerivatives::computeTemperatureDerivativeDensity(material1Density, material1Pressure, material1Parameters);
+}
+
+double HPRIntermediateStateVector::computeMaterial1TemperatureDerivativePressure(HPRMaterialParameters material1Parameters)
+{
+    return HPRDerivatives::computeTemperatureDerivativePressure(material1Density, material1Parameters);
+}
+
+double HPRIntermediateStateVector::computeMaterial1Theta1Reciprocal(HPRMaterialParameters material1Parameters)
+{
+    return HPRSourceTerms::computeTheta1Reciprocal(material1Density, interfaceDistortionTensor, material1Parameters);
+}
+
+double HPRIntermediateStateVector::computeMaterial1Theta2Reciprocal(HPRMaterialParameters material1Parameters)
+{
+    return HPRSourceTerms::computeTheta2Reciprocal(material1Density, computeMaterial1Temperature(material1Parameters), material1Parameters);
+}
+
+vector<vector<double> > HPRIntermediateStateVector::computeMaterial1ShearStressTensor(HPRMaterialParameters material1Parameters)
+{
+    return HPREquationOfState::computeShearStressTensor(material1Density, interfaceDistortionTensor, material1Parameters);
+}
+
+vector<vector<vector<vector<double> > > >  HPRIntermediateStateVector::computeMaterial1ShearStressTensorDerivativeDistortionTensor(HPRMaterialParameters material1Parameters)
+{
+    return HPREquationOfState::computeShearStressTensorDerivativeDistortionTensor(material1Density, interfaceDistortionTensor, material1Parameters);
+}
+
+double HPRIntermediateStateVector::computeMaterial2TotalEnergy(HPRMaterialParameters material2Parameters)
+{
+    return HPREquationOfState::computeTotalEnergy(material2Density, material2Pressure, interfaceXVelocity, interfaceYVelocity, interfaceZVelocity, interfaceDistortionTensor,
+                                                  interfaceXThermalImpulse, interfaceYThermalImpulse, interfaceZThermalImpulse, material2Parameters);
+}
+
+double HPRIntermediateStateVector::computeMaterial2Temperature(HPRMaterialParameters material2Parameters)
+{
+    return HPREquationOfState::computeTemperature(material2Density, material2Pressure, material2Parameters);
+}
+
+vector<double> HPRIntermediateStateVector::computeMaterial2HeatFluxVector(HPRMaterialParameters material2Parameters)
+{
+    return HPREquationOfState::computeHeatFluxVector(computeMaterial2Temperature(material2Parameters), interfaceXThermalImpulse, interfaceYThermalImpulse, interfaceZThermalImpulse,
+                                                     material2Parameters);
+}
+
+double HPRIntermediateStateVector::computeMaterial2TotalEnergyDerivativeDensity(HPRMaterialParameters material2Parameters)
+{
+    return HPRDerivatives::computeTotalEnergyDerivativeDensity(material2Density, material2Pressure, material2Parameters);
+}
+
+double HPRIntermediateStateVector::computeMaterial2TotalEnergyDerivativePressure(HPRMaterialParameters material2Parameters)
+{
+    return HPRDerivatives::computeTotalEnergyDerivativePressure(material2Density, material2Parameters);
+}
+
+double HPRIntermediateStateVector::computeMaterial2TemperatureDerivativeDensity(HPRMaterialParameters material2Parameters)
+{
+    return HPRDerivatives::computeTemperatureDerivativeDensity(material2Density, material2Pressure, material2Parameters);
+}
+
+double HPRIntermediateStateVector::computeMaterial2TemperatureDerivativePressure(HPRMaterialParameters material2Parameters)
+{
+    return HPRDerivatives::computeTemperatureDerivativePressure(material2Density, material2Parameters);
+}
+
+double HPRIntermediateStateVector::computeMaterial2Theta1Reciprocal(HPRMaterialParameters material2Parameters)
+{
+    return HPRSourceTerms::computeTheta1Reciprocal(material2Density, interfaceDistortionTensor, material2Parameters);
+}
+
+double HPRIntermediateStateVector::computeMaterial2Theta2Reciprocal(HPRMaterialParameters material2Parameters)
+{
+    return HPRSourceTerms::computeTheta2Reciprocal(material2Density, computeMaterial2Temperature(material2Parameters), material2Parameters);
+}
+
+vector<vector<double> > HPRIntermediateStateVector::computeMaterial2ShearStressTensor(HPRMaterialParameters material2Parameters)
+{
+    return HPREquationOfState::computeShearStressTensor(material2Density, interfaceDistortionTensor, material2Parameters);
+}
+
+vector<vector<vector<vector<double> > > > HPRIntermediateStateVector::computeMaterial2ShearStressTensorDerivativeDistortionTensor(HPRMaterialParameters material2Parameters)
+{
+    return HPREquationOfState::computeShearStressTensorDerivativeDistortionTensor(material2Density, interfaceDistortionTensor, material2Parameters);
+}
+
+vector<vector<double> > HPRIntermediateStateVector::computeTotalEnergyDerivativeDistortionTensor(HPRMaterialParameters materialParameters)
+{
+    return HPRDerivatives::computeTotalEnergyDerivativeDistortionTensor(interfaceDistortionTensor, materialParameters);
+}
+
+vector<double> HPRIntermediateStateVector::computeTotalEnergyDerivativeThermalImpulse(HPRMaterialParameters materialParameters)
+{
+    return HPRDerivatives::computeTotalEnergyDerivativeThermalImpulse(interfaceXThermalImpulse, interfaceYThermalImpulse, interfaceZThermalImpulse, materialParameters);
+}
+
+vector<vector<double> > HPRIntermediateStateVector::computeShearStressTensorDerivativeDensity(HPRMaterialParameters materialParameters)
+{
+    return HPREquationOfState::computeShearStressTensorDerivativeDensity(interfaceDistortionTensor, materialParameters);
+}
+
+double HPRIntermediateStateVector::computeTotalDensity()
+{
+    double material2VolumeFraction = 1.0 - material1VolumeFraction;
+
+    return (material1VolumeFraction * material1Density) + (material2VolumeFraction * material2Density);
+}
+
+double HPRIntermediateStateVector::computeTotalPressure()
+{
+    double material2VolumeFraction = 1.0 - material1VolumeFraction;
+
+    return (material1VolumeFraction * material1Pressure) + (material2VolumeFraction * material2Pressure);
+}
+
+void HPRIntermediateStateVector::relaxTotalDensity()
+{
+    double totalDensity = computeTotalDensity();
+
+    material1Density = totalDensity;
+    material2Density = totalDensity;
+}
+
+void HPRIntermediateStateVector::relaxTotalPressure()
+{
+    double totalPressure = computeTotalPressure();
+
+    material1Pressure = totalPressure;
+    material2Pressure = totalPressure;
+}
+
+void HPRIntermediateStateVector::setMaterial1VolumeFraction(double newMaterial1VolumeFraction)
+{
+    material1VolumeFraction = newMaterial1VolumeFraction;
+}
+
+void HPRIntermediateStateVector::setInterfaceDistortionTensor(vector<vector<double> > newInterfaceDistortionTensor)
+{
+    interfaceDistortionTensor = newInterfaceDistortionTensor;
+}
+
+void HPRIntermediateStateVector::setInterfaceXVelocity(double newInterfaceXVelocity)
+{
+    interfaceXVelocity = newInterfaceXVelocity;
+}
+
+void HPRIntermediateStateVector::setInterfaceYVelocity(double newInterfaceYVelocity)
+{
+    interfaceYVelocity = newInterfaceYVelocity;
+}
+
+void HPRIntermediateStateVector::setInterfaceZVelocity(double newInterfaceZVelocity)
+{
+    interfaceZVelocity = newInterfaceZVelocity;
+}
+
+void HPRIntermediateStateVector::setInterfaceXThermalImpulse(double newInterfaceXThermalImpulse)
+{
+    interfaceXThermalImpulse = newInterfaceXThermalImpulse;
+}
+
+void HPRIntermediateStateVector::setInterfaceYThermalImpulse(double newInterfaceYThermalImpulse)
+{
+    interfaceYThermalImpulse = newInterfaceYThermalImpulse;
+}
+
+void HPRIntermediateStateVector::setInterfaceZThermalImpulse(double newInterfaceZThermalImpulse)
+{
+    interfaceZThermalImpulse = newInterfaceZThermalImpulse;
+}
+
+void HPRIntermediateStateVector::setMaterial1Density(double newMaterial1Density)
+{
+    material1Density = newMaterial1Density;
+}
+
+void HPRIntermediateStateVector::setMaterial1Pressure(double newMaterial1Pressure)
+{
+    material1Pressure = newMaterial1Pressure;
+}
+
+void HPRIntermediateStateVector::setMaterial2Density(double newMaterial2Density)
+{
+    material2Density = newMaterial2Density;
+}
+
+void HPRIntermediateStateVector::setMaterial2Pressure(double newMaterial2Pressure)
+{
+    material2Pressure = newMaterial2Pressure;
+}
+
+double HPRIntermediateStateVector::getMaterial1VolumeFraction()
+{
+    return material1VolumeFraction;
+}
+
+vector<vector<double> > HPRIntermediateStateVector::getInterfaceDistortionTensor()
+{
+    return interfaceDistortionTensor;
+}
+
+double HPRIntermediateStateVector::getInterfaceXVelocity()
+{
+    return interfaceXVelocity;
+}
+
+double HPRIntermediateStateVector::getInterfaceYVelocity()
+{
+    return interfaceYVelocity;
+}
+
+double HPRIntermediateStateVector::getInterfaceZVelocity()
+{
+    return interfaceZVelocity;
+}
+
+double HPRIntermediateStateVector::getInterfaceXThermalImpulse()
+{
+    return interfaceXThermalImpulse;
+}
+
+double HPRIntermediateStateVector::getInterfaceYThermalImpulse()
+{
+    return interfaceYThermalImpulse;
+}
+
+double HPRIntermediateStateVector::getInterfaceZThermalImpulse()
+{
+    return interfaceZThermalImpulse;
+}
+
+double HPRIntermediateStateVector::getMaterial1Density()
+{
+    return material1Density;
+}
+
+double HPRIntermediateStateVector::getMaterial1Pressure()
+{
+    return material1Pressure;
+}
+
+double HPRIntermediateStateVector::getMaterial2Density()
+{
+    return material2Density;
+}
+
+double HPRIntermediateStateVector::getMaterial2Pressure()
+{
+    return material2Pressure;
 }

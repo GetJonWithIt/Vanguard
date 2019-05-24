@@ -23,6 +23,10 @@ public:
     static void reinitialiseVolumeFraction(vector<ElasticReducedStateVector> & currentCells);
     static void reinitialiseVolumeFraction(vector<vector<ElasticReducedStateVector> > & currentCells);
 
+    static void reinitialiseVolumeFraction(vector<HPRIntermediateStateVector> & currentCells, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
+    static void reinitialiseVolumeFraction(vector<vector<HPRIntermediateStateVector> > & currentCells, HPRMaterialParameters material1Parameters,
+                                           HPRMaterialParameters material2Parameters);
+
     static void reinitialiseVolumeFraction(vector<HPRReducedStateVector> & currentCells, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
     static void reinitialiseVolumeFraction(vector<vector<HPRReducedStateVector> > & currentCells, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
 };

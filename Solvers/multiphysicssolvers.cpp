@@ -486,6 +486,35 @@ void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<vector<ElasticReduce
     }
 }
 
+void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<HPRIntermediateStateVector> & currentCells, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    int interfaceLocation = 0;
+    int cellCount = currentCells.size();
+
+    for (int i = 0; i < cellCount; i++)
+    {
+        if (currentCells[i].getMaterial1VolumeFraction() < 0.5 && currentCells[i - 1].getMaterial1VolumeFraction() >= 0.5)
+        {
+            interfaceLocation = i;
+        }
+    }
+
+    for (int i = interfaceLocation - 2; i < interfaceLocation + 2; i++)
+    {
+        currentCells[i].relaxTotalDensity();
+        currentCells[i].relaxTotalPressure();
+
+        if (i < interfaceLocation)
+        {
+            currentCells[i].setMaterial1VolumeFraction(0.999);
+        }
+        else
+        {
+            currentCells[i].setMaterial1VolumeFraction(0.001);
+        }
+    }
+}
+
 void MultiphysicsSolvers::reinitialiseVolumeFraction(vector<HPRReducedStateVector> & currentCells, HPRMaterialParameters materialParameters, HPRMaterialParameters material2Parameters)
 {
     int interfaceLocation = 0;
