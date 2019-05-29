@@ -297,7 +297,7 @@ void HPRReducedTests::solve2DZhangTest2(int cellCount, int reinitialisationFrequ
         }
     }
 
-    outputSolution2D(HPRSecondOrderSolver::solve2D(initialCells, cellSpacing, 0.8, 1.0 * pow(10.0, -5.0), 0.0, 0, 0, reinitialisationFrequency, material1Parameters, material2Parameters));
+    outputSolution2D(HPRSecondOrderSolver::solve2D(initialCells, cellSpacing, 0.8, 2.0 * pow(10.0, -4.0), 0.0, 0, 0, reinitialisationFrequency, material1Parameters, material2Parameters));
 }
 
 void HPRReducedTests::solve2DZhangElasticPlasticTest(int cellCount, int subcyclingIterations, int reinitialisationFrequency)
@@ -374,8 +374,36 @@ void HPRReducedTests::solve2DZhangElasticPlasticTest2(int cellCount, int subcycl
         }
     }
 
-    outputSolution2D(HPRSecondOrderSolver::solve2D(initialCells, cellSpacing, 0.8, 2.0 * pow(10.0, -5.0), 0.0, 0, subcyclingIterations, reinitialisationFrequency, material1Parameters,
+    outputSolution2D(HPRSecondOrderSolver::solve2D(initialCells, cellSpacing, 0.8, 3.0 * pow(10.0, -5.0), 0.0, 0, subcyclingIterations, reinitialisationFrequency, material1Parameters,
                                                    material2Parameters));
+}
+
+void HPRReducedTests::solve2DHowellBallTest1(int cellCount, int subcyclingIterations, int reinitialisationFrequency)
+{
+    /*
+    double cellSpacing = 1.0 / cellCount;
+
+    vector<vector<HPRReducedStateVector> > initialCells(cellCount, vector<HPRReducedStateVector>(cellCount));
+
+    vector<vector<double> > distortionTensor = MatrixAlgebra::computeIDentityMatrix(3);
+
+    for (int i = 0; i < cellCount; i++)
+    {
+        for (int j = 0; j < cellCount; j++)
+        {
+            initialCells[i][j] = HPRReducedStateVector(0.001, 0.0, 0.0, 0.0, distortionTensor, 0.0, distortionTensor, 0.0, hyperelasticMaterial1Parameters,
+                                                       hyperelasticMaterial2Parameters, material1Parameters, material2Parameters);
+        }
+    }
+
+    for (int i = (0.1 * cellCount); i < (0.15 * cellCount); i++)
+    {
+        for (int j = (0.44 * cellCount); j < (0.56 * cellCount); j++)
+        {
+            initialCells[i][j] = HPRReducedStateVector(0.999, 0.0, )
+        }
+    }
+    */
 }
 
 void HPRReducedTests::outputSolution(vector<HPRReducedStateVector> solution)

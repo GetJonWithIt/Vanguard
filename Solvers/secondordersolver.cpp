@@ -401,10 +401,13 @@ vector<vector<EulerStateVector> > SecondOrderSolver::solve2D(vector<vector<Euler
         vector<vector<EulerStateVector> > currentCellsWithBoundary = Solvers::insertBoundaryCells2D(currentCells, 2);
         double timeStep = Solvers::computeStableTimeStep2D(currentCellsWithBoundary, cellSpacing, CFLCoefficient, currentTime, finalTime, currentIteration, materialParameters);
 
-        computeXSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, bias, slopeLimiter, materialParameters);
+        computeXSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, bias, slopeLimiter, materialParameters);
 
         currentCellsWithBoundary = Solvers::insertBoundaryCells2D(currentCells, 2);
         computeYSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, bias, slopeLimiter, materialParameters);
+
+        currentCellsWithBoundary = Solvers::insertBoundaryCells2D(currentCells, 2);
+        computeXSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, bias, slopeLimiter, materialParameters);
 
         for (int i = 0; i < subcyclingIterations; i++)
         {
@@ -434,10 +437,13 @@ vector<vector<EulerMultiphysicsStateVector> > SecondOrderSolver::solve2D(vector<
         double timeStep = Solvers::computeStableTimeStep2D(currentCellsWithBoundary, cellSpacing, CFLCoefficient, currentTime, finalTime, currentIteration, material1Parameters,
                                                            material2Parameters);
 
-        computeXSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+        computeXSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
 
         currentCellsWithBoundary = Solvers::insertBoundaryCells2D(currentCells, 2);
         computeYSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+
+        currentCellsWithBoundary = Solvers::insertBoundaryCells2D(currentCells, 2);
+        computeXSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
 
         for (int i = 0; i < subcyclingIterations; i++)
         {
@@ -475,10 +481,13 @@ vector<vector<EulerReducedStateVector> > SecondOrderSolver::solve2D(vector<vecto
         double timeStep = Solvers::computeStableTimeStep2D(currentCellsWithBoundary, cellSpacing, CFLCoefficient, currentTime, finalTime, currentIteration, material1Parameters,
                                                            material2Parameters);
 
-        computeXSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+        computeXSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
 
         currentCellsWithBoundary = Solvers::insertBoundaryCells2D(currentCells, 2);
         computeYSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+
+        currentCellsWithBoundary = Solvers::insertBoundaryCells2D(currentCells, 2);
+        computeXSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
 
         for (int i = 0; i < subcyclingIterations; i++)
         {

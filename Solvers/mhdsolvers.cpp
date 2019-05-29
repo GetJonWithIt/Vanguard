@@ -22,6 +22,7 @@ vector<MHDStateVector> MHDSolvers::insertBoundaryCells(vector<MHDStateVector> & 
         currentCellsWithBoundary[cellCount + 3] = currentCells[cellCount - 2];
     }
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
         currentCellsWithBoundary[i + boundarySize] = currentCells[i];
@@ -35,9 +36,12 @@ double MHDSolvers::computeMaximumWaveSpeed(vector<MHDStateVector> & currentCells
     double maximumWaveSpeed = 0.0;
     int cellCount = currentCells.size();
 
+#pragma omp parallel for
     for (int i = 0; i < cellCount; i++)
     {
-        double waveSpeed = abs(currentCells[i].getXVelocity()) + currentCells[i].computeFastMagnetoAcousticSpeed(materialParameters);
+        double waveSpeed = abs(currentCells[i].getXVelocity()) + max(max(abs(currentCells[i].computeFastMagnetoAcousticSpeed(materialParameters)),
+                                                                         abs(currentCells[i].computeAlfvenWaveSpeed())),
+                                                                     abs(currentCells[i].computeSlowMagnetoAcousticSpeed(materialParameters)));
 
         if (waveSpeed > maximumWaveSpeed)
         {

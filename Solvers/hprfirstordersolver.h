@@ -10,6 +10,8 @@ public:
     HPRFirstOrderSolver();
 
     static vector<double> computeXLaxFriedrichsFlux(HPRStateVector leftStateVector, HPRStateVector rightStateVector, double cellSpacing, double timeStep, HPRMaterialParameters materialParameters);
+    static vector<double> computeXLaxFriedrichsFlux(HPRMultiphysicsStateVector leftStateVector, HPRMultiphysicsStateVector rightStateVector, double cellSpacing, double timeStep,
+                                                    HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
     static vector<double> computeXLaxFriedrichsFlux(HPRIntermediateStateVector leftStateVector, HPRIntermediateStateVector rightStateVector, double cellSpacing, double timeStep,
                                                     HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
     static vector<double> computeXLaxFriedrichsFlux(HPRReducedStateVector leftStateVector, HPRReducedStateVector rightStateVector, double cellSpacing, double timeStep,
@@ -22,6 +24,8 @@ public:
                                                     HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
 
     static vector<double> computeXRichtmyerFlux(HPRStateVector leftStateVector, HPRStateVector rightStateVector, double cellSpacing, double timeStep, HPRMaterialParameters materialParameters);
+    static vector<double> computeXRichtmyerFlux(HPRMultiphysicsStateVector leftStateVector, HPRMultiphysicsStateVector rightStateVector, double cellSpacing, double timeStep,
+                                                HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
     static vector<double> computeXRichtmyerFlux(HPRIntermediateStateVector leftStateVector, HPRIntermediateStateVector rightStateVector, double cellSpacing, double timeStep,
                                                 HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
     static vector<double> computeXRichtmyerFlux(HPRReducedStateVector leftStateVector, HPRReducedStateVector rightStateVector, double cellSpacing, double timeStep,
@@ -34,6 +38,8 @@ public:
                                                 HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
 
     static vector<double> computeXFORCEFlux(HPRStateVector leftStateVector, HPRStateVector rightStateVector, double cellSpacing, double timeStep, HPRMaterialParameters materialParameters);
+    static vector<double> computeXFORCEFlux(HPRMultiphysicsStateVector leftStateVector, HPRMultiphysicsStateVector rightStateVector, double cellSpacing, double timeStep,
+                                            HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
     static vector<double> computeXFORCEFlux(HPRIntermediateStateVector leftStateVector, HPRIntermediateStateVector rightStateVector, double cellSpacing, double timeStep,
                                             HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
     static vector<double> computeXFORCEFlux(HPRReducedStateVector leftStateVector, HPRReducedStateVector rightStateVector, double cellSpacing, double timeStep,
@@ -47,6 +53,8 @@ public:
 
     static void computeFORCETimeStep(vector<HPRStateVector> & currentCells, vector<HPRStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep,
                                      HPRMaterialParameters materialParameters);
+    static void computeFORCETimeStep(vector<HPRMultiphysicsStateVector> & currentCells, vector<HPRMultiphysicsStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep,
+                                     HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
     static void computeFORCETimeStep(vector<HPRIntermediateStateVector> & currentCells, vector<HPRIntermediateStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep,
                                      HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
     static void computeFORCETimeStep(vector<HPRReducedStateVector> & currentCells, vector<HPRReducedStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep,
@@ -68,6 +76,8 @@ public:
 
     static vector<HPRStateVector> solve(vector<HPRStateVector> & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, int subcyclingIterations,
                                         HPRMaterialParameters materialParameters);
+    static vector<HPRMultiphysicsStateVector> solve(vector<HPRMultiphysicsStateVector> & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, int subcyclingIterations,
+                                                    HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
     static vector<HPRIntermediateStateVector> solve(vector<HPRIntermediateStateVector> & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, int subcyclingIterations,
                                                     HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
     static vector<HPRReducedStateVector> solve(vector<HPRReducedStateVector> & initialCells, double cellSpacing, double CFLCoefficient, double finalTime, int subcyclingIterations,

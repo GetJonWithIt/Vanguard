@@ -329,10 +329,13 @@ vector<vector<ElasticStateVector> > ElasticSecondOrderSolver::solve2D(vector<vec
         vector<vector<ElasticStateVector> > currentCellsWithBoundary = ElasticSolvers::insertBoundaryCells2D(currentCells, 2);
         double timeStep = ElasticSolvers::computeStableTimeStep2D(currentCellsWithBoundary, cellSpacing, CFLCoefficient, currentTime, finalTime, currentIteration, materialParameters);
 
-        computeXSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, bias, slopeLimiter, materialParameters);
+        computeXSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, bias, slopeLimiter, materialParameters);
 
         currentCellsWithBoundary = ElasticSolvers::insertBoundaryCells2D(currentCells, 2);
         computeYSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, bias, slopeLimiter, materialParameters);
+
+        currentCellsWithBoundary = ElasticSolvers::insertBoundaryCells2D(currentCells, 2);
+        computeXSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, bias, slopeLimiter, materialParameters);
 
         currentTime += timeStep;
         currentIteration += 1;
@@ -357,10 +360,13 @@ vector<vector<ElasticReducedStateVector> > ElasticSecondOrderSolver::solve2D(vec
         double timeStep = ElasticSolvers::computeStableTimeStep2D(currentCellsWithBoundary, cellSpacing, CFLCoefficient, currentTime, finalTime, currentIteration, material1Parameters,
                                                                   material2Parameters);
 
-        computeXSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+        computeXSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
 
         currentCellsWithBoundary = ElasticSolvers::insertBoundaryCells2D(currentCells, 2);
         computeYSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+
+        currentCellsWithBoundary = ElasticSolvers::insertBoundaryCells2D(currentCells, 2);
+        computeXSLICTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
 
         currentTime += timeStep;
         currentIteration += 1;

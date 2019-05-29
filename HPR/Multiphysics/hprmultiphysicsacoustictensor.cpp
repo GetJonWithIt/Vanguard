@@ -1,17 +1,17 @@
-#include "hprintermediateacoustictensor.h"
+#include "hprmultiphysicsacoustictensor.h"
 
-HPRIntermediateAcousticTensor::HPRIntermediateAcousticTensor()
+HPRMultiphysicsAcousticTensor::HPRMultiphysicsAcousticTensor()
 {
 }
 
-vector<vector<double> > HPRIntermediateAcousticTensor::computeMaterial1AcousticTensorComponent1(HPRIntermediateStateVector stateVector, HPRMaterialParameters material1Parameters, int direction)
+vector<vector<double> > HPRMultiphysicsAcousticTensor::computeMaterial1AcousticTensorComponent1(HPRMultiphysicsStateVector stateVector, HPRMaterialParameters material1Parameters, int direction)
 {
     vector<vector<double> > material1AcousticTensorComponent1(4, vector<double>(5));
 
     double material1Density = stateVector.getMaterial1Density();
     material1AcousticTensorComponent1[0][1] = 1.0 / material1Density;
 
-    vector<vector<double> > material1ShearStressTensorDerivativeDensity = stateVector.computeShearStressTensorDerivativeDensity(material1Parameters);
+    vector<vector<double> > material1ShearStressTensorDerivativeDensity = stateVector.computeMaterial1ShearStressTensorDerivativeDensity(material1Parameters);
     vector<vector<vector<vector<double> > > > material1ShearStressTensorDerivativeDistortionTensor = stateVector.computeMaterial1ShearStressTensorDerivativeDistortionTensor(material1Parameters);
 
     for (int i = 0; i < 3; i++)
@@ -39,14 +39,14 @@ vector<vector<double> > HPRIntermediateAcousticTensor::computeMaterial1AcousticT
     return material1AcousticTensorComponent1;
 }
 
-vector<vector<double> > HPRIntermediateAcousticTensor::computeMaterial2AcousticTensorComponent1(HPRIntermediateStateVector stateVector, HPRMaterialParameters material2Parameters, int direction)
+vector<vector<double> > HPRMultiphysicsAcousticTensor::computeMaterial2AcousticTensorComponent1(HPRMultiphysicsStateVector stateVector, HPRMaterialParameters material2Parameters, int direction)
 {
     vector<vector<double> > material2AcousticTensorComponent1(4, vector<double>(5));
 
     double material2Density = stateVector.getMaterial2Density();
     material2AcousticTensorComponent1[0][1] = 1.0 / material2Density;
 
-    vector<vector<double> > material2ShearStressTensorDerivativeDensity = stateVector.computeShearStressTensorDerivativeDensity(material2Parameters);
+    vector<vector<double> > material2ShearStressTensorDerivativeDensity = stateVector.computeMaterial2ShearStressTensorDerivativeDensity(material2Parameters);
     vector<vector<vector<vector<double> > > > material2ShearStressTensorDerivativeDistortionTensor = stateVector.computeMaterial2ShearStressTensorDerivativeDistortionTensor(material2Parameters);
 
     for (int i = 0; i < 3; i++)
@@ -58,7 +58,7 @@ vector<vector<double> > HPRIntermediateAcousticTensor::computeMaterial2AcousticT
     {
         for (int j = 0; j < 3; j++)
         {
-            material2AcousticTensorComponent1[i][2 + j] = -(1.0 / material2Density) * material2ShearStressTensorDerivativeDistortionTensor[direction][i][j][direction];
+            material2AcousticTensorComponent1[i][2 + j] = -(1.0 / material2Density) * material2ShearStressTensorDerivativeDistortionTensor[direction][i][i][direction];
         }
     }
 
@@ -74,13 +74,13 @@ vector<vector<double> > HPRIntermediateAcousticTensor::computeMaterial2AcousticT
     return material2AcousticTensorComponent1;
 }
 
-vector<vector<double> > HPRIntermediateAcousticTensor::computeMaterial1AcousticTensorComponent2(HPRIntermediateStateVector stateVector, HPRMaterialParameters material1Parameters, int direction)
+vector<vector<double> > HPRMultiphysicsAcousticTensor::computeMaterial1AcousticTensorComponent2(HPRMultiphysicsStateVector stateVector, HPRMaterialParameters material1Parameters, int direction)
 {
     vector<vector<double> > material1AcousticTensorComponent2(5, vector<double>(4));
 
     double material1Density = stateVector.getMaterial1Density();
     double material1Pressure = stateVector.getMaterial1Pressure();
-    vector<vector<double> > interfaceDistortionTensor = stateVector.getInterfaceDistortionTensor();
+    vector<vector<double> > material1DistortionTensor = stateVector.getMaterial1DistortionTensor();
 
     double material1AdiabaticSoundSpeed = HPRWaveSpeeds::computeAdiabaticSoundSpeed(material1Density, material1Pressure, material1Parameters);
 
@@ -88,7 +88,7 @@ vector<vector<double> > HPRIntermediateAcousticTensor::computeMaterial1AcousticT
     material1AcousticTensorComponent2[1][direction] = material1Density * (material1AdiabaticSoundSpeed * material1AdiabaticSoundSpeed);
 
     vector<vector<double> > material1ShearStressTensor = stateVector.computeMaterial1ShearStressTensor(material1Parameters);
-    vector<vector<double> > material1ShearStressTensorDerivativeDensity = stateVector.computeShearStressTensorDerivativeDensity(material1Parameters);
+    vector<vector<double> > material1ShearStressTensorDerivativeDensity = stateVector.computeMaterial1ShearStressTensorDerivativeDensity(material1Parameters);
 
     for (int i = 0; i < 3; i++)
     {
@@ -99,7 +99,7 @@ vector<vector<double> > HPRIntermediateAcousticTensor::computeMaterial1AcousticT
     {
         for (int j = 0; j < 3; j++)
         {
-            material1AcousticTensorComponent2[2 + i][j] = interfaceDistortionTensor[i][j];
+            material1AcousticTensorComponent2[2 + i][j] = material1DistortionTensor[i][j];
         }
     }
 
@@ -116,13 +116,13 @@ vector<vector<double> > HPRIntermediateAcousticTensor::computeMaterial1AcousticT
     return material1AcousticTensorComponent2;
 }
 
-vector<vector<double> > HPRIntermediateAcousticTensor::computeMaterial2AcousticTensorComponent2(HPRIntermediateStateVector stateVector, HPRMaterialParameters material2Parameters, int direction)
+vector<vector<double> > HPRMultiphysicsAcousticTensor::computeMaterial2AcousticTensorComponent2(HPRMultiphysicsStateVector stateVector, HPRMaterialParameters material2Parameters, int direction)
 {
     vector<vector<double> > material2AcousticTensorComponent2(5, vector<double>(4));
 
     double material2Density = stateVector.getMaterial2Density();
     double material2Pressure = stateVector.getMaterial2Pressure();
-    vector<vector<double> > interfaceDistortionTensor = stateVector.getInterfaceDistortionTensor();
+    vector<vector<double> > material2DistortionTensor = stateVector.getMaterial2DistortionTensor();
 
     double material2AdiabaticSoundSpeed = HPRWaveSpeeds::computeAdiabaticSoundSpeed(material2Density, material2Pressure, material2Parameters);
 
@@ -130,7 +130,7 @@ vector<vector<double> > HPRIntermediateAcousticTensor::computeMaterial2AcousticT
     material2AcousticTensorComponent2[1][direction] = material2Density * (material2AdiabaticSoundSpeed * material2AdiabaticSoundSpeed);
 
     vector<vector<double> > material2ShearStressTensor = stateVector.computeMaterial2ShearStressTensor(material2Parameters);
-    vector<vector<double> > material2ShearStressTensorDerivativeDensity = stateVector.computeShearStressTensorDerivativeDensity(material2Parameters);
+    vector<vector<double> > material2ShearStressTensorDerivativeDensity = stateVector.computeMaterial2ShearStressTensorDerivativeDensity(material2Parameters);
 
     for (int i = 0; i < 3; i++)
     {
@@ -141,7 +141,7 @@ vector<vector<double> > HPRIntermediateAcousticTensor::computeMaterial2AcousticT
     {
         for (int j = 0; j < 3; j++)
         {
-            material2AcousticTensorComponent2[2 + i][j] = interfaceDistortionTensor[i][j];
+            material2AcousticTensorComponent2[2 + i][j] = material2DistortionTensor[i][j];
         }
     }
 
@@ -158,7 +158,7 @@ vector<vector<double> > HPRIntermediateAcousticTensor::computeMaterial2AcousticT
     return material2AcousticTensorComponent2;
 }
 
-vector<vector<double> > HPRIntermediateAcousticTensor::computeMaterial1AcousticTensor(HPRIntermediateStateVector stateVector, HPRMaterialParameters material1Parameters, int direction)
+vector<vector<double> > HPRMultiphysicsAcousticTensor::computeMaterial1AcousticTensor(HPRMultiphysicsStateVector stateVector, HPRMaterialParameters material1Parameters, int direction)
 {
     vector<vector<double> > material1AcousticTensorComponent1 = computeMaterial1AcousticTensorComponent1(stateVector, material1Parameters, direction);
     vector<vector<double> > material1AcousticTensorComponent2 = computeMaterial1AcousticTensorComponent2(stateVector, material1Parameters, direction);
@@ -166,7 +166,7 @@ vector<vector<double> > HPRIntermediateAcousticTensor::computeMaterial1AcousticT
     return MatrixAlgebra::multiplyMatrices(material1AcousticTensorComponent1, material1AcousticTensorComponent2);
 }
 
-vector<vector<double> > HPRIntermediateAcousticTensor::computeMaterial2AcousticTensor(HPRIntermediateStateVector stateVector, HPRMaterialParameters material2Parameters, int direction)
+vector<vector<double> > HPRMultiphysicsAcousticTensor::computeMaterial2AcousticTensor(HPRMultiphysicsStateVector stateVector, HPRMaterialParameters material2Parameters, int direction)
 {
     vector<vector<double> > material2AcousticTensorComponent1 = computeMaterial2AcousticTensorComponent1(stateVector, material2Parameters, direction);
     vector<vector<double> > material2AcousticTensorComponent2 = computeMaterial2AcousticTensorComponent2(stateVector, material2Parameters, direction);
@@ -174,7 +174,7 @@ vector<vector<double> > HPRIntermediateAcousticTensor::computeMaterial2AcousticT
     return MatrixAlgebra::multiplyMatrices(material2AcousticTensorComponent1, material2AcousticTensorComponent2);
 }
 
-double HPRIntermediateAcousticTensor::computeMaximumWaveSpeed(HPRIntermediateStateVector stateVector, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters,
+double HPRMultiphysicsAcousticTensor::computeMaximumWaveSpeed(HPRMultiphysicsStateVector stateVector, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters,
                                                               int direction)
 {
     vector<vector<double> > material1AcousticTensor = computeMaterial1AcousticTensor(stateVector, material1Parameters, direction);

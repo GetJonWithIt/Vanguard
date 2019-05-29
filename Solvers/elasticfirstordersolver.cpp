@@ -419,9 +419,13 @@ vector<vector<ElasticStateVector> > ElasticFirstOrderSolver::solve2D(vector<vect
         vector<vector<ElasticStateVector> > currentCellsWithBoundary = ElasticSolvers::insertBoundaryCells2D(currentCells, 1);
         double timeStep = ElasticSolvers::computeStableTimeStep2D(currentCellsWithBoundary, cellSpacing, CFLCoefficient, currentTime, finalTime, currentIteration, materialParameters);
 
-        computeXFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, materialParameters);
+        computeXFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, materialParameters);
+
         currentCellsWithBoundary = ElasticSolvers::insertBoundaryCells2D(currentCells, 1);
         computeYFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, materialParameters);
+
+        currentCellsWithBoundary = ElasticSolvers::insertBoundaryCells2D(currentCells, 1);
+        computeXFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, materialParameters);
 
         currentTime += timeStep;
         currentIteration += 1;
@@ -446,9 +450,13 @@ vector<vector<ElasticReducedStateVector> > ElasticFirstOrderSolver::solve2D(vect
         double timeStep = ElasticSolvers::computeStableTimeStep2D(currentCellsWithBoundary, cellSpacing, CFLCoefficient, currentTime, finalTime, currentIteration, material1Parameters,
                                                            material2Parameters);
 
-        computeXFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, material1Parameters, material2Parameters);
+        computeXFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, material1Parameters, material2Parameters);
+
         currentCellsWithBoundary = ElasticSolvers::insertBoundaryCells2D(currentCells, 1);
         computeYFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, material1Parameters, material2Parameters);
+
+        currentCellsWithBoundary = ElasticSolvers::insertBoundaryCells2D(currentCells, 1);
+        computeXFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, material1Parameters, material2Parameters);
 
         currentTime += timeStep;
         currentIteration += 1;

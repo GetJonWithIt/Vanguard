@@ -18,6 +18,14 @@ public:
 
     static void solve2DBartonTest1(int cellCount, int reinitialisationFrequency);
 
+    static void solve2DZhangTest(int cellCount, int reinitialisationFrequency);
+
+    static void solve2DZhangTest2(int cellCount, int reinitialisationFrequency);
+
+    static void solve2DZhangElasticPlasticTest(int cellCount, int subcyclingIterations, int reinitialisationFrequency);
+
+    static void solve2DZhangElasticPlasticTest2(int cellCount, int subcyclingIterations, int reinitialisationFrequency);
+
     static void outputSolution(vector<HPRIntermediateStateVector> solution);
     static void outputSolution2D(vector<vector<HPRIntermediateStateVector> > solution);
 };

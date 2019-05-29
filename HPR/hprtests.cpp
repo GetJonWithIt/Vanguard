@@ -7,7 +7,7 @@ HPRTests::HPRTests()
 void HPRTests::solveStokesFirstProblem(int cellCount, int subcyclingIterations)
 {
     vector<HPRStateVector> initialCells(cellCount);
-    HPRMaterialParameters materialParameters("StiffenedGas", false, false, 8.31445985, 1.0, 1.0 / 1.4, 0.0, 0.0, 1.0, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, pow(10.0, -4.0), 0.75, 0.0, 1.0,
+    HPRMaterialParameters materialParameters("StiffenedGas", false, false, 8.31445985, 1.0, 1.0 / 1.4, 0.0, 0.0, 1.0, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, pow(10.0, -2.0), 0.75, 0.0, 1.0,
                                              pow(10.0, -16.0), 0.0, 0.0, 0.0);
 
     materialParameters.configureStrainDissipationTime();
@@ -111,9 +111,9 @@ void HPRTests::solveZhangElasticPlasticTest(int cellCount, int subcyclingIterati
     vector<HPRStateVector> initialCells(cellCount);
     HyperelasticMaterialParameters hyperelasticMaterialParameters(2.71, 6.22, 3.16, 9.0 * pow(10.0, -4.0), 300.0, 1.0, 3.577, 2.088);
     HPRMaterialParameters materialParameters("GodunovRomenski", false, true, 8.31445985, 2.71, 73.0, 300.0, 300.0, 9.0 * pow(10.0, -4.0), 1.0, 0.0, 5.037, 1.0, 1.338, 0.0, 3.16, pow(10.0, -9.0),
-                                             0.0, 24.8 * pow(10.0, 9.0), 0.75, 0.2976 * pow(10.0, 8.0), 1.338, 2.0, 1.0, 3.577, 2.088);
+                                             0.0, 24.8 * pow(10.0, 9.0), 0.75, 0.2976 * pow(10.0, 9.0), 1.338, 2.0, 1.0, 3.577, 2.088);
 
-    double cellSpacing = 1.0 / cellCount;
+    double cellSpacing = 10.0 / cellCount;
 
     vector<vector<double> > leftDistortionTensor = MatrixAlgebra::computeIdentityMatrix(3);
     vector<vector<double> > rightDistortionTensor = MatrixAlgebra::computeIdentityMatrix(3);
@@ -130,7 +130,7 @@ void HPRTests::solveZhangElasticPlasticTest(int cellCount, int subcyclingIterati
         }
     }
 
-    outputSolution(HPRSecondOrderSolver::solve(initialCells, cellSpacing, 0.8, 0.06, 0.0, 0, subcyclingIterations, materialParameters), materialParameters);
+    outputSolution(HPRSecondOrderSolver::solve(initialCells, cellSpacing, 0.8, 0.6, 0.0, 0, subcyclingIterations, materialParameters), materialParameters);
 }
 
 void HPRTests::solve2DBartonTest1(int cellCount, int subcyclingIterations)

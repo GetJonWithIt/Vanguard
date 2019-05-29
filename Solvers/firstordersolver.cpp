@@ -530,10 +530,13 @@ vector<vector<EulerStateVector> > FirstOrderSolver::solve2D(vector<vector<EulerS
         vector<vector<EulerStateVector> > currentCellsWithBoundary = Solvers::insertBoundaryCells2D(currentCells, 1);
         double timeStep = Solvers::computeStableTimeStep2D(currentCellsWithBoundary, cellSpacing, CFLCoefficient, currentTime, finalTime, currentIteration, materialParameters);
 
-        computeXFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, materialParameters);
+        computeXFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, materialParameters);
 
         currentCellsWithBoundary = Solvers::insertBoundaryCells2D(currentCells, 1);
         computeYFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, materialParameters);
+
+        currentCellsWithBoundary = Solvers::insertBoundaryCells2D(currentCells, 1);
+        computeXFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, materialParameters);
 
         for (int i = 0; i < subcyclingIterations; i++)
         {
@@ -563,9 +566,13 @@ vector<vector<EulerMultiphysicsStateVector> > FirstOrderSolver::solve2D(vector<v
         double timeStep = Solvers::computeStableTimeStep2D(currentCellsWithBoundary, cellSpacing, CFLCoefficient, currentTime, finalTime, currentIteration, material1Parameters,
                                                            material2Parameters);
 
-        computeXFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, material1Parameters, material2Parameters);
+        computeXFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, material1Parameters, material2Parameters);
+
         currentCellsWithBoundary = Solvers::insertBoundaryCells2D(currentCells, 1);
         computeYFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, material1Parameters, material2Parameters);
+
+        currentCellsWithBoundary = Solvers::insertBoundaryCells2D(currentCells, 1);
+        computeXFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, material1Parameters, material2Parameters);
 
         for (int i = 0; i < subcyclingIterations; i++)
         {
@@ -595,9 +602,13 @@ vector<vector<EulerReducedStateVector> > FirstOrderSolver::solve2D(vector<vector
         double timeStep = Solvers::computeStableTimeStep2D(currentCellsWithBoundary, cellSpacing, CFLCoefficient, currentTime, finalTime, currentIteration, material1Parameters,
                                                            material2Parameters);
 
-        computeXFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, material1Parameters, material2Parameters);
+        computeXFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, material1Parameters, material2Parameters);
+
         currentCellsWithBoundary = Solvers::insertBoundaryCells2D(currentCells, 1);
         computeYFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, timeStep, material1Parameters, material2Parameters);
+
+        currentCellsWithBoundary = Solvers::insertBoundaryCells2D(currentCells, 1);
+        computeXFORCETimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * timeStep, material1Parameters, material2Parameters);
 
         for (int i = 0; i < subcyclingIterations; i++)
         {

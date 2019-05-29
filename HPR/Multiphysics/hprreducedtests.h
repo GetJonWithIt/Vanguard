@@ -26,6 +26,9 @@ public:
 
     static void solve2DZhangElasticPlasticTest2(int cellCount, int subcyclingIterations, int reinitialisationFrequency);
 
+    static void solve2DHowellBallTest1(int cellCount, int subcyclingIterations, int reinitialisationFrequency);
+    static void solve2DHowellBallTest2(int cellCount, int subcyclingIterations, int reinitialisationFrequency);
+
     static void outputSolution(vector<HPRReducedStateVector> solution);
     static void outputSolution2D(vector<vector<HPRReducedStateVector> > solution);
 };

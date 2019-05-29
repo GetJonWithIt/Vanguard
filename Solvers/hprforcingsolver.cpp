@@ -209,9 +209,11 @@ vector<double> HPRForcingSolver::evolveReducedConservedVariableVector2D(vector<d
     vector<double> middleConservedVariableVectorFirstStep = VectorAlgebra::addVectors(middleConservedVariableVector, VectorAlgebra::multiplyVector(0.5, firstStep));
     middleStateVector.setConservedVariableVector(middleConservedVariableVectorFirstStep, material1Parameters, material2Parameters);
 
-    HPRReducedStateVector middleStateVectorFirstStepEvolvedX = HPRSolvers::evolveStateByFractionalXTimeStep(0.5, leftStateVector, middleStateVector, rightStateVector, cellSpacing, timeStep,
+    HPRReducedStateVector middleStateVectorFirstStepEvolved1 = HPRSolvers::evolveStateByFractionalXTimeStep(0.25, leftStateVector, middleStateVector, rightStateVector, cellSpacing, timeStep,
                                                                                                             bias, slopeLimiter, material1Parameters, material2Parameters);
-    HPRReducedStateVector middleStateVectorFirstStepEvolved = HPRSolvers::evolveStateByFractionalYTimeStep(0.5, topStateVector, middleStateVectorFirstStepEvolvedX, bottomStateVector,
+    HPRReducedStateVector middleStateVectorFirstStepEvolved2 = HPRSolvers::evolveStateByFractionalYTimeStep(0.5, topStateVector, middleStateVectorFirstStepEvolved1, bottomStateVector,
+                                                                                                            cellSpacing, timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+    HPRReducedStateVector middleStateVectorFirstStepEvolved = HPRSolvers::evolveStateByFractionalXTimeStep(0.25, leftStateVector, middleStateVectorFirstStepEvolved2, rightStateVector,
                                                                                                            cellSpacing, timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
 
     vector<double> middleConservedVariableVectorFirstStepEvolved = middleStateVectorFirstStepEvolved.computeConservedVariableVector(material1Parameters, material2Parameters);
@@ -221,9 +223,11 @@ vector<double> HPRForcingSolver::evolveReducedConservedVariableVector2D(vector<d
     vector<double> middleConservedVariableVectorSecondStep = VectorAlgebra::addVectors(middleConservedVariableVector, VectorAlgebra::multiplyVector(0.5, secondStep));
     middleStateVector.setConservedVariableVector(middleConservedVariableVectorSecondStep, material1Parameters, material2Parameters);
 
-    HPRReducedStateVector middleStateVectorSecondStepEvolvedX = HPRSolvers::evolveStateByFractionalXTimeStep(0.5, leftStateVector, middleStateVector, rightStateVector, cellSpacing, timeStep,
+    HPRReducedStateVector middleStateVectorSecondStepEvolved1 = HPRSolvers::evolveStateByFractionalXTimeStep(0.25, leftStateVector, middleStateVector, rightStateVector, cellSpacing, timeStep,
                                                                                                              bias, slopeLimiter, material1Parameters, material2Parameters);
-    HPRReducedStateVector middleStateVectorSecondStepEvolved = HPRSolvers::evolveStateByFractionalYTimeStep(0.5, topStateVector, middleStateVectorSecondStepEvolvedX, bottomStateVector,
+    HPRReducedStateVector middleStateVectorSecondStepEvolved2 = HPRSolvers::evolveStateByFractionalYTimeStep(0.5, topStateVector, middleStateVectorSecondStepEvolved1, bottomStateVector,
+                                                                                                             cellSpacing, timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+    HPRReducedStateVector middleStateVectorSecondStepEvolved = HPRSolvers::evolveStateByFractionalXTimeStep(0.25, leftStateVector, middleStateVectorSecondStepEvolved2, rightStateVector,
                                                                                                             cellSpacing, timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
 
     vector<double> middleConservedVariableVectorSecondStepEvolved = middleStateVectorSecondStepEvolved.computeConservedVariableVector(material1Parameters, material2Parameters);
@@ -233,9 +237,11 @@ vector<double> HPRForcingSolver::evolveReducedConservedVariableVector2D(vector<d
     vector<double> middleConservedVariableVectorThirdStep = VectorAlgebra::addVectors(middleConservedVariableVector, thirdStep);
     middleStateVector.setConservedVariableVector(middleConservedVariableVectorThirdStep, material1Parameters, material2Parameters);
 
-    HPRReducedStateVector middleStateVectorThirdStepEvolvedX = HPRSolvers::evolveStateByFractionalXTimeStep(1.0, leftStateVector, middleStateVector, rightStateVector, cellSpacing,
+    HPRReducedStateVector middleStateVectorThirdStepEvolved1 = HPRSolvers::evolveStateByFractionalXTimeStep(0.5, leftStateVector, middleStateVector, rightStateVector, cellSpacing,
                                                                                                             timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
-    HPRReducedStateVector middleStateVectorThirdStepEvolved = HPRSolvers::evolveStateByFractionalYTimeStep(1.0, topStateVector, middleStateVectorThirdStepEvolvedX, bottomStateVector,
+    HPRReducedStateVector middleStateVectorThirdStepEvolved2 = HPRSolvers::evolveStateByFractionalYTimeStep(1.0, topStateVector, middleStateVectorThirdStepEvolved1, bottomStateVector,
+                                                                                                            cellSpacing, timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+    HPRReducedStateVector middleStateVectorThirdStepEvolved = HPRSolvers::evolveStateByFractionalXTimeStep(0.5, leftStateVector, middleStateVectorThirdStepEvolved2, rightStateVector,
                                                                                                            cellSpacing, timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
 
     vector<double> middleConservedVariableVectorThirdStepEvolved = middleStateVectorThirdStepEvolved.computeConservedVariableVector(material1Parameters, material2Parameters);

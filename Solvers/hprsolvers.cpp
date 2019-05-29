@@ -31,6 +31,33 @@ vector<HPRStateVector> HPRSolvers::insertBoundaryCells(vector<HPRStateVector> & 
     return currentCellsWithBoundary;
 }
 
+vector<HPRMultiphysicsStateVector> HPRSolvers::insertBoundaryCells(vector<HPRMultiphysicsStateVector> & currentCells, int boundarySize)
+{
+    int cellCount = currentCells.size();
+    vector<HPRMultiphysicsStateVector> currentCellsWithBoundary(cellCount + (2 * boundarySize));
+
+    if (boundarySize == 1)
+    {
+        currentCellsWithBoundary[0] = currentCells[0];
+        currentCellsWithBoundary[cellCount + 1] = currentCells[cellCount - 1];
+    }
+    else if (boundarySize == 2)
+    {
+        currentCellsWithBoundary[0] = currentCells[1];
+        currentCellsWithBoundary[1] = currentCells[0];
+        currentCellsWithBoundary[cellCount + 2] = currentCells[cellCount - 1];
+        currentCellsWithBoundary[cellCount + 3] = currentCells[cellCount - 2];
+    }
+
+#pragma omp parallel for
+    for (int i = 0; i < cellCount; i++)
+    {
+        currentCellsWithBoundary[i + boundarySize] = currentCells[i];
+    }
+
+    return currentCellsWithBoundary;
+}
+
 vector<HPRIntermediateStateVector> HPRSolvers::insertBoundaryCells(vector<HPRIntermediateStateVector> & currentCells, int boundarySize)
 {
     int cellCount = currentCells.size();
@@ -275,6 +302,25 @@ double HPRSolvers::computeMaximumWaveSpeed(vector<HPRStateVector> & currentCells
     return maximumWaveSpeed;
 }
 
+double HPRSolvers::computeMaximumWaveSpeed(vector<HPRMultiphysicsStateVector> & currentCells, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    double maximumWaveSpeed = 0.0;
+    int cellCount = currentCells.size();
+
+#pragma omp parallel for
+    for (int i = 0; i < cellCount; i++)
+    {
+        double waveSpeed = abs(currentCells[i].getInterfaceXVelocity()) + HPRMultiphysicsAcousticTensor::computeMaximumWaveSpeed(currentCells[i], material1Parameters, material2Parameters, 0);
+
+        if (waveSpeed > maximumWaveSpeed)
+        {
+            maximumWaveSpeed = waveSpeed;
+        }
+    }
+
+    return maximumWaveSpeed;
+}
+
 double HPRSolvers::computeMaximumWaveSpeed(vector<HPRIntermediateStateVector> & currentCells, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
 {
     double maximumWaveSpeed = 0.0;
@@ -396,6 +442,14 @@ double HPRSolvers::computeStableTimeStep(vector<HPRStateVector> & currentCells, 
     return Solvers::computeStableTimeStep(timeStep, currentTime, finalTime, currentIteration);
 }
 
+double HPRSolvers::computeStableTimeStep(vector<HPRMultiphysicsStateVector> & currentCells, double cellSpacing, double CFLCoefficient, double currentTime, double finalTime, int currentIteration,
+                                         HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    double timeStep = CFLCoefficient * (cellSpacing / computeMaximumWaveSpeed(currentCells, material1Parameters, material2Parameters));
+
+    return Solvers::computeStableTimeStep(timeStep, currentTime, finalTime, currentIteration);
+}
+
 double HPRSolvers::computeStableTimeStep(vector<HPRIntermediateStateVector> & currentCells, double cellSpacing, double CFLCoefficient, double currentTime, double finalTime, int currentIteration,
                                          HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
 {
@@ -448,6 +502,23 @@ HPRStateVector HPRSolvers::evolveStateByHalfXTimeStep(HPRStateVector leftStateVe
     vector<double> evolutionVector = Solvers::computeEvolutionVector(leftFluxVector, rightFluxVector, cellSpacing, timeStep);
 
     return evolveStateByHalfTimeStep(leftExtrapolatedValue, rightExtrapolatedValue, evolutionVector, side, materialParameters);
+}
+
+HPRMultiphysicsStateVector HPRSolvers::evolveStateByHalfXTimeStep(HPRMultiphysicsStateVector leftStateVector, HPRMultiphysicsStateVector middleStateVector,
+                                                                  HPRMultiphysicsStateVector rightStateVector, double cellSpacing, double timeStep, double bias, int slopeLimiter, int side,
+                                                                  HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    vector<double> slopeVector = SlopeLimiters::computeSlopeVector(leftStateVector, middleStateVector, rightStateVector, bias, slopeLimiter, material1Parameters, material2Parameters);
+    vector<double> leftExtrapolatedValue = VectorAlgebra::subtractVectors(middleStateVector.computeConservedVariableVector(material1Parameters, material2Parameters),
+                                                                          VectorAlgebra::multiplyVector(0.5, slopeVector));
+    vector<double> rightExtrapolatedValue = VectorAlgebra::addVectors(middleStateVector.computeConservedVariableVector(material1Parameters, material2Parameters),
+                                                                      VectorAlgebra::multiplyVector(0.5, slopeVector));
+
+    vector<double> leftFluxVector = HPRMultiphysicsStateVector::computeXFluxVector(leftExtrapolatedValue, material1Parameters, material2Parameters);
+    vector<double> rightFluxVector = HPRMultiphysicsStateVector::computeXFluxVector(rightExtrapolatedValue, material1Parameters, material2Parameters);
+    vector<double> evolutionVector = Solvers::computeEvolutionVector(leftFluxVector, rightFluxVector, cellSpacing, timeStep);
+
+    return evolveStateByHalfTimeStep(leftExtrapolatedValue, rightExtrapolatedValue, evolutionVector, side, material1Parameters, material2Parameters);
 }
 
 HPRIntermediateStateVector HPRSolvers::evolveStateByHalfXTimeStep(HPRIntermediateStateVector leftStateVector, HPRIntermediateStateVector middleStateVector,
@@ -546,6 +617,23 @@ HPRStateVector HPRSolvers::evolveStateByFractionalXTimeStep(double stepFraction,
     vector<double> evolutionVector = Solvers::computeFractionalEvolutionVector(stepFraction, leftFluxVector, rightFluxVector, cellSpacing, timeStep);
 
     return evolveStateByFractionalTimeStep(middleConservedVariableVector, evolutionVector, materialParameters);
+}
+
+HPRMultiphysicsStateVector HPRSolvers::evolveStateByFractionalXTimeStep(double stepFraction, HPRMultiphysicsStateVector leftStateVector, HPRMultiphysicsStateVector middleStateVector,
+                                                                        HPRMultiphysicsStateVector rightStateVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
+                                                                        HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    vector<double> slopeVector = SlopeLimiters::computeSlopeVector(leftStateVector, middleStateVector, rightStateVector, bias, slopeLimiter, material1Parameters, material2Parameters);
+
+    vector<double> middleConservedVariableVector = middleStateVector.computeConservedVariableVector(material1Parameters, material2Parameters);
+    vector<double> leftConservedVariableVector = VectorAlgebra::subtractVectors(middleConservedVariableVector, VectorAlgebra::multiplyVector(0.5, slopeVector));
+    vector<double> rightConservedVariableVector = VectorAlgebra::addVectors(middleConservedVariableVector, VectorAlgebra::multiplyVector(0.5, slopeVector));
+
+    vector<double> leftFluxVector = HPRMultiphysicsStateVector::computeXFluxVector(leftConservedVariableVector, material1Parameters, material2Parameters);
+    vector<double> rightFluxVector = HPRMultiphysicsStateVector::computeXFluxVector(rightConservedVariableVector, material1Parameters, material2Parameters);
+    vector<double> evolutionVector = Solvers::computeFractionalEvolutionVector(stepFraction, leftFluxVector, rightFluxVector, cellSpacing, timeStep);
+
+    return evolveStateByFractionalTimeStep(middleConservedVariableVector, evolutionVector, material1Parameters, material2Parameters);
 }
 
 HPRIntermediateStateVector HPRSolvers::evolveStateByFractionalXTimeStep(double stepFraction, HPRIntermediateStateVector leftStateVector, HPRIntermediateStateVector middleStateVector,
@@ -649,6 +737,23 @@ HPRStateVector HPRSolvers::evolveStateByHalfTimeStep(vector<double> leftExtrapol
     return evolvedStateVector;
 }
 
+HPRMultiphysicsStateVector HPRSolvers::evolveStateByHalfTimeStep(vector<double> leftExtrapolatedValue, vector<double> rightExtrapolatedValue, vector<double> evolutionVector, int side,
+                                                                 HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    HPRMultiphysicsStateVector evolvedStateVector;
+
+    if (side == 0)
+    {
+        evolvedStateVector.setConservedVariableVector(VectorAlgebra::addVectors(leftExtrapolatedValue, evolutionVector), material1Parameters, material2Parameters);
+    }
+    else
+    {
+        evolvedStateVector.setConservedVariableVector(VectorAlgebra::addVectors(rightExtrapolatedValue, evolutionVector), material1Parameters, material2Parameters);
+    }
+
+    return evolvedStateVector;
+}
+
 HPRIntermediateStateVector HPRSolvers::evolveStateByHalfTimeStepIntermediate(vector<double> leftExtrapolatedValue, vector<double> rightExtrapolatedValue, vector<double> evolutionVector,
                                                                              int side, HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
 {
@@ -687,6 +792,15 @@ HPRStateVector HPRSolvers::evolveStateByFractionalTimeStep(vector<double> middle
 {
     HPRStateVector evolvedStateVector;
     evolvedStateVector.setConservedVariableVector(VectorAlgebra::addVectors(middleConservedVariableVector, conservedVariableVectorEvolution), materialParameters);
+
+    return evolvedStateVector;
+}
+
+HPRMultiphysicsStateVector HPRSolvers::evolveStateByFractionalTimeStep(vector<double> middleConservedVariableVector, vector<double> conservedVariableVectorEvolution,
+                                                                       HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters)
+{
+    HPRMultiphysicsStateVector evolvedStateVector;
+    evolvedStateVector.setConservedVariableVector(VectorAlgebra::addVectors(middleConservedVariableVector, conservedVariableVectorEvolution), material1Parameters, material2Parameters);
 
     return evolvedStateVector;
 }
