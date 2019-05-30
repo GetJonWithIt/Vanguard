@@ -193,7 +193,7 @@ void HPRTests::solve2DZhangElasticPlasticTest(int cellCount, int subcyclingItera
     HPRMaterialParameters materialParameters("GodunovRomenski", false, true, 8.31445985, 2.71, 73.0, 300.0, 300.0, 9.0 * pow(10.0, -4.0), 1.0, 0.0, 5.037, 1.0, 1.338, 0.0, 3.16,
                                              pow(10.0, -9.0), 0.0, 24.8 * pow(10.0, 9.0), 0.75, 0.2976 * pow(10.0, 9.0), 1.338, 2.0, 1.0, 3.577, 2.088);
 
-    double cellSpacing = 1.0 / cellCount;
+    double cellSpacing = 10.0 / cellCount;
 
     vector<vector<double> > leftDistortionTensor = MatrixAlgebra::computeIdentityMatrix(3);
     vector<vector<double> > rightDistortionTensor = MatrixAlgebra::computeIdentityMatrix(3);
@@ -213,7 +213,7 @@ void HPRTests::solve2DZhangElasticPlasticTest(int cellCount, int subcyclingItera
         }
     }
 
-    outputSolution2D(HPRSecondOrderSolver::solve2D(initialCells, cellSpacing, 0.8, 0.03, 0.0, 0, subcyclingIterations, materialParameters), materialParameters);
+    outputSolution2D(HPRSecondOrderSolver::solve2D(initialCells, cellSpacing, 0.8, 0.3, 0.0, 0, subcyclingIterations, materialParameters), materialParameters);
 }
 
 void HPRTests::outputSolution(vector<HPRStateVector> solution, HPRMaterialParameters materialParameters)

@@ -563,7 +563,8 @@ vector<vector<HPRIntermediateStateVector> > HPRSecondOrderSolver::solve2D(vector
         {
             currentCellsWithBoundary = HPRSolvers::insertBoundaryCells2D(currentCells, 1);
 
-            // Runge-Kutta goes here.
+            HPRForcingSolver::computeRungeKuttaTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * (timeStep / subcyclingIterations), bias, slopeLimiter,
+                                                          material1Parameters, material2Parameters);
         }
 
         currentCellsWithBoundary = HPRSolvers::insertBoundaryCells2D(currentCells, 2);
@@ -578,6 +579,9 @@ vector<vector<HPRIntermediateStateVector> > HPRSecondOrderSolver::solve2D(vector
         for (int i = 0; i < subcyclingIterations; i++)
         {
             currentCellsWithBoundary = HPRSolvers::insertBoundaryCells2D(currentCells, 1);
+
+            HPRForcingSolver::computeRungeKuttaTimeStep2D(currentCells, currentCellsWithBoundary, cellSpacing, 0.5 * (timeStep / subcyclingIterations), bias, slopeLimiter,
+                                                          material1Parameters, material2Parameters);
         }
 
         currentTime += timeStep;

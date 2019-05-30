@@ -52,17 +52,21 @@ int main(int argc, char *argv[])
     //HPRTests::solveStokesFirstProblem(200, 1);
     //HPRTests::solveHeatConductionProblem(100, 20);
     //HPRTests::solveBartonTest1(100, 0);
-    //HPRTests::solveZhangElasticPlasticTest(400, 1);
+    //HPRTests::solveZhangElasticPlasticTest(100, 1);
     //HPRTests::solve2DBartonTest1(100, 0);
     //HPRTests::solve2DZhangElasticPlasticTest(100, 1);
 
     //HPRMultiphysicsTests::solveBartonTest1(100, 3);
-    HPRMultiphysicsTests::solveZhangTest(100, 0);
+    //HPRMultiphysicsTests::solveZhangTest(400, 0);
 
     //HPRIntermediateTests::solveBartonTest1(400, 3);
     //HPRIntermediateTests::solveZhangTest(400, 0);
     //HPRIntermediateTests::solveZhangElasticPlasticTest(400, 1, 3);
-    //HPRIntermediateTests::solve2DBartonTest1(10, 3);
+    //HPRIntermediateTests::solve2DBartonTest1(100, 0);
+    //HPRIntermediateTests::solve2DZhangTest(100, 3);
+    //HPRIntermediateTests::solve2DZhangTest2(100, 3);
+    HPRIntermediateTests::solve2DZhangElasticPlasticTest(100, 1, 0);
+    //HPRIntermediateTests::solve2DZhangElasticPlasticTest2(100, 1, 0);
 
     //HPRReducedTests::solveBartonTest1(200, 0);
     //HPRReducedTests::solveZhangTest(800, 0);
