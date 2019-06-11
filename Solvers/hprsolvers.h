@@ -80,8 +80,8 @@ public:
                                                                   HPRReducedStateVector rightStateVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
                                                                   HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);
 
-    static HPRStateVector evolveStateByFractionalYTimeStep(double stepFraction, HPRStateVector topStateVector, HPRStateVector middleStateVector, HPRStateVector bottomStateVector, double cellSpacing,
-                                                           double timeStep, double bias, int slopeLimiter, HPRMaterialParameters materialParameters);
+    static HPRStateVector evolveStateByFractionalYTimeStep(double stepFraction, HPRStateVector topStateVector, HPRStateVector middleStateVector, HPRStateVector bottomStateVector,
+                                                           double cellSpacing, double timeStep, double bias, int slopeLimiter, HPRMaterialParameters materialParameters);
     static HPRIntermediateStateVector evolveStateByFractionalYTimeStep(double stepFraction, HPRIntermediateStateVector topStateVector, HPRIntermediateStateVector middleStateVector,
                                                                        HPRIntermediateStateVector bottomStateVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
                                                                        HPRMaterialParameters material1Parameters, HPRMaterialParameters material2Parameters);

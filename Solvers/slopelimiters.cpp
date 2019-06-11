@@ -144,6 +144,16 @@ vector<double> SlopeLimiters::computeSlopeVector(MHDStateVector leftStateVector,
     return computeSlopeVector(leftConservedVariableVector, middleConservedVariableVector, rightConservedVariableVector, bias, slopeLimiter);
 }
 
+vector<double> SlopeLimiters::computeSlopeVector(MHDReducedStateVector leftStateVector, MHDReducedStateVector middleStateVector, MHDReducedStateVector rightStateVector, double bias,
+                                                 int slopeLimiter, MHDMaterialParameters material1Parameters, MHDMaterialParameters material2Parameters)
+{
+    vector<double> leftConservedVariableVector = leftStateVector.computeConservedVariableVector(material1Parameters, material2Parameters);
+    vector<double> middleConservedVariableVector = middleStateVector.computeConservedVariableVector(material1Parameters, material2Parameters);
+    vector<double> rightConservedVariableVector = rightStateVector.computeConservedVariableVector(material1Parameters, material2Parameters);
+
+    return computeSlopeVector(leftConservedVariableVector, middleConservedVariableVector, rightConservedVariableVector, bias, slopeLimiter);
+}
+
 vector<double> SlopeLimiters::computeSlopeVector(HPRStateVector leftStateVector, HPRStateVector middleStateVector, HPRStateVector rightStateVector, double bias, int slopeLimiter,
                                                  HPRMaterialParameters materialParameters)
 {

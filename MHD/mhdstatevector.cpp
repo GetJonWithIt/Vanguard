@@ -53,16 +53,16 @@ void MHDStateVector::setConservedVariableVector(vector<double> newConservedVaria
     yVelocity = newConservedVariableVector[2] / density;
     zVelocity = newConservedVariableVector[3] / density;
 
+    xMagneticField = newConservedVariableVector[5];
+    yMagneticField = newConservedVariableVector[6];
+    zMagneticField = newConservedVariableVector[7];
+
     double magneticFieldSquared = (xMagneticField * xMagneticField) + (yMagneticField * yMagneticField) + (zMagneticField * zMagneticField);
     double totalEnergy = (newConservedVariableVector[4] - (0.5 * magneticFieldSquared)) / density;
 
     double velocitySquared = (xVelocity * xVelocity) + (yVelocity * yVelocity) + (zVelocity * zVelocity);
     double specificInternalEnergy = totalEnergy - (0.5 * velocitySquared);
     pressure = MHDEquationOfState::computePressure(density, specificInternalEnergy, materialParameters);
-
-    xMagneticField = newConservedVariableVector[5];
-    yMagneticField = newConservedVariableVector[6];
-    zMagneticField = newConservedVariableVector[7];
 
     auxiliaryField = newConservedVariableVector[8];
 }
@@ -128,8 +128,10 @@ vector<double> MHDStateVector::computeXFluxVector(vector<double> conservedVariab
     double specificInternalEnergy = hydrodynamicTotalEnergy - (0.5 * velocitySquared);
     double computedPressure = MHDEquationOfState::computePressure(computedDensity, specificInternalEnergy, materialParameters);
 
+    double hyperbolicWaveSpeedSquared = materialParameters.computeHyperbolicWaveSpeedSquared();
+
     fluxVector[0] = computedDensity * computedXVelocity;
-    fluxVector[1] = ((computedDensity * (computedXVelocity * computedXVelocity))) + computedPressure + (0.5 * magneticFieldSquared) - (computedXMagneticField * computedXMagneticField);
+    fluxVector[1] = (computedDensity * (computedXVelocity * computedXVelocity)) + computedPressure + (0.5 * magneticFieldSquared) - (computedXMagneticField * computedXMagneticField);
     fluxVector[2] = (computedDensity * (computedXVelocity * computedYVelocity)) - (computedXMagneticField * computedYMagneticField);
     fluxVector[3] = (computedDensity * (computedXVelocity * computedZVelocity)) - (computedXMagneticField * computedZMagneticField);
 
@@ -150,7 +152,7 @@ vector<double> MHDStateVector::computeXFluxVector(vector<double> conservedVariab
     fluxVector[6] = (computedYMagneticField * computedXVelocity) - (computedXMagneticField * computedYVelocity);
     fluxVector[7] = (computedZMagneticField * computedXVelocity) - (computedXMagneticField * computedZVelocity);
 
-    fluxVector[8] = 0.0;
+    fluxVector[8] = hyperbolicWaveSpeedSquared * computedXMagneticField;
 
     return fluxVector;
 }
@@ -158,6 +160,82 @@ vector<double> MHDStateVector::computeXFluxVector(vector<double> conservedVariab
 vector<double> MHDStateVector::computeXFluxVector(MHDMaterialParameters materialParameters)
 {
     return computeXFluxVector(computeConservedVariableVector(materialParameters), materialParameters);
+}
+
+vector<double> MHDStateVector::computeYFluxVector(vector<double> conservedVariableVector, MHDMaterialParameters materialParameters)
+{
+    vector<double> fluxVector(9);
+
+    double computedDensity = conservedVariableVector[0];
+    double computedXVelocity = conservedVariableVector[1] / computedDensity;
+    double computedYVelocity = conservedVariableVector[2] / computedDensity;
+    double computedZVelocity = conservedVariableVector[3] / computedDensity;
+
+    double computedXMagneticField = conservedVariableVector[5];
+    double computedYMagneticField = conservedVariableVector[6];
+    double computedZMagneticField = conservedVariableVector[7];
+
+    double computedAuxiliaryField = conservedVariableVector[8];
+
+    double magneticFieldSquared = (computedXMagneticField * computedXMagneticField) + (computedYMagneticField * computedYMagneticField) + (computedZMagneticField * computedZMagneticField);
+    double totalEnergy = conservedVariableVector[4];
+    double hydrodynamicTotalEnergy = (totalEnergy - (0.5 * magneticFieldSquared)) / computedDensity;
+
+    double velocitySquared = (computedXVelocity * computedXVelocity) + (computedYVelocity * computedYVelocity) + (computedZVelocity * computedZVelocity);
+    double specificInternalEnergy = hydrodynamicTotalEnergy - (0.5 * velocitySquared);
+    double computedPressure = MHDEquationOfState::computePressure(computedDensity, specificInternalEnergy, materialParameters);
+
+    double hyperbolicWaveSpeedSquared = materialParameters.computeHyperbolicWaveSpeedSquared();
+
+    fluxVector[0] = computedDensity * computedYVelocity;
+    fluxVector[1] = (computedDensity * (computedYVelocity * computedXVelocity)) - (computedYMagneticField * computedXMagneticField);
+    fluxVector[2] = (computedDensity * (computedYVelocity * computedYVelocity)) + computedPressure + (0.5 * magneticFieldSquared) - (computedYMagneticField * computedYMagneticField);
+    fluxVector[3] = (computedDensity * (computedYVelocity * computedZVelocity)) - (computedYMagneticField * computedZMagneticField);
+
+    vector<double> velocityVector(3);
+    velocityVector[0] = computedXVelocity;
+    velocityVector[1] = computedYVelocity;
+    velocityVector[2] = computedZVelocity;
+
+    vector<double> magneticFieldVector(3);
+    magneticFieldVector[0] = computedXMagneticField;
+    magneticFieldVector[1] = computedYMagneticField;
+    magneticFieldVector[2] = computedZMagneticField;
+
+    double magneticFieldVelocityVectorProduct = VectorAlgebra::computeDotProduct(velocityVector, magneticFieldVector);
+    fluxVector[4] = ((totalEnergy + computedPressure + (0.5 * magneticFieldSquared)) * computedYVelocity) - (magneticFieldVelocityVectorProduct * computedYMagneticField);
+
+    fluxVector[5] = (computedXMagneticField * computedYVelocity) - (computedYMagneticField * computedXVelocity);
+    fluxVector[6] = computedAuxiliaryField;
+    fluxVector[7] = (computedZMagneticField * computedYVelocity) - (computedYMagneticField * computedZVelocity);
+
+    fluxVector[8] = hyperbolicWaveSpeedSquared * computedYMagneticField;
+
+    return fluxVector;
+}
+
+vector<double> MHDStateVector::computeYFluxVector(MHDMaterialParameters materialParameters)
+{
+    return computeYFluxVector(computeConservedVariableVector(materialParameters), materialParameters);
+}
+
+vector<double> MHDStateVector::computeSourceTermVector(vector<double> conservedVariableVector, MHDMaterialParameters materialParameters)
+{
+    vector<double> sourceTermVector(9);
+
+    double hyperbolicWaveSpeedSquared = materialParameters.computeHyperbolicWaveSpeedSquared();
+    double parabolicDampingSquared = materialParameters.computeParabolicDampingSquared();
+
+    double computedAuxiliaryField = conservedVariableVector[8];
+
+    sourceTermVector[8] = - (hyperbolicWaveSpeedSquared / parabolicDampingSquared) * computedAuxiliaryField;
+
+    return sourceTermVector;
+}
+
+vector<double> MHDStateVector::computeSourceTermVector(MHDMaterialParameters materialParameters)
+{
+    return computeSourceTermVector(computeConservedVariableVector(materialParameters), materialParameters);
 }
 
 double MHDStateVector::computeSpecificInternalEnergy(MHDMaterialParameters materialParameters)
@@ -180,19 +258,34 @@ double MHDStateVector::computeSoundSpeed(MHDMaterialParameters materialParameter
     return MHDEquationOfState::computeSoundSpeed(density, pressure, materialParameters);
 }
 
+double MHDStateVector::computeEntropy(MHDMaterialParameters materialParameters)
+{
+    return MHDEquationOfState::computeEntropy(density, pressure, materialParameters);
+}
+
 double MHDStateVector::computeAlfvenWaveSpeed()
 {
     return MHDWaveSpeeds::computeAlfvenWaveSpeed(density, xMagneticField, yMagneticField, zMagneticField);
 }
 
-double MHDStateVector::computeSlowMagnetoAcousticSpeed(MHDMaterialParameters materialParameters)
+double MHDStateVector::computeXSlowMagnetoAcousticSpeed(MHDMaterialParameters materialParameters)
 {
-    return MHDWaveSpeeds::computeSlowMagnetoAcousticSpeed(density, pressure, xMagneticField, yMagneticField, zMagneticField, materialParameters);
+    return MHDWaveSpeeds::computeXSlowMagnetoAcousticSpeed(density, pressure, xMagneticField, yMagneticField, zMagneticField, materialParameters);
 }
 
-double MHDStateVector::computeFastMagnetoAcousticSpeed(MHDMaterialParameters materialParameters)
+double MHDStateVector::computeYSlowMagnetoAcousticSpeed(MHDMaterialParameters materialParameters)
 {
-    return MHDWaveSpeeds::computeFastMagnetoAcousticSpeed(density, pressure, xMagneticField, yMagneticField, zMagneticField, materialParameters);
+    return MHDWaveSpeeds::computeYSlowMagnetoAcousticSpeed(density, pressure, xMagneticField, yMagneticField, zMagneticField, materialParameters);
+}
+
+double MHDStateVector::computeXFastMagnetoAcousticSpeed(MHDMaterialParameters materialParameters)
+{
+    return MHDWaveSpeeds::computeXFastMagnetoAcousticSpeed(density, pressure, xMagneticField, yMagneticField, zMagneticField, materialParameters);
+}
+
+double MHDStateVector::computeYFastMagnetoAcousticSpeed(MHDMaterialParameters materialParameters)
+{
+    return MHDWaveSpeeds::computeYFastMagnetoAcousticSpeed(density, pressure, xMagneticField, yMagneticField, zMagneticField, materialParameters);
 }
 
 void MHDStateVector::setDensity(double newDensity)

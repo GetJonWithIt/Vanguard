@@ -14,7 +14,7 @@ double MHDWaveSpeeds::computeAlfvenWaveSpeed(double density, double xMagneticFie
     return (VectorAlgebra::computeNorm(magneticFieldVector) / sqrt(density));
 }
 
-double MHDWaveSpeeds::computeSlowMagnetoAcousticSpeed(double density, double pressure, double xMagneticField, double yMagneticField, double zMagneticField, MHDMaterialParameters materialParameters)
+double MHDWaveSpeeds::computeXSlowMagnetoAcousticSpeed(double density, double pressure, double xMagneticField, double yMagneticField, double zMagneticField, MHDMaterialParameters materialParameters)
 {
     double soundSpeed = MHDEquationOfState::computeSoundSpeed(density, pressure, materialParameters);
     double alfvenWaveSpeed = computeAlfvenWaveSpeed(density, xMagneticField, yMagneticField, zMagneticField);
@@ -26,7 +26,19 @@ double MHDWaveSpeeds::computeSlowMagnetoAcousticSpeed(double density, double pre
                                                                          4.0 * ((soundSpeedSquared * (xMagneticField * xMagneticField)) / density))));
 }
 
-double MHDWaveSpeeds::computeFastMagnetoAcousticSpeed(double density, double pressure, double xMagneticField, double yMagneticField, double zMagneticField, MHDMaterialParameters materialParameters)
+double MHDWaveSpeeds::computeYSlowMagnetoAcousticSpeed(double density, double pressure, double xMagneticField, double yMagneticField, double zMagneticField, MHDMaterialParameters materialParameters)
+{
+    double soundSpeed = MHDEquationOfState::computeSoundSpeed(density, pressure, materialParameters);
+    double alfvenWaveSpeed = computeAlfvenWaveSpeed(density, xMagneticField, yMagneticField, zMagneticField);
+
+    double soundSpeedSquared = (soundSpeed * soundSpeed);
+    double alfvenWaveSpeedSquared = (alfvenWaveSpeed * alfvenWaveSpeed);
+
+    return sqrt(0.5 * (soundSpeedSquared + alfvenWaveSpeedSquared - sqrt(((soundSpeedSquared + alfvenWaveSpeedSquared) * (soundSpeedSquared + alfvenWaveSpeedSquared)) -
+                                                                         4.0 * ((soundSpeedSquared * (yMagneticField * yMagneticField)) / density))));
+}
+
+double MHDWaveSpeeds::computeXFastMagnetoAcousticSpeed(double density, double pressure, double xMagneticField, double yMagneticField, double zMagneticField, MHDMaterialParameters materialParameters)
 {
     double soundSpeed = MHDEquationOfState::computeSoundSpeed(density, pressure, materialParameters);
     double alfvenWaveSpeed = computeAlfvenWaveSpeed(density, xMagneticField, yMagneticField, zMagneticField);
@@ -36,4 +48,16 @@ double MHDWaveSpeeds::computeFastMagnetoAcousticSpeed(double density, double pre
 
     return sqrt(0.5 * (soundSpeedSquared + alfvenWaveSpeedSquared + sqrt(((soundSpeedSquared + alfvenWaveSpeedSquared) * (soundSpeedSquared + alfvenWaveSpeedSquared)) -
                                                                          4.0 * ((soundSpeedSquared * (xMagneticField * xMagneticField)) / density))));
+}
+
+double MHDWaveSpeeds::computeYFastMagnetoAcousticSpeed(double density, double pressure, double xMagneticField, double yMagneticField, double zMagneticField, MHDMaterialParameters materialParameters)
+{
+    double soundSpeed = MHDEquationOfState::computeSoundSpeed(density, pressure, materialParameters);
+    double alfvenWaveSpeed = computeAlfvenWaveSpeed(density, xMagneticField, yMagneticField, zMagneticField);
+
+    double soundSpeedSquared = (soundSpeed * soundSpeed);
+    double alfvenWaveSpeedSquared = (alfvenWaveSpeed * alfvenWaveSpeed);
+
+    return sqrt(0.5 * (soundSpeedSquared + alfvenWaveSpeedSquared + sqrt(((soundSpeedSquared + alfvenWaveSpeedSquared) * (soundSpeedSquared + alfvenWaveSpeedSquared)) -
+                                                                         4.0 * ((soundSpeedSquared * (yMagneticField * yMagneticField)) / density))));
 }

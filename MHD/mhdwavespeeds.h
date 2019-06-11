@@ -12,8 +12,11 @@ public:
 
     static double computeAlfvenWaveSpeed(double density, double xMagneticField, double yMagneticField, double zMagneticField);
 
-    static double computeSlowMagnetoAcousticSpeed(double density, double pressure, double xMagneticField, double yMagneticField, double zMagneticField, MHDMaterialParameters materialParameters);
-    static double computeFastMagnetoAcousticSpeed(double density, double pressure, double xMagneticField, double yMagneticField, double zMagneticField, MHDMaterialParameters materialParameters);
+    static double computeXSlowMagnetoAcousticSpeed(double density, double pressure, double xMagneticField, double yMagneticField, double zMagneticField, MHDMaterialParameters materialParameters);
+    static double computeYSlowMagnetoAcousticSpeed(double density, double pressure, double xMagneticField, double yMagneticField, double zMagneticField, MHDMaterialParameters materialParameters);
+
+    static double computeXFastMagnetoAcousticSpeed(double density, double pressure, double xMagneticField, double yMagneticField, double zMagneticField, MHDMaterialParameters materialParameters);
+    static double computeYFastMagnetoAcousticSpeed(double density, double pressure, double xMagneticField, double yMagneticField, double zMagneticField, MHDMaterialParameters materialParameters);
 };
 
 #endif // MHDWAVESPEEDS_H

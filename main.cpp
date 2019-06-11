@@ -7,6 +7,7 @@
 #include "Elasticity/Multiphysics/elasticmultiphysicstests.h"
 #include "Elasticity/Multiphysics/elasticreducedtests.h"
 #include "MHD/mhdtests.h"
+#include "MHD/Multiphysics/mhdreducedtests.h"
 #include "HPR/hprtests.h"
 #include "HPR/Multiphysics/hprmultiphysicstests.h"
 #include "HPR/Multiphysics/hprintermediatetests.h"
@@ -45,9 +46,16 @@ int main(int argc, char *argv[])
     //ElasticReducedTests::solve2DZhangTest(100, 3);
     //ElasticReducedTests::solve2DZhangTest2(100, 3);
 
-    //MHDTests::solveDumbserTest2(400);
-    //MHDTests::solveDumbserTest1(800);
-    //MHDTests::solveDumbserTest3(400);
+    //MHDTests::solveDumbserTest2(100);
+    //MHDTests::solveDumbserTest1(400, 1);
+    //MHDTests::solveDumbserTest3(100);
+    //MHDTests::solve2DDumbserTest1(100, 1);
+    //MHDTests::solve2DDumbserTest2(100, 1);
+
+    //MHDReducedTests::solveDumbserTest1(400, 1, 3);
+    //MHDReducedTests::solveDumbserMultimaterialTest1(800, 0, 3);
+    //MHDReducedTests::solve2DDumbserTest1(100, 1, 0);
+    MHDReducedTests::solve2DDumbserMultimaterialTest1(100, 1, 3);
 
     //HPRTests::solveStokesFirstProblem(200, 1);
     //HPRTests::solveHeatConductionProblem(100, 20);
@@ -64,18 +72,20 @@ int main(int argc, char *argv[])
     //HPRIntermediateTests::solveZhangElasticPlasticTest(400, 1, 3);
     //HPRIntermediateTests::solve2DBartonTest1(100, 0);
     //HPRIntermediateTests::solve2DZhangTest(100, 3);
-    //HPRIntermediateTests::solve2DZhangTest2(100, 3);
-    HPRIntermediateTests::solve2DZhangElasticPlasticTest(100, 1, 0);
+    //HPRIntermediateTests::solve2DZhangTest2(100, 0);
+    //HPRIntermediateTests::solve2DZhangElasticPlasticTest(100, 1, 0);
     //HPRIntermediateTests::solve2DZhangElasticPlasticTest2(100, 1, 0);
+    //HPRIntermediateTests::solve2DUdayKumarTest(100, 1, 3);
 
     //HPRReducedTests::solveBartonTest1(200, 0);
-    //HPRReducedTests::solveZhangTest(800, 0);
+    //HPRReducedTests::solveZhangTest(200, 0);
     //HPRReducedTests::solveZhangElasticPlasticTest(100, 1, 0);
     //HPRReducedTests::solve2DBartonTest1(100, 0);
     //HPRReducedTests::solve2DZhangTest(100, 0);
     //HPRReducedTests::solve2DZhangTest2(100, 3);
     //HPRReducedTests::solve2DZhangElasticPlasticTest(100, 1, 0);
     //HPRReducedTests::solve2DZhangElasticPlasticTest2(100, 1, 0);
+    //HPRReducedTests::solve2DUdayKumarTest(100, 1, 0);
 
     return a.exec();
 }

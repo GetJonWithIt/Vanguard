@@ -20,6 +20,9 @@ public:
     static vector<double> computeXFluxVector(vector<double> conservedVariableVector, MHDMaterialParameters materialParameters);
     vector<double> computeXFluxVector(MHDMaterialParameters materialParameters);
 
+    static vector<double> computeYFluxVector(vector<double> conservedVariableVector, MHDMaterialParameters materialParameters);
+    vector<double> computeYFluxVector(MHDMaterialParameters materialParameters);
+
     static vector<double> computeSourceTermVector(vector<double> conservedVariableVector, MHDMaterialParameters materialParameters);
     vector<double> computeSourceTermVector(MHDMaterialParameters materialParameters);
 
@@ -29,8 +32,12 @@ public:
     double computeEntropy(MHDMaterialParameters materialParameters);
 
     double computeAlfvenWaveSpeed();
-    double computeSlowMagnetoAcousticSpeed(MHDMaterialParameters materialParameters);
-    double computeFastMagnetoAcousticSpeed(MHDMaterialParameters materialParameters);
+
+    double computeXSlowMagnetoAcousticSpeed(MHDMaterialParameters materialParameters);
+    double computeYSlowMagnetoAcousticSpeed(MHDMaterialParameters materialParameters);
+
+    double computeXFastMagnetoAcousticSpeed(MHDMaterialParameters materialParameters);
+    double computeYFastMagnetoAcousticSpeed(MHDMaterialParameters materialParameters);
 
     void setDensity(double newDensity);
     void setXVelocity(double newXVelocity);

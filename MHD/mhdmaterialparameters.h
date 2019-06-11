@@ -10,6 +10,11 @@ public:
     MHDMaterialParameters();
     MHDMaterialParameters(double newAdiabaticIndex);
 
+    double computeHyperbolicWaveSpeedSquared();
+    double computeParabolicDampingSquared();
+
+    void configureParabolicDamping();
+
     void setAdiabaticIndex(double newAdiabaticIndex);
     void setStiffeningParameter(double newStiffeningParameter);
 
