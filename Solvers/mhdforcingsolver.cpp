@@ -43,6 +43,51 @@ vector<double> MHDForcingSolver::evolveConservedVariableVector(vector<double> le
     return HPRForcingSolver::computeEvolvedConservedVariableVector(middleConservedVariableVector, firstStep, secondStep, thirdStep, fourthStep);
 }
 
+vector<double> MHDForcingSolver::evolveIntermediateConservedVariableVector(vector<double> leftConservedVariableVector, vector<double> middleConservedVariableVector,
+                                                                           vector<double> rightConservedVariableVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
+                                                                           MHDMaterialParameters material1Parameters, MHDMaterialParameters material2Parameters)
+{
+    MHDIntermediateStateVector leftStateVector;
+    MHDIntermediateStateVector middleStateVector;
+    MHDIntermediateStateVector rightStateVector;
+
+    leftStateVector.setConservedVariableVector(leftConservedVariableVector, material1Parameters, material2Parameters);
+    rightStateVector.setConservedVariableVector(rightConservedVariableVector, material1Parameters, material2Parameters);
+
+    vector<double> firstStep = VectorAlgebra::multiplyVector(timeStep, MHDIntermediateStateVector::computeSourceTermVector(middleConservedVariableVector, material1Parameters,
+                                                                                                                           material2Parameters));
+
+    vector<double> middleConservedVariableVectorFirstStep = VectorAlgebra::addVectors(middleConservedVariableVector, VectorAlgebra::multiplyVector(0.5, firstStep));
+    middleStateVector.setConservedVariableVector(middleConservedVariableVectorFirstStep, material1Parameters, material2Parameters);
+    MHDIntermediateStateVector middleStateVectorFirstStepEvolved = MHDSolvers::evolveStateByFractionalXTimeStep(0.5, leftStateVector, middleStateVector, rightStateVector, cellSpacing,
+                                                                                                                timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+
+    vector<double> middleConservedVariableVectorFirstStepEvolved = middleStateVectorFirstStepEvolved.computeConservedVariableVector(material1Parameters, material2Parameters);
+    vector<double> secondStep = VectorAlgebra::multiplyVector(timeStep, MHDIntermediateStateVector::computeSourceTermVector(middleConservedVariableVectorFirstStepEvolved, material1Parameters,
+                                                                                                                            material2Parameters));
+
+    vector<double> middleConservedVariableVectorSecondStep = VectorAlgebra::addVectors(middleConservedVariableVector, VectorAlgebra::multiplyVector(0.5, secondStep));
+    middleStateVector.setConservedVariableVector(middleConservedVariableVectorSecondStep, material1Parameters, material2Parameters);
+    MHDIntermediateStateVector middleStateVectorSecondStepEvolved = MHDSolvers::evolveStateByFractionalXTimeStep(0.5, leftStateVector, middleStateVector, rightStateVector, cellSpacing,
+                                                                                                                 timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+
+    vector<double> middleConservedVariableVectorSecondStepEvolved = middleStateVectorSecondStepEvolved.computeConservedVariableVector(material1Parameters, material2Parameters);
+    vector<double> thirdStep = VectorAlgebra::multiplyVector(timeStep, MHDIntermediateStateVector::computeSourceTermVector(middleConservedVariableVectorSecondStepEvolved, material1Parameters,
+                                                                                                                           material2Parameters));
+
+    vector<double> middleConservedVariableVectorThirdStep = VectorAlgebra::addVectors(middleConservedVariableVector, thirdStep);
+    middleStateVector.setConservedVariableVector(middleConservedVariableVectorThirdStep, material1Parameters, material2Parameters);
+    MHDIntermediateStateVector middleStateVectorThirdStepEvolved = MHDSolvers::evolveStateByFractionalXTimeStep(1.0, leftStateVector, middleStateVector, rightStateVector, cellSpacing,
+                                                                                                                timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+
+    vector<double> middleConservedVariableVectorThirdStepEvolved = middleStateVectorThirdStepEvolved.computeConservedVariableVector(material1Parameters, material2Parameters);
+    vector<double> fourthStep = VectorAlgebra::multiplyVector(timeStep, MHDIntermediateStateVector::computeSourceTermVector(middleConservedVariableVectorThirdStepEvolved, material1Parameters,
+                                                                                                                            material2Parameters));
+
+    return HPRForcingSolver::computeEvolvedConservedVariableVector(middleConservedVariableVector, firstStep, secondStep, thirdStep, fourthStep);
+
+}
+
 vector<double> MHDForcingSolver::evolveReducedConservedVariableVector(vector<double> leftConservedVariableVector, vector<double> middleConservedVariableVector,
                                                                       vector<double> rightConservedVariableVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
                                                                       MHDMaterialParameters material1Parameters, MHDMaterialParameters material2Parameters)
@@ -86,9 +131,10 @@ vector<double> MHDForcingSolver::evolveReducedConservedVariableVector(vector<dou
     return HPRForcingSolver::computeEvolvedConservedVariableVector(middleConservedVariableVector, firstStep, secondStep, thirdStep, fourthStep);
 }
 
-vector<double> MHDForcingSolver::evolveConservedVariableVector2D(vector<double> leftConservedVariableVector, vector<double> middleConservedVariableVector, vector<double> rightConservedVariableVector,
-                                                                 vector<double> topConservedVariableVector, vector<double> bottomConservedVariableVector, double cellSpacing, double timeStep,
-                                                                 double bias, int slopeLimiter, MHDMaterialParameters materialParameters)
+vector<double> MHDForcingSolver::evolveConservedVariableVector2D(vector<double> leftConservedVariableVector, vector<double> middleConservedVariableVector,
+                                                                 vector<double> rightConservedVariableVector, vector<double> topConservedVariableVector,
+                                                                 vector<double> bottomConservedVariableVector, double cellSpacing, double timeStep, double bias, int slopeLimiter,
+                                                                 MHDMaterialParameters materialParameters)
 {
     MHDStateVector leftStateVector;
     MHDStateVector middleStateVector;
@@ -143,6 +189,79 @@ vector<double> MHDForcingSolver::evolveConservedVariableVector2D(vector<double> 
 
     vector<double> middleConservedVariableVectorThirdStepEvolved = middleStateVectorThirdStepEvolved.computeConservedVariableVector(materialParameters);
     vector<double> fourthStep = VectorAlgebra::multiplyVector(timeStep, MHDStateVector::computeSourceTermVector(middleConservedVariableVectorThirdStepEvolved, materialParameters));
+
+    return HPRForcingSolver::computeEvolvedConservedVariableVector(middleConservedVariableVector, firstStep, secondStep, thirdStep, fourthStep);
+}
+
+vector<double> MHDForcingSolver::evolveIntermediateConservedVariableVector2D(vector<double> leftConservedVariableVector, vector<double> middleConservedVariableVector,
+                                                                             vector<double> rightConservedVariableVector, vector<double> topConservedVariableVector,
+                                                                             vector<double> bottomConservedVariableVector, double cellSpacing, double timeStep, double bias,
+                                                                             int slopeLimiter, MHDMaterialParameters material1Parameters, MHDMaterialParameters material2Parameters)
+{
+    MHDIntermediateStateVector leftStateVector;
+    MHDIntermediateStateVector middleStateVector;
+    MHDIntermediateStateVector rightStateVector;
+
+    MHDIntermediateStateVector topStateVector;
+    MHDIntermediateStateVector bottomStateVector;
+
+    leftStateVector.setConservedVariableVector(leftConservedVariableVector, material1Parameters, material2Parameters);
+    rightStateVector.setConservedVariableVector(rightConservedVariableVector, material1Parameters, material2Parameters);
+
+    topStateVector.setConservedVariableVector(topConservedVariableVector, material1Parameters, material2Parameters);
+    bottomStateVector.setConservedVariableVector(bottomConservedVariableVector, material1Parameters, material2Parameters);
+
+    vector<double> firstStep = VectorAlgebra::multiplyVector(timeStep, MHDIntermediateStateVector::computeSourceTermVector(middleConservedVariableVector, material1Parameters,
+                                                                                                                           material2Parameters));
+
+    vector<double> middleConservedVariableVectorFirstStep = VectorAlgebra::addVectors(middleConservedVariableVector, VectorAlgebra::multiplyVector(0.5, firstStep));
+    middleStateVector.setConservedVariableVector(middleConservedVariableVectorFirstStep, material1Parameters, material2Parameters);
+
+    MHDIntermediateStateVector middleStateVectorFirstStepEvolved1 = MHDSolvers::evolveStateByFractionalXTimeStep(0.25, leftStateVector, middleStateVector, rightStateVector, cellSpacing,
+                                                                                                                 timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+    MHDIntermediateStateVector middleStateVectorFirstStepEvolved2 = MHDSolvers::evolveStateByFractionalYTimeStep(0.5, topStateVector, middleStateVectorFirstStepEvolved1,
+                                                                                                                 bottomStateVector, cellSpacing, timeStep, bias, slopeLimiter,
+                                                                                                                 material1Parameters, material2Parameters);
+    MHDIntermediateStateVector middleStateVectorFirstStepEvolved = MHDSolvers::evolveStateByFractionalXTimeStep(0.25, leftStateVector, middleStateVectorFirstStepEvolved2,
+                                                                                                                rightStateVector, cellSpacing, timeStep, bias, slopeLimiter,
+                                                                                                                material1Parameters, material2Parameters);
+
+    vector<double> middleConservedVariableVectorFirstStepEvolved = middleStateVectorFirstStepEvolved.computeConservedVariableVector(material1Parameters, material2Parameters);
+    vector<double> secondStep = VectorAlgebra::multiplyVector(timeStep, MHDIntermediateStateVector::computeSourceTermVector(middleConservedVariableVectorFirstStepEvolved,
+                                                                                                                            material1Parameters, material2Parameters));
+
+    vector<double> middleConservedVariableVectorSecondStep = VectorAlgebra::addVectors(middleConservedVariableVector, VectorAlgebra::multiplyVector(0.5, secondStep));
+    middleStateVector.setConservedVariableVector(middleConservedVariableVectorSecondStep, material1Parameters, material2Parameters);
+
+    MHDIntermediateStateVector middleStateVectorSecondStepEvolved1 = MHDSolvers::evolveStateByFractionalXTimeStep(0.25, leftStateVector, middleStateVector, rightStateVector,
+                                                                                                                  cellSpacing, timeStep, bias, slopeLimiter, material1Parameters,
+                                                                                                                  material2Parameters);
+    MHDIntermediateStateVector middleStateVectorSecondStepEvolved2 = MHDSolvers::evolveStateByFractionalYTimeStep(0.5, topStateVector, middleStateVectorSecondStepEvolved1,
+                                                                                                                  bottomStateVector, cellSpacing, timeStep, bias, slopeLimiter,
+                                                                                                                  material1Parameters, material2Parameters);
+    MHDIntermediateStateVector middleStateVectorSecondStepEvolved = MHDSolvers::evolveStateByFractionalXTimeStep(0.25, leftStateVector, middleStateVectorSecondStepEvolved2,
+                                                                                                                 rightStateVector, cellSpacing, timeStep, bias, slopeLimiter,
+                                                                                                                 material1Parameters, material2Parameters);
+
+    vector<double> middleConservedVariableVectorSecondStepEvolved = middleStateVectorSecondStepEvolved.computeConservedVariableVector(material1Parameters, material2Parameters);
+    vector<double> thirdStep = VectorAlgebra::multiplyVector(timeStep, MHDIntermediateStateVector::computeSourceTermVector(middleConservedVariableVectorSecondStepEvolved,
+                                                                                                                           material1Parameters, material2Parameters));
+
+    vector<double> middleConservedVariableVectorThirdStep = VectorAlgebra::addVectors(middleConservedVariableVector, thirdStep);
+    middleStateVector.setConservedVariableVector(middleConservedVariableVectorThirdStep, material1Parameters, material2Parameters);
+
+    MHDIntermediateStateVector middleStateVectorThirdStepEvolved1 = MHDSolvers::evolveStateByFractionalXTimeStep(0.5, leftStateVector, middleStateVector, rightStateVector, cellSpacing,
+                                                                                                                 timeStep, bias, slopeLimiter, material1Parameters, material2Parameters);
+    MHDIntermediateStateVector middleStateVectorThirdStepEvolved2 = MHDSolvers::evolveStateByFractionalYTimeStep(1.0, topStateVector, middleStateVectorThirdStepEvolved1,
+                                                                                                                 bottomStateVector, cellSpacing, timeStep, bias, slopeLimiter,
+                                                                                                                 material1Parameters, material2Parameters);
+    MHDIntermediateStateVector middleStateVectorThirdStepEvolved = MHDSolvers::evolveStateByFractionalXTimeStep(0.5, leftStateVector, middleStateVectorThirdStepEvolved2,
+                                                                                                                rightStateVector, cellSpacing, timeStep, bias, slopeLimiter,
+                                                                                                                material1Parameters, material2Parameters);
+
+    vector<double> middleConservedVariableVectorThirdStepEvolved = middleStateVectorThirdStepEvolved.computeConservedVariableVector(material1Parameters, material2Parameters);
+    vector<double> fourthStep = VectorAlgebra::multiplyVector(timeStep, MHDIntermediateStateVector::computeSourceTermVector(middleConservedVariableVectorThirdStepEvolved,
+                                                                                                                            material1Parameters, material2Parameters));
 
     return HPRForcingSolver::computeEvolvedConservedVariableVector(middleConservedVariableVector, firstStep, secondStep, thirdStep, fourthStep);
 }
@@ -236,6 +355,24 @@ void MHDForcingSolver::computeRungeKuttaTimeStep(vector<MHDStateVector> & curren
     }
 }
 
+void MHDForcingSolver::computeRungeKuttaTimeStep(vector<MHDIntermediateStateVector> & currentCells, vector<MHDIntermediateStateVector> & currentCellsWithBoundary, double cellSpacing,
+                                                 double timeStep, double bias, int slopeLimiter, MHDMaterialParameters material1Parameters, MHDMaterialParameters material2Parameters)
+{
+    int cellCount = currentCells.size();
+
+#pragma omp parallel for
+    for (int i = 0; i < cellCount; i++)
+    {
+        vector<double> leftConservedVariableVector = currentCellsWithBoundary[i].computeConservedVariableVector(material1Parameters, material2Parameters);
+        vector<double> middleConservedVariableVector = currentCellsWithBoundary[i + 1].computeConservedVariableVector(material1Parameters, material2Parameters);
+        vector<double> rightConservedVariableVector = currentCellsWithBoundary[i + 2].computeConservedVariableVector(material1Parameters, material2Parameters);
+
+        currentCells[i].setConservedVariableVector(evolveIntermediateConservedVariableVector(leftConservedVariableVector, middleConservedVariableVector, rightConservedVariableVector,
+                                                                                             cellSpacing, timeStep, bias, slopeLimiter, material1Parameters, material2Parameters),
+                                                   material1Parameters, material2Parameters);
+    }
+}
+
 void MHDForcingSolver::computeRungeKuttaTimeStep(vector<MHDReducedStateVector> & currentCells, vector<MHDReducedStateVector> & currentCellsWithBoundary, double cellSpacing, double timeStep,
                                                  double bias, int slopeLimiter, MHDMaterialParameters material1Parameters, MHDMaterialParameters material2Parameters)
 {
@@ -275,6 +412,33 @@ void MHDForcingSolver::computeRungeKuttaTimeStep2D(vector<vector<MHDStateVector>
             currentCells[i][j].setConservedVariableVector(evolveConservedVariableVector2D(leftConservedVariableVector, middleConservedVariableVector, rightConservedVariableVector,
                                                                                           topConservedVariableVector, bottomConservedVariableVector, cellSpacing, timeStep, bias,
                                                                                           slopeLimiter, materialParameters), materialParameters);
+        }
+    }
+}
+
+void MHDForcingSolver::computeRungeKuttaTimeStep2D(vector<vector<MHDIntermediateStateVector> > & currentCells, vector<vector<MHDIntermediateStateVector> > & currentCellsWithBoundary,
+                                                   double cellSpacing, double timeStep, double bias, int slopeLimiter, MHDMaterialParameters material1Parameters,
+                                                   MHDMaterialParameters material2Parameters)
+{
+    int rowCount = currentCells.size();
+    int columnCount = currentCells[0].size();
+
+#pragma omp parallel for
+    for (int i = 0; i < rowCount; i++)
+    {
+        for (int j = 0; j < columnCount; j++)
+        {
+            vector<double> leftConservedVariableVector = currentCellsWithBoundary[i + 1][j].computeConservedVariableVector(material1Parameters, material2Parameters);
+            vector<double> middleConservedVariableVector = currentCellsWithBoundary[i + 1][j + 1].computeConservedVariableVector(material1Parameters, material2Parameters);
+            vector<double> rightConservedVariableVector = currentCellsWithBoundary[i + 1][j + 2].computeConservedVariableVector(material1Parameters, material2Parameters);
+
+            vector<double> topConservedVariableVector = currentCellsWithBoundary[i][j + 1].computeConservedVariableVector(material1Parameters, material2Parameters);
+            vector<double> bottomConservedVariableVector = currentCellsWithBoundary[i + 2][j + 1].computeConservedVariableVector(material1Parameters, material2Parameters);
+
+            currentCells[i][j].setConservedVariableVector(evolveIntermediateConservedVariableVector2D(leftConservedVariableVector, middleConservedVariableVector, rightConservedVariableVector,
+                                                                                                      topConservedVariableVector, bottomConservedVariableVector, cellSpacing, timeStep, bias,
+                                                                                                      slopeLimiter, material1Parameters, material2Parameters),
+                                                          material1Parameters, material2Parameters);
         }
     }
 }

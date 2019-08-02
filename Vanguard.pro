@@ -71,7 +71,11 @@ SOURCES += main.cpp \
     HPR/Multiphysics/hprmultiphysicstests.cpp \
     Solvers/mhdforcingsolver.cpp \
     MHD/Multiphysics/mhdreducedstatevector.cpp \
-    MHD/Multiphysics/mhdreducedtests.cpp
+    MHD/Multiphysics/mhdreducedtests.cpp \
+    MHD/Multiphysics/mhdintermediatestatevector.cpp \
+    MHD/Multiphysics/mhdintermediatetests.cpp \
+    MHD/Multiphysics/mhdmultiphysicsstatevector.cpp \
+    MHD/Multiphysics/mhdmultiphysicstests.cpp
 
 HEADERS += \
     Solvers/firstordersolver.h \
@@ -134,5 +138,9 @@ HEADERS += \
     HPR/Multiphysics/hprmultiphysicstests.h \
     Solvers/mhdforcingsolver.h \
     MHD/Multiphysics/mhdreducedstatevector.h \
-    MHD/Multiphysics/mhdreducedtests.h
+    MHD/Multiphysics/mhdreducedtests.h \
+    MHD/Multiphysics/mhdintermediatestatevector.h \
+    MHD/Multiphysics/mhdintermediatetests.h \
+    MHD/Multiphysics/mhdmultiphysicsstatevector.h \
+    MHD/Multiphysics/mhdmultiphysicstests.h
 

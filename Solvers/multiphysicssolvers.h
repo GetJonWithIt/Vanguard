@@ -23,6 +23,9 @@ public:
     static void reinitialiseVolumeFraction(vector<ElasticReducedStateVector> & currentCells);
     static void reinitialiseVolumeFraction(vector<vector<ElasticReducedStateVector> > & currentCells);
 
+    static void reinitialiseVolumeFraction(vector<MHDIntermediateStateVector> & currentCells, MHDMaterialParameters material1Parameters, MHDMaterialParameters material2Parameters);
+    static void reinitialiseVolumeFraction(vector<vector<MHDIntermediateStateVector> > & currentCells, MHDMaterialParameters material1Parameters, MHDMaterialParameters material2Parameters);
+
     static void reinitialiseVolumeFraction(vector<MHDReducedStateVector> & currentCells, MHDMaterialParameters material1Parameters, MHDMaterialParameters material2Parameters);
     static void reinitialiseVolumeFraction(vector<vector<MHDReducedStateVector> > & currentCells, MHDMaterialParameters material1Parameters, MHDMaterialParameters material2Parameters);
 

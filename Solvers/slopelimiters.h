@@ -8,6 +8,8 @@
 #include "Elasticity/Multiphysics/elasticmultiphysicsstatevector.h"
 #include "Elasticity/Multiphysics/elasticreducedstatevector.h"
 #include "MHD/mhdstatevector.h"
+#include "MHD/Multiphysics/mhdmultiphysicsstatevector.h"
+#include "MHD/Multiphysics/mhdintermediatestatevector.h"
 #include "MHD/Multiphysics/mhdreducedstatevector.h"
 #include "HPR/hprstatevector.h"
 #include "HPR/Multiphysics/hprmultiphysicsstatevector.h"
@@ -47,6 +49,10 @@ public:
 
     static vector<double> computeSlopeVector(MHDStateVector leftStateVector, MHDStateVector middleStateVector, MHDStateVector rightStateVector, double bias, int slopeLimiter,
                                              MHDMaterialParameters materialParameters);
+    static vector<double> computeSlopeVector(MHDMultiphysicsStateVector leftStateVector, MHDMultiphysicsStateVector middleStateVector, MHDMultiphysicsStateVector rightStateVector,
+                                             double bias, int slopeLimiter, MHDMaterialParameters material1Parameters, MHDMaterialParameters material2Parameters);
+    static vector<double> computeSlopeVector(MHDIntermediateStateVector leftStateVector, MHDIntermediateStateVector middleStateVector, MHDIntermediateStateVector rightStateVector,
+                                             double bias, int slopeLimiter, MHDMaterialParameters material1Parameters, MHDMaterialParameters material2Parameters);
     static vector<double> computeSlopeVector(MHDReducedStateVector leftStateVector, MHDReducedStateVector middleStateVector, MHDReducedStateVector rightStateVector, double bias,
                                              int slopeLimiter, MHDMaterialParameters material1Parameters, MHDMaterialParameters material2Parameters);
 

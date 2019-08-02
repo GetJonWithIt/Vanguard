@@ -382,6 +382,11 @@ vector<double> MHDReducedStateVector::computeSourceTermVector(vector<double> con
     return sourceTermVector;
 }
 
+vector<double> MHDReducedStateVector::computeSourceTermVector(MHDMaterialParameters material1Parameters, MHDMaterialParameters material2Parameters)
+{
+    return computeSourceTermVector(computeConservedVariableVector(material1Parameters, material2Parameters), material1Parameters, material2Parameters);
+}
+
 double MHDReducedStateVector::computeMaterial1SpecificInternalEnergy(MHDMaterialParameters material1Parameters)
 {
     return MHDEquationOfState::computeSpecificInternalEnergy(material1Density, interfacePressure, material1Parameters);

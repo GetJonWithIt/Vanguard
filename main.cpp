@@ -7,6 +7,8 @@
 #include "Elasticity/Multiphysics/elasticmultiphysicstests.h"
 #include "Elasticity/Multiphysics/elasticreducedtests.h"
 #include "MHD/mhdtests.h"
+#include "MHD/Multiphysics/mhdmultiphysicstests.h"
+#include "MHD/Multiphysics/mhdintermediatetests.h"
 #include "MHD/Multiphysics/mhdreducedtests.h"
 #include "HPR/hprtests.h"
 #include "HPR/Multiphysics/hprmultiphysicstests.h"
@@ -19,15 +21,15 @@ int main(int argc, char *argv[])
 
     //EulerTests::solveToroTest1(1000);
     //EulerTests::solve2DToroTest1(100);
-    //EulerMultiphysicsTests::solveToroTest1(400, 3);
-    //EulerMultiphysicsTests::solveFedkiwTest(100, 3);
+    //EulerMultiphysicsTests::solveToroTest1(400, 0);
+    //EulerMultiphysicsTests::solveFedkiwTest(400, 0);
     //EulerMultiphysicsTests::solveChinnayyaTest(100);
 
     //EulerMultiphysicsTests::solve2DToroTest1(100, 3);
     //EulerMultiphysicsTests::solve2DFedkiwTest(100, 3);
 
     //EulerReducedTests::solveToroTest1(100, 3);
-    //EulerReducedTests::solveFedkiwTest(200, 3);
+    //EulerReducedTests::solveFedkiwTest(200, 0);
     //EulerReducedTests::solve2DToroTest1(100, 3);
     //EulerReducedTests::solve2DFedkiwTest(100, 3);
 
@@ -38,7 +40,7 @@ int main(int argc, char *argv[])
 
     //ElasticMultiphysicsTests::solveBartonTest1(100, 3);
     //ElasticMultiphysicsTests::solveBartonTest2(100, 3);
-    //ElasticMultiphysicsTests::solveZhangTest(100, 0);
+    //ElasticMultiphysicsTests::solveZhangTest(200, 0);
 
     //ElasticReducedTests::solveBartonTest1(100, 3);
     //ElasticReducedTests::solveZhangTest(800, 3);
@@ -52,40 +54,47 @@ int main(int argc, char *argv[])
     //MHDTests::solve2DDumbserTest1(100, 1);
     //MHDTests::solve2DDumbserTest2(100, 1);
 
-    //MHDReducedTests::solveDumbserTest1(400, 1, 3);
-    //MHDReducedTests::solveDumbserMultimaterialTest1(800, 0, 3);
-    //MHDReducedTests::solve2DDumbserTest1(100, 1, 0);
-    MHDReducedTests::solve2DDumbserMultimaterialTest1(100, 1, 3);
+    MHDMultiphysicsTests::solveDumbserTest1(400, 0, 0);
 
-    //HPRTests::solveStokesFirstProblem(200, 1);
-    //HPRTests::solveHeatConductionProblem(100, 20);
+    //MHDIntermediateTests::solveDumbserTest1(800, 1, 3);
+    //MHDIntermediateTests::solveDumbserMultimaterialTest1(800, 1, 3);
+    //MHDIntermediateTests::solve2DDumbserTest1(100, 1, 3);
+    //MHDIntermediateTests::solve2DDumbserMultimaterialTest1(100, 1, 3);
+
+    //MHDReducedTests::solveDumbserTest1(400, 1, 3);
+    //MHDReducedTests::solveDumbserMultimaterialTest1(400, 1, 3);
+    //MHDReducedTests::solve2DDumbserTest1(100, 1, 0);
+    //MHDReducedTests::solve2DDumbserMultimaterialTest1(100, 1, 3);
+
+    //HPRTests::solveStokesFirstProblem(800, 100);
+    //HPRTests::solveHeatConductionProblem(800, 20);
     //HPRTests::solveBartonTest1(100, 0);
-    //HPRTests::solveZhangElasticPlasticTest(100, 1);
+    //HPRTests::solveZhangElasticPlasticTest(800, 1);
     //HPRTests::solve2DBartonTest1(100, 0);
     //HPRTests::solve2DZhangElasticPlasticTest(100, 1);
 
     //HPRMultiphysicsTests::solveBartonTest1(100, 3);
-    //HPRMultiphysicsTests::solveZhangTest(400, 0);
+    //HPRMultiphysicsTests::solveZhangTest(100, 0);
 
-    //HPRIntermediateTests::solveBartonTest1(400, 3);
-    //HPRIntermediateTests::solveZhangTest(400, 0);
-    //HPRIntermediateTests::solveZhangElasticPlasticTest(400, 1, 3);
-    //HPRIntermediateTests::solve2DBartonTest1(100, 0);
+    //HPRIntermediateTests::solveBartonTest1(100, 3);
+    //HPRIntermediateTests::solveZhangTest(100, 3);
+    //HPRIntermediateTests::solveZhangElasticPlasticTest(100, 1, 3);
+    //HPRIntermediateTests::solve2DBartonTest1(100, 3);
     //HPRIntermediateTests::solve2DZhangTest(100, 3);
-    //HPRIntermediateTests::solve2DZhangTest2(100, 0);
-    //HPRIntermediateTests::solve2DZhangElasticPlasticTest(100, 1, 0);
-    //HPRIntermediateTests::solve2DZhangElasticPlasticTest2(100, 1, 0);
+    //HPRIntermediateTests::solve2DZhangTest2(100, 3);
+    //HPRIntermediateTests::solve2DZhangElasticPlasticTest(100, 1, 3);
+    //HPRIntermediateTests::solve2DZhangElasticPlasticTest2(100, 1, 3);
     //HPRIntermediateTests::solve2DUdayKumarTest(100, 1, 3);
 
-    //HPRReducedTests::solveBartonTest1(200, 0);
-    //HPRReducedTests::solveZhangTest(200, 0);
-    //HPRReducedTests::solveZhangElasticPlasticTest(100, 1, 0);
-    //HPRReducedTests::solve2DBartonTest1(100, 0);
-    //HPRReducedTests::solve2DZhangTest(100, 0);
+    //HPRReducedTests::solveBartonTest1(800, 3);
+    //HPRReducedTests::solveZhangTest(800, 3);
+    //HPRReducedTests::solveZhangElasticPlasticTest(800, 1, 3);
+    //HPRReducedTests::solve2DBartonTest1(100, 3);
+    //HPRReducedTests::solve2DZhangTest(100, 3);
     //HPRReducedTests::solve2DZhangTest2(100, 3);
-    //HPRReducedTests::solve2DZhangElasticPlasticTest(100, 1, 0);
-    //HPRReducedTests::solve2DZhangElasticPlasticTest2(100, 1, 0);
-    //HPRReducedTests::solve2DUdayKumarTest(100, 1, 0);
+    //HPRReducedTests::solve2DZhangElasticPlasticTest(100, 1, 3);
+    //HPRReducedTests::solve2DZhangElasticPlasticTest2(100, 1, 3);
+    //HPRReducedTests::solve2DUdayKumarTest(100, 1, 3);
 
     return a.exec();
 }
