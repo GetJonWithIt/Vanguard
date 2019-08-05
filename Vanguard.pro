@@ -75,7 +75,12 @@ SOURCES += main.cpp \
     MHD/Multiphysics/mhdintermediatestatevector.cpp \
     MHD/Multiphysics/mhdintermediatetests.cpp \
     MHD/Multiphysics/mhdmultiphysicsstatevector.cpp \
-    MHD/Multiphysics/mhdmultiphysicstests.cpp
+    MHD/Multiphysics/mhdmultiphysicstests.cpp \
+    RGFM/exactsolver.cpp \
+    RGFM/multimaterialsystem.cpp \
+    RGFM/rgfmsolver.cpp \
+    RGFM/eulerrgfmtests.cpp \
+    RGFM/hllcsolver.cpp
 
 HEADERS += \
     Solvers/firstordersolver.h \
@@ -142,5 +147,10 @@ HEADERS += \
     MHD/Multiphysics/mhdintermediatestatevector.h \
     MHD/Multiphysics/mhdintermediatetests.h \
     MHD/Multiphysics/mhdmultiphysicsstatevector.h \
-    MHD/Multiphysics/mhdmultiphysicstests.h
+    MHD/Multiphysics/mhdmultiphysicstests.h \
+    RGFM/exactsolver.h \
+    RGFM/multimaterialsystem.h \
+    RGFM/rgfmsolver.h \
+    RGFM/eulerrgfmtests.h \
+    RGFM/hllcsolver.h
 

@@ -15,6 +15,8 @@
 #include "HPR/Multiphysics/hprintermediatetests.h"
 #include "HPR/Multiphysics/hprreducedtests.h"
 
+#include "RGFM/eulerrgfmtests.h"
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
@@ -54,7 +56,8 @@ int main(int argc, char *argv[])
     //MHDTests::solve2DDumbserTest1(100, 1);
     //MHDTests::solve2DDumbserTest2(100, 1);
 
-    MHDMultiphysicsTests::solveDumbserTest1(400, 0, 0);
+    //MHDMultiphysicsTests::solveDumbserTest1(100, 0, 3);
+    //MHDMultiphysicsTests::solveDumbserMultimaterialTest1(400, 0, 0);
 
     //MHDIntermediateTests::solveDumbserTest1(800, 1, 3);
     //MHDIntermediateTests::solveDumbserMultimaterialTest1(800, 1, 3);
@@ -95,6 +98,16 @@ int main(int argc, char *argv[])
     //HPRReducedTests::solve2DZhangElasticPlasticTest(100, 1, 3);
     //HPRReducedTests::solve2DZhangElasticPlasticTest2(100, 1, 3);
     //HPRReducedTests::solve2DUdayKumarTest(100, 1, 3);
+
+    //EulerRGFMTests::solveToroTest1Exact(400, 0);
+    //EulerRGFMTests::solveToroTest1HLLC(400, 0);
+    //EulerRGFMTests::solveFedkiwTestExact(400, 0);
+    //EulerRGFMTests::solveFedkiwTestHLLC(400, 0);
+
+    //EulerRGFMTests::solve2DToroTest1Exact(100, 0);
+    //EulerRGFMTests::solve2DToroTest1HLLC(100, 0);
+    //EulerRGFMTests::solve2DFedkiwTestExact(100, 0);
+    EulerRGFMTests::solve2DFedkiwTestHLLC(100, 0);
 
     return a.exec();
 }
