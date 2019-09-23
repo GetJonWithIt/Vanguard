@@ -16,6 +16,7 @@
 #include "HPR/Multiphysics/hprreducedtests.h"
 
 #include "RGFM/eulerrgfmtests.h"
+#include "RGFM/mhdrgfmtests.h"
 
 int main(int argc, char *argv[])
 {
@@ -100,14 +101,17 @@ int main(int argc, char *argv[])
     //HPRReducedTests::solve2DUdayKumarTest(100, 1, 3);
 
     //EulerRGFMTests::solveToroTest1Exact(400, 0);
-    //EulerRGFMTests::solveToroTest1HLLC(400, 0);
+    //EulerRGFMTests::solveToroTest1HLLC(100, 0);
     //EulerRGFMTests::solveFedkiwTestExact(400, 0);
     //EulerRGFMTests::solveFedkiwTestHLLC(400, 0);
 
     //EulerRGFMTests::solve2DToroTest1Exact(100, 0);
     //EulerRGFMTests::solve2DToroTest1HLLC(100, 0);
     //EulerRGFMTests::solve2DFedkiwTestExact(100, 0);
-    EulerRGFMTests::solve2DFedkiwTestHLLC(100, 0);
+    //EulerRGFMTests::solve2DFedkiwTestHLLC(100, 0);
+
+    //MHDRGFMTests::solveDumbserTest1(800, 0, 0);
+    MHDRGFMTests::solveDumbserMultimaterialTest1(800, 0, 0);
 
     return a.exec();
 }

@@ -349,6 +349,7 @@ MultimaterialSystem RGFMSolver::applyRGFMBoundaryConditionsHLLC(MultimaterialSys
 
             inGhostRegion = !inGhostRegion;
         }
+
         levelSetValue = levelSetFunction[i];
     }
 

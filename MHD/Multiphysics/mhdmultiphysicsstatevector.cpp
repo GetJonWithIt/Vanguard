@@ -460,21 +460,21 @@ double MHDMultiphysicsStateVector::computeTotalXMagneticField()
 {
     double material2VolumeFraction = 1.0 - material1VolumeFraction;
 
-    return (material1VolumeFraction * material1XMagneticField) + (material2VolumeFraction * material2XMagneticField);
+    return (pow(material1VolumeFraction, 1.0 / 2.0) * material1XMagneticField) + (pow(material2VolumeFraction, 1.0 / 2.0) * material2XMagneticField);
 }
 
 double MHDMultiphysicsStateVector::computeTotalYMagneticField()
 {
     double material2VolumeFraction = 1.0 - material1VolumeFraction;
 
-    return (material1VolumeFraction * material1YMagneticField) + (material2VolumeFraction * material2YMagneticField);
+    return (pow(material1VolumeFraction, 1.0 / 2.0) * material1YMagneticField) + (pow(material2VolumeFraction, 1.0 / 2.0) * material2YMagneticField);
 }
 
 double MHDMultiphysicsStateVector::computeTotalZMagneticField()
 {
     double material2VolumeFraction = 1.0 - material1VolumeFraction;
 
-    return (material1VolumeFraction * material1ZMagneticField) + (material2VolumeFraction * material2ZMagneticField);
+    return (pow(material1VolumeFraction, 1.0 / 2.0) * material1ZMagneticField) + (pow(material2VolumeFraction, 1.0 / 2.0) * material2ZMagneticField);
 }
 
 double MHDMultiphysicsStateVector::computeTotalAuxiliaryField()

@@ -117,15 +117,15 @@ EulerStateVector HLLCSolver::solveX(EulerStateVector leftStateVector, EulerState
     double leftWaveSpeed = computeLeftWaveSpeed(leftStateVector, rightStateVector, material1Parameters, material2Parameters);
     double rightWaveSpeed = computeRightWaveSpeed(leftStateVector, rightStateVector, material1Parameters, material2Parameters);
 
-    if (0 <= leftWaveSpeed)
+    if (0.0 <= leftWaveSpeed)
     {
         return leftStateVector;
     }
-    else if (rightWaveSpeed <= 0)
+    else if (rightWaveSpeed <= 0.0)
     {
         return rightStateVector;
     }
-    else if (0 <= starRegionWaveSpeed)
+    else if (0.0 <= starRegionWaveSpeed)
     {
         vector<double> starRegionConservedVariableVector = computeStarRegionXConservedVariableVector(leftStateVector, leftWaveSpeed, starRegionWaveSpeed, material1Parameters);
 
@@ -151,15 +151,15 @@ EulerStateVector HLLCSolver::solveY(EulerStateVector topStateVector, EulerStateV
     double topWaveSpeed = computeTopWaveSpeed(topStateVector, bottomStateVector, material1Parameters, material2Parameters);
     double bottomWaveSpeed = computeBottomWaveSpeed(topStateVector, bottomStateVector, material1Parameters, material2Parameters);
 
-    if (0 <= topWaveSpeed)
+    if (0.0 <= topWaveSpeed)
     {
         return topStateVector;
     }
-    else if (bottomWaveSpeed <= 0)
+    else if (bottomWaveSpeed <= 0.0)
     {
         return bottomStateVector;
     }
-    else if (0 <= starRegionWaveSpeed)
+    else if (0.0 <= starRegionWaveSpeed)
     {
         vector<double> starRegionConservedVariableVector = computeStarRegionYConservedVariableVector(topStateVector, topWaveSpeed, starRegionWaveSpeed, material1Parameters);
 

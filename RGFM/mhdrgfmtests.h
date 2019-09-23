@@ -1,21 +1,20 @@
-#ifndef MHDMULTIPHYSICSTESTS_H
-#define MHDMULTIPHYSICSTESTS_H
+#ifndef MHDRGFMTESTS_H
+#define MHDRGFMTESTS_H
 
-#include "Solvers/mhdsecondordersolver.h"
+#include "mhdrgfmsolver.h"
 #include <fstream>
 using namespace std;
 
-
-class MHDMultiphysicsTests
+class MHDRGFMTests
 {
 public:
-    MHDMultiphysicsTests();
+    MHDRGFMTests();
 
     static void solveDumbserTest1(int cellCount, int subcyclingIterations, int reinitialisationFrequency);
 
     static void solveDumbserMultimaterialTest1(int cellCount, int subcyclingIterations, int reinitialisationFrequency);
 
-    static void outputSolution(vector<MHDMultiphysicsStateVector> solution);
+    static void outputSolution(MHDMultimaterialSystem multimaterialSystem);
 };
 
-#endif // MHDMULTIPHYSICSTESTS_H
+#endif // MHDRGFMTESTS_H

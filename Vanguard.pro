@@ -80,7 +80,11 @@ SOURCES += main.cpp \
     RGFM/multimaterialsystem.cpp \
     RGFM/rgfmsolver.cpp \
     RGFM/eulerrgfmtests.cpp \
-    RGFM/hllcsolver.cpp
+    RGFM/hllcsolver.cpp \
+    RGFM/mhdhllcsolver.cpp \
+    RGFM/mhdmultimaterialsystem.cpp \
+    RGFM/mhdrgfmsolver.cpp \
+    RGFM/mhdrgfmtests.cpp
 
 HEADERS += \
     Solvers/firstordersolver.h \
@@ -152,5 +156,9 @@ HEADERS += \
     RGFM/multimaterialsystem.h \
     RGFM/rgfmsolver.h \
     RGFM/eulerrgfmtests.h \
-    RGFM/hllcsolver.h
+    RGFM/hllcsolver.h \
+    RGFM/mhdhllcsolver.h \
+    RGFM/mhdmultimaterialsystem.h \
+    RGFM/mhdrgfmsolver.h \
+    RGFM/mhdrgfmtests.h
 
