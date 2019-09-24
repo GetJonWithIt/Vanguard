@@ -519,13 +519,13 @@ vector<double> RGFMSolver::updateLevelSetFunction(vector<double> levelSetFunctio
             velocity = material2Cells[i].getXVelocity();
         }
 
-        if (velocity < 0)
+        if (velocity < 0.0)
         {
-            upwindApproximation = (-levelSetFunctionWithBoundary[i + 4] + (4 * levelSetFunctionWithBoundary[i + 3]) - (3 * levelSetFunctionWithBoundary[i + 2])) / (2 * cellSpacing);
+            upwindApproximation = (-levelSetFunctionWithBoundary[i + 4] + (4.0 * levelSetFunctionWithBoundary[i + 3]) - (3.0 * levelSetFunctionWithBoundary[i + 2])) / (2.0 * cellSpacing);
         }
         else
         {
-            upwindApproximation = ((3 * levelSetFunctionWithBoundary[i + 2]) - (4 * levelSetFunctionWithBoundary[i + 1]) + levelSetFunctionWithBoundary[i]) / (2 * cellSpacing);
+            upwindApproximation = ((3.0 * levelSetFunctionWithBoundary[i + 2]) - (4.0 * levelSetFunctionWithBoundary[i + 1]) + levelSetFunctionWithBoundary[i]) / (2.0 * cellSpacing);
         }
         newLevelSetFunction[i] = levelSetFunction[i] - (timeStep * (velocity * upwindApproximation));
 
@@ -571,15 +571,15 @@ vector<vector<double> > RGFMSolver::update2DLevelSetFunctionX(vector<vector<doub
                 velocity = material2Cells[i][j].getXVelocity();
             }
 
-            if (velocity < 0)
+            if (velocity < 0.0)
             {
-                upwindApproximation = (-levelSetFunctionWithBoundary[i + 2][j + 4] + (4 * levelSetFunctionWithBoundary[i + 2][j + 3]) - (3 * levelSetFunctionWithBoundary[i + 2][j + 2])) /
-                        (2 * cellSpacing);
+                upwindApproximation = (-levelSetFunctionWithBoundary[i + 2][j + 4] + (4.0 * levelSetFunctionWithBoundary[i + 2][j + 3]) - (3.0 * levelSetFunctionWithBoundary[i + 2][j + 2])) /
+                        (2.0 * cellSpacing);
             }
             else
             {
-                upwindApproximation = ((3 * levelSetFunctionWithBoundary[i + 2][j + 2]) - (4 * levelSetFunctionWithBoundary[i + 2][j + 1]) + levelSetFunctionWithBoundary[i + 2][j]) /
-                        (2 * cellSpacing);
+                upwindApproximation = ((3.0 * levelSetFunctionWithBoundary[i + 2][j + 2]) - (4.0 * levelSetFunctionWithBoundary[i + 2][j + 1]) + levelSetFunctionWithBoundary[i + 2][j]) /
+                        (2.0 * cellSpacing);
             }
             newLevelSetFunction[i][j] = levelSetFunction[i][j] - (timeStep * (velocity * upwindApproximation));
 
@@ -626,15 +626,15 @@ vector<vector<double> > RGFMSolver::update2DLevelSetFunctionY(vector<vector<doub
                 velocity = material2Cells[j][i].getYVelocity();
             }
 
-            if (velocity < 0)
+            if (velocity < 0.0)
             {
-                upwindApproximation = (-levelSetFunctionWithBoundary[j + 4][i + 2] + (4 * levelSetFunctionWithBoundary[j + 3][i + 2]) - (3 * levelSetFunctionWithBoundary[j + 2][i + 2])) /
-                        (2 * cellSpacing);
+                upwindApproximation = (-levelSetFunctionWithBoundary[j + 4][i + 2] + (4.0 * levelSetFunctionWithBoundary[j + 3][i + 2]) - (3.0 * levelSetFunctionWithBoundary[j + 2][i + 2])) /
+                        (2.0 * cellSpacing);
             }
             else
             {
-                upwindApproximation = ((3 * levelSetFunctionWithBoundary[j + 2][i + 2]) - (4 * levelSetFunctionWithBoundary[j + 1][i + 2]) + levelSetFunctionWithBoundary[j][i + 2]) /
-                        (2 * cellSpacing);
+                upwindApproximation = ((3.0 * levelSetFunctionWithBoundary[j + 2][i + 2]) - (4.0 * levelSetFunctionWithBoundary[j + 1][i + 2]) + levelSetFunctionWithBoundary[j][i + 2]) /
+                        (2.0 * cellSpacing);
             }
             newLevelSetFunction[j][i] = levelSetFunction[j][i] - (timeStep * (velocity * upwindApproximation));
 

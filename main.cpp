@@ -106,12 +106,15 @@ int main(int argc, char *argv[])
     //EulerRGFMTests::solveFedkiwTestHLLC(400, 0);
 
     //EulerRGFMTests::solve2DToroTest1Exact(100, 0);
-    //EulerRGFMTests::solve2DToroTest1HLLC(100, 0);
+    //EulerRGFMTests::solve2DToroTest1HLLC(200, 0);
     //EulerRGFMTests::solve2DFedkiwTestExact(100, 0);
     //EulerRGFMTests::solve2DFedkiwTestHLLC(100, 0);
 
-    //MHDRGFMTests::solveDumbserTest1(800, 0, 0);
-    MHDRGFMTests::solveDumbserMultimaterialTest1(800, 0, 0);
+    //MHDRGFMTests::solveDumbserTest1(400, 0, 0);
+    //MHDRGFMTests::solveDumbserMultimaterialTest1(400, 0, 0);
+
+    //MHDRGFMTests::solve2DDumbserTest1(100, 1, 0);
+    MHDRGFMTests::solve2DDumbserMultimaterialTest1(100, 1, 0);
 
     return a.exec();
 }
