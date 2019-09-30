@@ -270,6 +270,10 @@ void EulerRGFMTests::outputSolution2D(MultimaterialSystem multimaterialSystem)
     ofstream densityFile("density.dat");
     ofstream pressureFile("pressure.dat");
 
+    ofstream levelSetFunctionSliceFile("levelSetFunctionSlice.dat");
+    ofstream densitySliceFile("densitySlice.dat");
+    ofstream pressureSliceFile("pressureSlice.dat");
+
     bool inGhostRegion;
     double levelSetValue;
 
@@ -289,14 +293,31 @@ void EulerRGFMTests::outputSolution2D(MultimaterialSystem multimaterialSystem)
             {
                 densityFile << (cellSpacing * i) << " " << (cellSpacing * j) << " " << material1Cells[i][j].getDensity() << endl;
                 pressureFile << (cellSpacing * i) << " " << (cellSpacing * j) <<  " " << material1Cells[i][j].getPressure() << endl;
+
+                if (i == floor(0.5 * rowCount))
+                {
+                    densitySliceFile << (cellSpacing * j) << " " << material1Cells[i][j].getDensity() << endl;
+                    pressureSliceFile << (cellSpacing * j) << " " << material1Cells[i][j].getPressure() << endl;
+                }
             }
             else
             {
                 densityFile << (cellSpacing * i) << " " << (cellSpacing * j) << " " << material2Cells[i][j].getDensity() << endl;
                 pressureFile << (cellSpacing * i) << " " << (cellSpacing * j) << " " << material2Cells[i][j].getPressure() << endl;
+
+                if (i == floor(0.5 * rowCount))
+                {
+                    densitySliceFile << (cellSpacing * j) << " " << material2Cells[i][j].getDensity() << endl;
+                    pressureSliceFile << (cellSpacing * j) << " " << material2Cells[i][j].getPressure() << endl;
+                }
             }
 
             levelSetFunctionFile << (cellSpacing * i) << " " << (cellSpacing * j) << " " << levelSetFunction[i][j] << endl;
+
+            if (i == floor(0.5 * rowCount))
+            {
+                levelSetFunctionSliceFile << (cellSpacing * j) << levelSetFunction[i][j] << endl;
+            }
 
             levelSetValue = levelSetFunction[i][j];
         }
@@ -305,4 +326,9 @@ void EulerRGFMTests::outputSolution2D(MultimaterialSystem multimaterialSystem)
     levelSetFunctionFile.close();
     densityFile.close();
     pressureFile.close();
+
+    levelSetFunctionSliceFile.close();
+    densitySliceFile.close();
+    pressureSliceFile.close();
+
 }

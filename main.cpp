@@ -16,6 +16,7 @@
 #include "HPR/Multiphysics/hprreducedtests.h"
 
 #include "RGFM/eulerrgfmtests.h"
+#include "RGFM/elasticrgfmtests.h"
 #include "RGFM/mhdrgfmtests.h"
 
 int main(int argc, char *argv[])
@@ -106,15 +107,20 @@ int main(int argc, char *argv[])
     //EulerRGFMTests::solveFedkiwTestHLLC(400, 0);
 
     //EulerRGFMTests::solve2DToroTest1Exact(100, 0);
-    //EulerRGFMTests::solve2DToroTest1HLLC(200, 0);
+    //EulerRGFMTests::solve2DToroTest1HLLC(100, 0);
     //EulerRGFMTests::solve2DFedkiwTestExact(100, 0);
-    //EulerRGFMTests::solve2DFedkiwTestHLLC(100, 0);
+    //EulerRGFMTests::solve2DFedkiwTestHLLC(200, 0);
+
+    //ElasticRGFMTests::solveBartonTest1Tilde(400, 0, 0);
+    //ElasticRGFMTests::solveBartonTest1Star(400, 0, 0);
+    //ElasticRGFMTests::solveZhangTestTilde(400, 0, 0);
+    ElasticRGFMTests::solveZhangTestStar(400, 0, 0);
 
     //MHDRGFMTests::solveDumbserTest1(400, 0, 0);
     //MHDRGFMTests::solveDumbserMultimaterialTest1(400, 0, 0);
 
-    //MHDRGFMTests::solve2DDumbserTest1(100, 1, 0);
-    MHDRGFMTests::solve2DDumbserMultimaterialTest1(100, 1, 0);
+    //MHDRGFMTests::solve2DDumbserTest1(200, 1, 0);
+    //MHDRGFMTests::solve2DDumbserMultimaterialTest1(100, 1, 0);
 
     return a.exec();
 }

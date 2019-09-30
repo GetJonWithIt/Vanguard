@@ -612,16 +612,19 @@ MHDMultimaterialSystem MHDRGFMSolver::solve2D(MHDMultimaterialSystem multimateri
         levelSetFunction = update2DLevelSetFunctionY(levelSetFunction, cellSpacing, timeStep, currentMaterial1Cells, currentMaterial2Cells);
         levelSetFunction = update2DLevelSetFunctionX(levelSetFunction, cellSpacing, 0.5 * timeStep, currentMaterial1Cells, currentMaterial2Cells);
 
+        /*
         double maximumWaveSpeed = min(MHDSolvers::computeMaximumWaveSpeed2D(currentMaterial1CellsWithBoundary, material1Parameters),
                                       MHDSolvers::computeMaximumWaveSpeed2D(currentMaterial2CellsWithBoundary, material2Parameters));
+                                      */
+        double maximumWaveSpeed = 4.0;
         material1Parameters.setHyperbolicWaveSpeed(maximumWaveSpeed);
         material2Parameters.setHyperbolicWaveSpeed(maximumWaveSpeed);
 
         material1Parameters.configureParabolicDamping();
         material2Parameters.configureParabolicDamping();
         /*
-        double material1MaximumWaveSpeed = MHDSolvers::computeMaximumWaveSpeed2D(currentMaterial1CellsWithBoundary, material1Parameters);
-        double material2MaximumWaveSpeed = MHDSolvers::computeMaximumWaveSpeed2D(currentMaterial2CellsWithBoundary, material2Parameters);
+        double material1MaximumWaveSpeed = 0.1 * MHDSolvers::computeMaximumWaveSpeed2D(currentMaterial1CellsWithBoundary, material1Parameters);
+        double material2MaximumWaveSpeed = 0.1 * MHDSolvers::computeMaximumWaveSpeed2D(currentMaterial2CellsWithBoundary, material2Parameters);
 
         material1Parameters.setHyperbolicWaveSpeed(material1MaximumWaveSpeed);
         material2Parameters.setHyperbolicWaveSpeed(material2MaximumWaveSpeed);

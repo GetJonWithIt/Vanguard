@@ -152,6 +152,10 @@ void MHDRGFMTests::outputSolution2D(MHDMultimaterialSystem multimaterialSystem)
     ofstream densityFile("density.dat");
     ofstream yMagneticFieldFile("yMagneticField.dat");
 
+    ofstream levelSetFunctionSliceFile("levelSetFunctionSlice.dat");
+    ofstream densitySliceFile("densitySlice.dat");
+    ofstream yMagneticFieldSliceFile("yMagneticFieldSlice.dat");
+
     bool inGhostRegion;
     double levelSetValue;
 
@@ -171,14 +175,31 @@ void MHDRGFMTests::outputSolution2D(MHDMultimaterialSystem multimaterialSystem)
             {
                 densityFile << (cellSpacing * i) << " " << (cellSpacing * j) << " " << material1Cells[i][j].getDensity() << endl;
                 yMagneticFieldFile << (cellSpacing * i) << " " << (cellSpacing * j) << " " << material1Cells[i][j].getYMagneticField() << endl;
+
+                if (i == floor(0.5 * rowCount))
+                {
+                    densitySliceFile << (cellSpacing * j) << " " << material1Cells[i][j].getDensity() << endl;
+                    yMagneticFieldSliceFile << (cellSpacing * j) << " " << material1Cells[i][j].getYMagneticField() << endl;
+                }
             }
             else
             {
                 densityFile << (cellSpacing * i) << " " << (cellSpacing * j) << " " << material2Cells[i][j].getDensity() << endl;
                 yMagneticFieldFile << (cellSpacing * i) << " " << (cellSpacing * j) << " " << material2Cells[i][j].getYMagneticField() << endl;
+
+                if (i == floor(0.5 * rowCount))
+                {
+                    densitySliceFile << (cellSpacing * j) << " " << material2Cells[i][j].getDensity() << endl;
+                    yMagneticFieldSliceFile << (cellSpacing * j) << " " << material2Cells[i][j].getYMagneticField() << endl;
+                }
             }
 
             levelSetFunctionFile << (cellSpacing * i) << " " << (cellSpacing * j) << " " << levelSetFunction[i][j] << endl;
+
+            if (i == floor(0.5 * rowCount))
+            {
+                levelSetFunctionSliceFile << (cellSpacing * j) << levelSetFunction[i][j] << endl;
+            }
 
             levelSetValue = levelSetFunction[i][j];
         }
@@ -187,4 +208,8 @@ void MHDRGFMTests::outputSolution2D(MHDMultimaterialSystem multimaterialSystem)
     levelSetFunctionFile.close();
     densityFile.close();
     yMagneticFieldFile.close();
+
+    levelSetFunctionSliceFile.close();
+    densitySliceFile.close();
+    yMagneticFieldSliceFile.close();
 }

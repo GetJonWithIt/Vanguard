@@ -84,7 +84,11 @@ SOURCES += main.cpp \
     RGFM/mhdhllcsolver.cpp \
     RGFM/mhdmultimaterialsystem.cpp \
     RGFM/mhdrgfmsolver.cpp \
-    RGFM/mhdrgfmtests.cpp
+    RGFM/mhdrgfmtests.cpp \
+    RGFM/elastichllcsolver.cpp \
+    RGFM/elasticmultimaterialsystem.cpp \
+    RGFM/elasticrgfmsolver.cpp \
+    RGFM/elasticrgfmtests.cpp
 
 HEADERS += \
     Solvers/firstordersolver.h \
@@ -160,5 +164,9 @@ HEADERS += \
     RGFM/mhdhllcsolver.h \
     RGFM/mhdmultimaterialsystem.h \
     RGFM/mhdrgfmsolver.h \
-    RGFM/mhdrgfmtests.h
+    RGFM/mhdrgfmtests.h \
+    RGFM/elastichllcsolver.h \
+    RGFM/elasticmultimaterialsystem.h \
+    RGFM/elasticrgfmsolver.h \
+    RGFM/elasticrgfmtests.h
 
